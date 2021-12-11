@@ -1,0 +1,53 @@
+services:
+
+# Postgres as a main storage
+  db:
+    restart: always
+    image: postgres
+    container_name: myapp_db
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data
+    ports:
+      - "8001:5432"
+    environment:
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_USER=postgres
+
+# Django application
+  web:
+    container_name: myapp_web
+    labels:
+      com.example.service: "web"
+      com.example.description: "Use for the main web process"
+    build: .
+    command: ["./scripts/wait_for_postgres.sh"]
+    expose:
+      - 8000
+    volumes:
+      - ./static:/code/static #must be same as nginx!
+    depends_on:
+      - db
+    links:
+      - redis
+    environment:
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_USER=postgres
+
+# Nginx as a web server and reverse proxy
+  nginx:
+    image: nginx
+    container_name: myapp_nginx
+    ports:
+      - "8083:8083"
+    volumes:
+      - ./config/nginx:/etc/nginx/conf.d
+      - ./static:/code/static #must be same as web!
+    depends_on:
+      - web
+
+# redis as a Django cache store
+  redis:
+    image: redis
+    container_name: myapp_redis
+    expose:
+      - '6379'
