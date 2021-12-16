@@ -21,5 +21,14 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('', include('home.urls')),
+    path('repository/', include('repository.urls')),
+    path('issue/', include('issue.urls')),
+    path('label/', include('label.urls')),
+    path('milestone/', include('milestone.urls')),
+    path('project/', include('project.urls')),
+    path('task/', include('task.urls')),
+    path('branch/', include('branch.urls')),
+    path('commit/', include('commit.urls')),
+    path('pullrequest/', include('pullrequest.urls')),
     path('admin/', admin.site.urls),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
