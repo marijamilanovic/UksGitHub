@@ -11,13 +11,13 @@
 <body>
     {% block navigation %}
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark"> 
-        <a class="navbar-brand" href="#">
+        <a class="navbar-brand" href="{% url 'welcome' %}">
         <img style="height: 40px; width: 40px;" src="{% static 'images/github-icon.png' %}"  class="d-inline-block align-top" alt="" loading="lazy">
         UksGitHub
         </a>   
             <ul class="navbar-nav ml-auto">
               <li class="nav-item ">
-                <a  class="nav-link" href="#">LogIn </a>
+                <a  class="nav-link" href="{% url 'login' %}">LogIn </a>
               </li>
               <li class="nav-item">
                 <a  class="nav-link" href="#">Register </a>

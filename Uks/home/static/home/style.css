@@ -26,13 +26,30 @@ body {
     margin: 0px;
     }
 
-
-    /* Change the link color to #111 (black) on hover */
-    nav .navbar-nav li a:hover {
-       background-color: rgb(66, 54, 54);
+nav .navbar-nav li a:hover {
+    background-color: rgb(66, 54, 54);
     
-    }
+}
 
-    nav .navbar-nav li a{
-        color: white !important;
-    }
+nav .navbar-nav li a{
+    color: white !important;
+}
+
+.container{
+    margin-top: 5%;
+ }
+
+.card-header {
+    padding: 5px 15px;
+ }
+
+.profile-img {
+    width: 96px;
+    height: 96px;
+    margin: 0 auto 10px;
+    display: block;
+    -moz-border-radius: 50%;
+    -webkit-border-radius: 50%;
+    border-radius: 50%;
+ }
+
