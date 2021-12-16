@@ -34,6 +34,17 @@ local_mode = True  #Za razvoj aplikacije lokalno!
 
 INSTALLED_APPS = [
     'home.apps.HomeConfig',
+    'repository.apps.RepositoryConfig',
+    'issue.apps.IssueConfig',
+    'label.apps.LabelConfig',
+    'milestone.apps.MilestoneConfig',
+    'project.apps.ProjectConfig',
+    'task.apps.TaskConfig',
+    'branch.apps.BranchConfig',
+    'commit.apps.CommitConfig',
+    'user.apps.UserConfig',
+    'pullrequest.apps.PullrequestConfig',
+    'comment.apps.CommentConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
