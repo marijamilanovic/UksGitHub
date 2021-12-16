@@ -6,5 +6,7 @@ from . import views
 
 app_name = "user"
 
-urlpatterns = [] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+urlpatterns = [
+    path('', views.welcome, name = 'welcome'),
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 

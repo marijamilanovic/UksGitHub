@@ -6,8 +6,33 @@
 }
 
 #wtitle{
-    grid-column-start: 2;
+    grid-column-start: 1;
     grid-column-end: 2;
-    color: brown;
+    margin-top: 30px;
+    margin-left: 20px;
+    color: rgb(52, 31, 128);
 }
 
+#text{
+    color:rgb(0, 0, 0);
+    grid-column-start: 1;
+    margin-left: 25px;
+    margin-top: 10px;
+    font-size: large;
+}
+
+
+body {
+    margin: 0px;
+    }
+
+
+    /* Change the link color to #111 (black) on hover */
+    nav .navbar-nav li a:hover {
+       background-color: rgb(66, 54, 54);
+    
+    }
+
+    nav .navbar-nav li a{
+        color: white !important;
+    }
