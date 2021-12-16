@@ -11,7 +11,7 @@ class Task(models.Model):
     opened = models.DateField(auto_now_add=True)
     closed = models.DateField(null=True, blank=True)
     milestone = models.ForeignKey(to=Milestone, null=True, blank=True, on_delete=models.SET_NULL)
-    author = models.ForeignKey(to=User, on_delete=models.CASCADE, related_name='author')
+    author = models.ForeignKey(to=User, null=True, on_delete=models.CASCADE, related_name='author')
     assigned = models.ManyToManyField(User)
 
     def __str__(self):

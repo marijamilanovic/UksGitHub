@@ -10,7 +10,7 @@ ISSUE_STATE = [
     (CLOSE, "Close")
 ]
 
-class Issue(models.Model):
+class Issue(Task):
     issue_title = models.CharField(max_length=50)
     state = models.CharField(max_length=20, choices=ISSUE_STATE, default=OPENED)
     pullrequests = models.ManyToManyField(Pullrequest)
