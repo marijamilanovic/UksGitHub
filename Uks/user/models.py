@@ -1,3 +1,5 @@
+from django.contrib.auth.models import User
+
 from django.db import models
 
 ADMINISTRATOR = "Administrator"
@@ -9,7 +11,6 @@ ROLE_TYPE = [
     (UNAUTHENTICATE_USER, "Unauthenticate user")
 ]
 
-class User(models.Model):
-    username = models.CharField(max_length=50)
-    password = models.CharField(max_length=50)
+class UserAccount(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     role =  models.CharField(max_length=20, choices=ROLE_TYPE, default=UNAUTHENTICATE_USER)
