@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load bootstrap_icons %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    {% block content %}
+    <div class="welcome">
+        <h1 id="wtitle">Welcome to UksGitHub</h1>
+        <p id="text">UksGitHub is a web-based version-control and collaboration platform for software developers. It's the place where the world builds software. Millions of developers and companies build, ship, and maintain their software on UksGitHub - the largest and most advanced development platform in the world. Be free to join us !</p>
+        <img src="{% static 'images/backgroundd.png' %}" style="margin-top: -50px;"  class="d-inline-block align-top" alt="" loading="lazy">
+    </div>
+    {% endblock %}
+
+  
+</body>
+</html>
