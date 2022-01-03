@@ -13,7 +13,6 @@ from Uks.decorators import authorized
 
 
 @login_required(login_url="login")
-@authorized(roles=['admin'])
 def index(request):
     template = loader.get_template('home/index.html')
     return render(request, "home/index.html", {})
