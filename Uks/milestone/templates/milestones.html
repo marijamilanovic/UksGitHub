@@ -1,5 +1,6 @@
 {% extends 'home/index.html' %}
 {% load static %}
+{% load bootstrap_icons %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -26,11 +27,29 @@
         </div>
     {% endblock %}
 
+    <!--Milestone tab block-->
     {% block tabMilestone %}
         <div class="tab-pane container active" id="milestones">
-            <a href="{% url 'newMilestone' %}" style="margin-left: 780px;" type="button" class="btn btn-success" >New milestone</a>
+            <a href="{% url 'newMilestone' %}" style="margin-left: 850px; margin-top: -25px;" type="button" class="btn btn-success" >New milestone</a>
+        {% if milestones %}
+            {% for m in milestones %}
+            <div class="card border-secondary mb-3" style="margin-top: 15px; margin-left: -15px; max-width: 1000px;">
+                <div class="card-header">
+                    {% bs_icon 'activity' size='1em' %}  {{m.status}}
+                </div>
+                <div class="card-body">
+                <h5 class="card-title">{{m.title}}</h5>
+                <p class="card-text">{{m.description}}</p>
+                <p class="card-text">{% bs_icon 'calendar-check' size='1em' %} Due by {{m.due_date}}</p>
+                <a href="#" class="link-primary">Edit</a>
+                <a href="#" class="link-primary" style="margin-left: 10px;">Delete</a>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+        <p>There are no milestones yet.</p>
+        {% endif %}
         </div>
-    {% endblock %}
-    
+    {% endblock %}   
 </body>
 </html>
