@@ -9,5 +9,6 @@ from . import views
 urlpatterns = [
     path('newMilestone/', views.newMilestone, name='newMilestone'),
     path('milestones/', views.milestones, name='milestones'),
+    path('deleteMilestone/<int:id>', views.deleteMilestone, name='deleteMilestone'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
