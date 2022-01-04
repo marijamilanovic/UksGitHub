@@ -4,7 +4,10 @@ from django.conf.urls.static import static
 
 from . import views
 
-app_name = "milestone"
+#app_name = "milestone"
 
-urlpatterns = [] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+urlpatterns = [
+    path('newMilestone/', views.newMilestone, name='newMilestone'),
+    path('milestones/', views.milestones, name='milestones'),
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 

@@ -1,0 +1,36 @@
+{% extends 'home/index.html' %}
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    
+    {% block navRepository %}
+    <a class="nav-link " data-toggle="tab" href="#repositories">Repositories</a>
+    {% endblock %}
+
+    {% block navMilestone %}
+    <a class="nav-link active" data-toggle="tab" href="#milestones">Milestones</a>
+    {% endblock %}
+
+    {% block tabRepository %}
+        <div class="tab-pane container" id="repositories">
+            Space for repositories
+        </div>
+    {% endblock %}
+
+    {% block tabMilestone %}
+        <div class="tab-pane container active" id="milestones">
+            <a href="{% url 'newMilestone' %}" style="margin-left: 780px;" type="button" class="btn btn-success" >New milestone</a>
+        </div>
+    {% endblock %}
+    
+</body>
+</html>

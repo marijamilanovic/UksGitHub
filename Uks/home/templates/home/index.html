@@ -33,33 +33,63 @@
     <!-- Nav tabs -->
     <ul class="nav nav-tabs" style="margin-left: 350px;">
         <li class="nav-item">
+            {% block navRepository %}
             <a class="nav-link active" data-toggle="tab" href="#repositories">Repositories</a>
+            {% endblock %}
         </li>
         <li class="nav-item">
+            {% block navIssue %}
             <a class="nav-link" data-toggle="tab" href="#issues">Issues</a>
+            {% endblock %}
         </li>
         <li class="nav-item">
+            {% block navMilestone %}
+            <a class="nav-link" data-toggle="tab" href="#milestones">Milestones</a>
+            {% endblock %}
+        </li>
+        <li class="nav-item">
+            {% block navProject %}
             <a class="nav-link" data-toggle="tab" href="#projects">Projects</a>
+            {% endblock %}
         </li>
         <li class="nav-item">
+            {% block navPullRequest %}
             <a class="nav-link" data-toggle="tab" href="#pull_requests">Pull requests</a>
+            {% endblock %}
         </li>
     </ul>
 
     <!-- Tab panes -->
     <div class="tab-content" style="margin-left: 350px;">
+        {% block tabRepository %}
         <div class="tab-pane container active" id="repositories">
             Space for repositories
         </div>
+        {% endblock %}
+        
+        {% block tabIssue %}
         <div class="tab-pane container fade" id="issues">
             Space for issues
         </div>
+        {% endblock %}
+
+        {% block tabMilestone %}
+        <div class="tab-pane container fade" id="milestones">
+            <a href="{% url 'newMilestone' %}" style="margin-left: 780px;" type="button" class="btn btn-success" >New milestone</a>
+        </div>
+        {% endblock %}
+
+        {% block tabProject %}
         <div class="tab-pane container fade" id="projects">
             Space for projects
         </div>
+        {% endblock %}
+
+        {% block tabPullRequest %}
         <div class="tab-pane container fade" id="pull_requests">
             Space for PR
         </div>
+        {% endblock %}
     </div>
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
