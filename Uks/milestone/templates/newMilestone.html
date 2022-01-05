@@ -30,20 +30,24 @@
     {% block tabMilestone %}
     <div class="tab-pane container active" id="milestones">
     <h2 style="margin-top: -20px;">New milestone</h2>
-        <form style="margin-top: 20px; margin-left: -12px;">
+        <form style="margin-top: 20px; margin-left: -12px;" method="POST" action="{% url 'addMilestone' %}"> 
+            {% csrf_token %}
             <div class="form-group col-md-6">
                 <h5>Title</h5>
-                <input type="text" class="form-control" id="title">
+                <input type="text" class="form-control" id="title" name="title" value="{{ title }}">
             </div>
+            {% if errorTitle %}
+            <div style="color: red; margin-left: 14px;" >{{errorTitle}}</div>
+            {% endif %}
             <div class="form-group col-md-6">
                 <h5 for="">Due date (optional) </h5>
-                <input type="date" id="dueDate" name="Due date">
+                <input type="date" id="dueDate" name="dueDate">
             </div>
             <div class="form-group col-md-6">
                 <h5 for="description">Description</h5>
-                <textarea class="form-control col-md-12" id="description" rows="4"></textarea>
+                <textarea class="form-control col-md-12" id="description" rows="4" name="description"></textarea>
             </div>
-            <a href="{% url 'milestones' %}" style="margin-left: 12px; margin-top: 5px;" type="button" class="btn btn-success" >Create</a>
+            <input type="submit" style="margin-left: 12px; margin-top: 5px;"  class="btn btn-success" value="Create">
         </form>
     </div>  
     {% endblock %}

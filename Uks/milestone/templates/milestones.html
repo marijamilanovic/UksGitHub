@@ -40,7 +40,7 @@
                 <div class="card-body">
                 <h5 class="card-title">{{m.title}}</h5>
                 <p class="card-text">{{m.description}}</p>
-                <p class="card-text">{% bs_icon 'calendar-check' size='1em' %} Due by {{m.due_date}}</p>
+                <p class="card-text">{% bs_icon 'calendar-check' size='1em' %} Due by: {{m.due_date}}</p>
                 <a href="#" class="link-primary">Edit</a>
                 <a href="{% url 'deleteMilestone' id=m.id %}" class="link-primary" style="margin-left: 10px;">Delete</a>
                 </div>
