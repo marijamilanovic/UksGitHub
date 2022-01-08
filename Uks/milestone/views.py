@@ -31,3 +31,15 @@ def addMilestone(request):
             newMilestone.save()
     return redirect('milestones')
 
+def getMilestoneById(request, id):
+    milestone = get_object_or_404(Milestone, id = id)
+    return render(request, "updateMilestone.html", {"milestone": milestone})
+
+def updateMilestone(request, id):
+    if request.method == 'POST':
+        milestone = get_object_or_404(Milestone, id = id)
+        milestone.title = request.POST['title']
+        milestone.due_date = request.POST['dueDate']
+        milestone.description = request.POST['description']
+        milestone.save()
+        return redirect('milestones')
