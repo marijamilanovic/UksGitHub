@@ -1,6 +1,6 @@
 from django.db import models
 
-from user.models import User
+from django.contrib.auth.models import User
 
 class Comment(models.Model):
     author = models.ForeignKey(to=User, null=True, on_delete=models.CASCADE)

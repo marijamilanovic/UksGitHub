@@ -4,7 +4,7 @@ from django.utils import timezone
 from datetime import datetime, timezone
 
 from milestone.models import Milestone
-from user.models import User
+from django.contrib.auth.models import User
 
 class Task(models.Model):
     task_title = models.CharField(max_length=50, default=' ')

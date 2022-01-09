@@ -4,7 +4,7 @@ from django.utils import timezone
 from datetime import datetime, timezone
 
 from branch.models import Branch
-from user.models import User
+from django.contrib.auth.models import User
 
 OPENED = "Opened"
 CLOSE = "Close"
