@@ -1,7 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import Milestone
 
-# Create your views here.
 def newMilestone(request):
     return render(request, 'newMilestone.html', {})
 

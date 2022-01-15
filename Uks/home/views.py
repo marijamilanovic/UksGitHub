@@ -1,18 +1,13 @@
 from getpass import getuser
 import re
-from django.shortcuts import render
-
-# Create your views here.
-
 from django.http import HttpResponse
 from django.template import loader
 from django.shortcuts import render, redirect
-
 from django.contrib.auth.decorators import login_required
-
 from Uks.decorators import authorized
 from repository.models import Repository
 from user.models import User
+from milestone.models import Milestone
 
 # Create your views here.
 
@@ -29,7 +24,8 @@ def index(request):
 def profile(request):
     template = loader.get_template('home/profile.html')
     my_repositories = get_my_repos(request)
-    return render(request, "home/profile.html", {'my_repositories': my_repositories})
+    my_milestones = get_my_milestones(request)
+    return render(request, "home/profile.html", {'my_repositories': my_repositories, 'milestones': my_milestones})
 
 
 def repository(request, id):
@@ -37,3 +33,6 @@ def repository(request, id):
 
 def get_my_repos(request):
     return Repository.objects.filter(creator_id=request.user.id)
+
+def get_my_milestones(request):
+    return Milestone.objects.all()

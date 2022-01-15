@@ -29,7 +29,8 @@ def logoutUser(request):
     return redirect('login')
 
 def home(request):
-    return redirect('/home/')
+    #return redirect('/home/')
+    return redirect('index')
 
 def profile(request):
     return redirect('/home/profile')

@@ -1,4 +1,4 @@
-{% extends 'home/index.html' %}
+{% extends 'repository/index.html' %}
 {% load static %}
 {% load bootstrap_icons %}
 
@@ -13,18 +13,18 @@
 
 <body>
     
-    {% block navRepository %}
-    <a class="nav-link " data-toggle="tab" href="#repositories">Repositories</a>
+    {% block navCode %}
+            <a class="nav-link " data-toggle="tab" href="#code">Code</a>
     {% endblock %}
 
     {% block navMilestone %}
     <a class="nav-link active" data-toggle="tab" href="#milestones">Milestones</a>
     {% endblock %}
 
-    {% block tabRepository %}
-        <div class="tab-pane container" id="repositories">
-            Space for repositories
-        </div>
+    {% block tabCode %}
+    <div class="tab-pane container " id="code">
+        Space for code
+    </div>
     {% endblock %}
 
     <!--Milestone tab block-->
