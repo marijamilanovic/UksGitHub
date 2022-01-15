@@ -9,5 +9,6 @@ urlpatterns = [
     path('login/', views.loginUser, name = 'login'),
     path('logout/', views.logoutUser, name = 'logout'),
     path('/', views.home, name = 'home'),
-]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    path('/profile/', views.profile, name = 'profile'),
+]
 
