@@ -1,3 +1,4 @@
+from getpass import getuser
 from django.shortcuts import render
 
 # Create your views here.
@@ -16,3 +17,8 @@ from Uks.decorators import authorized
 def index(request):
     template = loader.get_template('home/index.html')
     return render(request, "home/index.html", {})
+
+@login_required(login_url="login")
+def profile(request):
+    template = loader.get_template('home/profile.html')
+    return render(request, "home/profile.html", {})
