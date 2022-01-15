@@ -50,7 +50,11 @@
     <!-- Tab panes -->
     <div class="tab-content" style="margin-left: 350px;">
         <div class="tab-pane container active" id="repositories">
-            Space for repositories
+            {% if my_repositories %}
+                {% for repo in my_repositories %}
+                    <a  class="nav-link" href="{% url 'repository' %}">{{repo.creator_id}} / {{repo.name}}</a>
+                {% endfor %}
+            {% endif %}
         </div>
         <div class="tab-pane container fade" id="issues">
             Space for issues

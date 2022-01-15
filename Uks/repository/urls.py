@@ -6,5 +6,7 @@ from . import views
 
 app_name = "repository"
 
-urlpatterns = [] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+urlpatterns = [
+    path('', views.index, name='index'),
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 

@@ -11,24 +11,38 @@
 
 <body>
     {% block content %}
-    <div class="welcome">
-        <h3 id="wtitle">Welcome back, {{request.user}}.</h3>
-    </div>
-    <br><br>
-    <!-- LIST OF REPOSITORIES -->
-    <div class="repositories" style="margin-left: 20px;">
-        Find a repository
-        <form class="form-inline my-3 my-lg-0">
-            <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" name="search" >
-            <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">Search</button>
-        </form>
-        <br>
-        <!-- username/nameOfRepository -->
-        {% if all_repositories %}
-            {% for repo in all_repositories %}
-            <a  class="nav-link" href="{% url 'repository' %}">{{repo.creator_id}} / {{repo.name}}</a>
-            {% endfor %}
-        {% endif %}
+    <!-- Nav tabs -->
+    <!-- username/repoName -->
+    <br>
+    <ul class="nav nav-tabs" style="margin-left: 50px;">
+        <li class="nav-item">
+            <a class="nav-link active" data-toggle="tab" href="#code">Code</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" data-toggle="tab" href="#issues">Issues</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" data-toggle="tab" href="#pull_requests">Pull requests</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" data-toggle="tab" href="#projects">Projects</a>
+        </li>
+    </ul>
+
+    <!-- Tab panes -->
+    <div class="tab-content" style="margin-left: 350px;">
+        <div class="tab-pane container active" id="code">
+            Space for code
+        </div>
+        <div class="tab-pane container fade" id="issues">
+            Space for issues
+        </div>
+        <div class="tab-pane container fade" id="pull_requests">
+            Space for PR
+        </div>
+        <div class="tab-pane container fade" id="projects">
+            Space for projects
+        </div>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
