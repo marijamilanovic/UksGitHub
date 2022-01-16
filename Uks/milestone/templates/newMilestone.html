@@ -28,7 +28,6 @@
 
     {% block tabMilestone %}
     <div class="tab-pane container active" id="milestones">
-        <h1>{{repository_id}}</h1>
     <h2 style="margin-top: -20px;">New milestone</h2>
         <form style="margin-top: 20px; margin-left: -12px;" method="POST" action="{% url 'addMilestone' %}"> 
             {% csrf_token %}
