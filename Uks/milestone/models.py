@@ -3,6 +3,7 @@ from django.utils import timezone
 
 from datetime import datetime, timezone
 from project.models import Project
+from repository.models import Repository
 
 OPENED = "Opened"
 CLOSED = "Closed"
@@ -18,6 +19,7 @@ class Milestone(models.Model):
     created = models.DateField(auto_now_add=True)
     due_date = models.DateField(null=True, blank=True)
     project = models.ForeignKey(to=Project, null=True, on_delete=models.CASCADE)
+    repository = models.ForeignKey(to=Repository, null=True, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.title

@@ -28,11 +28,13 @@
 
     {% block tabMilestone %}
     <div class="tab-pane container active" id="milestones">
+        <h1>{{repository_id}}</h1>
     <h2 style="margin-top: -20px;">New milestone</h2>
         <form style="margin-top: 20px; margin-left: -12px;" method="POST" action="{% url 'addMilestone' %}"> 
             {% csrf_token %}
+            <input type="hidden" name="repository_id"  value="{{repository_id}}"/>
             <div class="form-group col-md-6">
-                <h5>Title</h5>
+                <h5>Title</h5> 
                 <input type="text" class="form-control" id="title" name="title" value="{{ title }}">
             </div>
             {% if errorTitle %}

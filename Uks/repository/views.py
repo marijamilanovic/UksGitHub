@@ -13,9 +13,13 @@ from milestone.models import Milestone
 def index(request, id):
     template = loader.get_template('repository/index.html')
     repository = Repository.objects.get(id=id)
-    #ovde dobavis sve za izabrani repo
-    my_milestones = get_my_milestones(request)  #trenutno sve dok model ne povezes
+    my_milestones = get_my_milestones(request,id)
     return render(request, "repository/index.html", {'repository':repository ,'milestones': my_milestones})
 
-def get_my_milestones(request):
-    return Milestone.objects.all()
+def get_my_milestones(request, id):
+    milestones = Milestone.objects.all()
+    repositoryMilestones=[]
+    for m in milestones:
+        if(m.repository.id == id):
+            repositoryMilestones.append(m)
+    return repositoryMilestones

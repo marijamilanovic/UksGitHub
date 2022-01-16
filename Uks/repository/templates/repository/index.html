@@ -61,7 +61,7 @@
 
         {% block tabMilestone %}
         <div class="tab-pane container fade" id="milestones">
-                <a href="{% url 'newMilestone' %}" style="margin-left: 850px; margin-top: -25px;" type="button" class="btn btn-success" >New milestone</a>
+                <a href="{% url 'newMilestone' id=repository.id %}" style="margin-left: 850px; margin-top: -25px;" type="button" class="btn btn-success" >New milestone</a>
             {% if milestones %}
                 {% for m in milestones %}
                 <div class="card border-secondary mb-3" style="margin-top: 15px; margin-left: -15px; max-width: 1000px;">
