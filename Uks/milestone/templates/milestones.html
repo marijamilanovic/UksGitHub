@@ -1,0 +1,55 @@
+{% extends 'repository/index.html' %}
+{% load static %}
+{% load bootstrap_icons %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    
+    {% block navCode %}
+            <a class="nav-link " data-toggle="tab" href="#code">Code</a>
+    {% endblock %}
+
+    {% block navMilestone %}
+    <a class="nav-link active" data-toggle="tab" href="#milestones">Milestones</a>
+    {% endblock %}
+
+    {% block tabCode %}
+    <div class="tab-pane container " id="code">
+        Space for code
+    </div>
+    {% endblock %}
+
+    <!--Milestone tab block-->
+    {% block tabMilestone %}
+        <div class="tab-pane container active" id="milestones">
+            <a href="{% url 'newMilestone' id=repository_id %}" style="margin-left: 770px; margin-top: -25px;" type="button" class="btn btn-success" >New milestone</a>
+        {% if milestones %}
+            {% for m in milestones %}
+            <div class="card border-secondary mb-3" style="margin-top: 15px; margin-left: -95px; max-width: 1000px;">
+                <div class="card-header">
+                    {% bs_icon 'activity' size='1em' %}  {{m.status}}
+                </div>
+                <div class="card-body">
+                <h5 class="card-title">{{m.title}}</h5>
+                <p class="card-text">{{m.description}}</p>
+                <p class="card-text">{% bs_icon 'calendar-check' size='1em' %} Due by: {{m.due_date}}</p>
+                <a href="{% url 'getMilestoneById' id=m.id %}" class="link-primary">Edit</a>
+                <a href="{% url 'deleteMilestone' id=m.id %}" class="link-primary" style="margin-left: 10px;">Delete</a>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+        <p>There are no milestones yet.</p>
+        {% endif %}
+        </div>
+    {% endblock %}   
+</body>
+</html>
