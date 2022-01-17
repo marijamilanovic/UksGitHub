@@ -8,6 +8,7 @@ app_name = "branch"
 
 urlpatterns = [
     path('createBranch', views.createBranch, name='newBranch'),
+    path('branchList', views.branchList, name='branchList'),
 
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 

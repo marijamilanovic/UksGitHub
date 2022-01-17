@@ -16,17 +16,23 @@ def createBranch(request):
     form = BranchForm()
 
     if request.method == 'POST':                            #Provera da li je POST
-        print('FORM DATA:', request.POST)                   #Print forme - radi provere
+        #print('FORM DATA:', request.POST)                   #Print forme - radi provere
         form = BranchForm(request.POST)                     
         if form.is_valid():                                 #Validacija polja forme
             form.save()                                     #Cuvanje u bazi
-            return redirect('profile')
+            return redirect('branch:branchList')
         
     context = {'form': form}
     return render(request, "branch/createBranch.html", context)
 
 
-
+def branchList(request):
+    branch_list = Branch.objects.all() 
+    context = {
+        'branch_list': branch_list,
+    }
+    return render(request, "branch/branchList.html", context)
+    
 
 
 
