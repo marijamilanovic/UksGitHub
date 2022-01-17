@@ -1,0 +1,60 @@
+{% extends 'repository/index.html' %}
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{% static 'home/style.css' %}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+</head>
+
+<body>
+
+    {% block navCode %}
+    <a class="nav-link" data-toggle="tab" href="#code">Code</a>
+    {% endblock %}
+
+    {% block navMilestone %}
+    <a class="nav-link active" data-toggle="tab" href="#milestones">Milestones</a>
+    {% endblock %}
+
+    {% block tabCode %}
+    <div class="tab-pane container" id="code">
+        Space for code
+    </div>
+    {% endblock %}
+
+    {% block tabMilestone %}
+    <div class="tab-pane container active" id="milestones">
+    {% if milestone %}
+    <h2 style="margin-top: -20px;">Milestone</h2>
+        <form style="margin-top: 20px; margin-left: -12px;" method="POST" action="{% url 'updateMilestone' id=milestone.id %}"> 
+            {% csrf_token %}
+            <div class="form-group col-md-6">
+                <h5>Title</h5>
+                <input type="text" class="form-control" id="title" name="title" value="{{ milestone.title }}">
+            </div>
+            {% if errorTitle %}
+            <div style="color: red; margin-left: 14px;" >{{errorTitle}}</div>
+            {% endif %}
+            <div class="form-group col-md-6">
+                <h5 >Due date (optional)</h5>
+                <input type="date" id="dueDate" name="dueDate" value="{{ milestone.due_date|date:"Y-m-d" }}">
+            </div>
+            <div class="form-group col-md-6">
+                <h5 >Description</h5>
+                <textarea class="form-control col-md-12" id="description" rows="4" name="description">{{ milestone.description }}</textarea>
+            </div>
+            <input type="submit" style="margin-left: 12px; margin-top: 5px;"  class="btn btn-success" value="Update">
+        </form>
+    {% else %}
+    <p>There are no milestone with that id.</p>
+    {% endif %}
+    </div>  
+    {% endblock %}
+
+</body>
+</html>

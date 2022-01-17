@@ -30,3 +30,7 @@ def logoutUser(request):
 
 def home(request):
     return redirect('/home/')
+    #return redirect('index')
+
+def profile(request):
+    return redirect('/home/profile')
