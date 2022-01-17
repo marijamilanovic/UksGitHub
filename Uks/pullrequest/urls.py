@@ -4,7 +4,10 @@ from django.conf.urls.static import static
 
 from . import views
 
-app_name = "pullrequest"
+#app_name = "pullrequest"
 
-urlpatterns = [] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+urlpatterns = [
+     path('openedPRs', views.openedPRs, name='openedPRs'),
+     path('closedPRs', views.closedPRs, name='closedPRs')
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
