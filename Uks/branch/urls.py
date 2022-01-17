@@ -6,5 +6,8 @@ from . import views
 
 app_name = "branch"
 
-urlpatterns = [] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+urlpatterns = [
+    path('createBranch', views.createBranch, name='newBranch'),
+
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
