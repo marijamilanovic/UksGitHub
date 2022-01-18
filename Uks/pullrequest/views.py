@@ -5,7 +5,8 @@ import datetime
 def pullrequests(request, id):
     repository = get_object_or_404(Repository, id=id)
     pullrequests = Pullrequest.objects.all().filter(prRepository=repository)
-    return pullrequests
+    return render(request, 'pullrequests.html', {"pullrequests":pullrequests, "repository":repository})
+
 
 def newPullrequest(request, id):
     return render(request, 'newPullrequest.html', {"repository_id":id})

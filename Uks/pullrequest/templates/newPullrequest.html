@@ -12,25 +12,8 @@
 </head>
 
 <body>
-    {% block navCode %}
-            <a class="nav-link " data-toggle="tab" href="#code">Code</a>
-    {% endblock %}
-
-    {% block navPullrequest %}
-    <a class="nav-link active" data-toggle="tab" href="#pullrequests">Pull requests</a>
-    {% endblock %}
-
-    {% block tabCode %}
-    <div class="tab-pane container " id="code">
-        Space for code
-    </div>
-    {% endblock %}
-
-    {% block tabPullrequest %}
-    <div class="tab-pane container active" id="pullrequests">
-    <h2 style="margin-top: -20px;">New pull request</h2>
-        
-    </div>  
+    {% block page_content %}
+            
     {% endblock %}
 
 </body>

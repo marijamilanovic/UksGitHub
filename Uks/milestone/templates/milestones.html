@@ -12,25 +12,9 @@
 </head>
 
 <body>
-    
-    {% block navCode %}
-            <a class="nav-link " data-toggle="tab" href="#code">Code</a>
-    {% endblock %}
-
-    {% block navMilestone %}
-    <a class="nav-link active" data-toggle="tab" href="#milestones">Milestones</a>
-    {% endblock %}
-
-    {% block tabCode %}
-    <div class="tab-pane container " id="code">
-        Space for code
-    </div>
-    {% endblock %}
-
-    <!--Milestone tab block-->
-    {% block tabMilestone %}
+    {%block page_content%}
         <div class="tab-pane container active" id="milestones">
-            <a href="{% url 'newMilestone' id=repository_id %}" style="margin-left: 770px; margin-top: -25px;" type="button" class="btn btn-success" >New milestone</a>
+            <a href="{% url 'newMilestone' id=repository.id %}" style="margin-left: 763px; margin-top: -25px;" type="button" class="btn btn-success" >New milestone</a>
         {% if milestones %}
             {% for m in milestones %}
             <div class="card border-secondary mb-3" style="margin-top: 15px; margin-left: -95px; max-width: 1000px;">
@@ -41,6 +25,7 @@
                 <h5 class="card-title">{{m.title}}</h5>
                 <p class="card-text">{{m.description}}</p>
                 <p class="card-text">{% bs_icon 'calendar-check' size='1em' %} Due by: {{m.due_date}}</p>
+                <h1>{{m.id}}</h1>
                 <a href="{% url 'getMilestoneById' id=m.id %}" class="link-primary">Edit</a>
                 <a href="{% url 'deleteMilestone' id=m.id %}" class="link-primary" style="margin-left: 10px;">Delete</a>
                 </div>
@@ -50,6 +35,6 @@
         <p>There are no milestones yet.</p>
         {% endif %}
         </div>
-    {% endblock %}   
+        {%endblock%}
 </body>
 </html>
