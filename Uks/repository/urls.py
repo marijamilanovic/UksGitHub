@@ -8,5 +8,10 @@ from . import views
 
 urlpatterns = [
     path('<int:id>', views.index, name='repository'),
+    path('newRepository/', views.newRepository, name='newRepository'),
+    path('addRepository/', views.addRepository, name = 'addRepository'),
+    path('editRepository/', views.editRepository, name = 'editRepository'),
+    path('transferToEditRepository/<int:id>', views.transferToEditRepository, name='transferToEditRepository'),
+    path('deleteRepository/<int:id>', views.deleteRepository, name='deleteRepository'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
