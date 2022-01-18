@@ -12,26 +12,13 @@
 </head>
 
 <body>
-    {% block navCode %}
-            <a class="nav-link " data-toggle="tab" href="#code">Code</a>
-    {% endblock %}
 
-    {% block navMilestone %}
-    <a class="nav-link active" data-toggle="tab" href="#milestones">Milestones</a>
-    {% endblock %}
-
-    {% block tabCode %}
-    <div class="tab-pane container " id="code">
-        Space for code
-    </div>
-    {% endblock %}
-
-    {% block tabMilestone %}
+    {% block page_content %}
     <div class="tab-pane container active" id="milestones">
     <h2 style="margin-top: -20px;">New milestone</h2>
         <form style="margin-top: 20px; margin-left: -12px;" method="POST" action="{% url 'addMilestone' %}"> 
             {% csrf_token %}
-            <input type="hidden" name="repository_id"  value="{{repository_id}}"/>
+            <input type="hidden" name="repository"  value="{{repository.id}}"/>
             <div class="form-group col-md-6">
                 <h5>Title</h5> 
                 <input type="text" class="form-control" id="title" name="title" value="{{ title }}">

@@ -12,90 +12,22 @@
 
 <body>
     {% block content %}
-    <!-- Nav tabs -->
-    <br>
-    <p style="margin-left: 40px;">{{repository.creator_id}} / {{repository.name}}</p>
-    <!-- username/repoName -->
-    <br>
-    <ul class="nav nav-tabs" style="margin-left: 50px;">
+    <ul class="nav">
         <li class="nav-item">
-            {% block navCode %}
-            <a class="nav-link active" data-toggle="tab" href="#code">Code</a>
-            {% endblock %}
+          <a class="nav-link active" aria-current="page" href="{% url 'milestones' id=repository.id  %}">Milestone</a>
         </li>
         <li class="nav-item">
-            {% block navIssue %}
-            <a class="nav-link" data-toggle="tab" href="#issues">Issues</a>
-            {% endblock %}
+          <a class="nav-link" href="{% url 'pullrequests' id=repository.id  %}">Pull requests</a>
         </li>
         <li class="nav-item">
-            {% block navMilestone %}
-            <a class="nav-link" data-toggle="tab" href="#milestones">Milestones</a>
-            {% endblock %}
+          <a class="nav-link" href="#">Link</a>
         </li>
         <li class="nav-item">
-            {% block navPullRequest %}
-            <a class="nav-link" data-toggle="tab" href="#pull_requests">Pull requests</a>
-            {% endblock %}
+          <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
         </li>
-        <li class="nav-item">
-            {% block navProject %}
-            <a class="nav-link" data-toggle="tab" href="#projects">Projects</a>
-            {% endblock %}
-        </li>
-    </ul>
-
-    <!-- Tab panes -->
-    <div class="tab-content" style="margin-left: 350px;">
-        {% block tabCode %}
-        <div class="tab-pane container active" id="code">
-            Space for code
-        </div>
-        {% endblock %}
-
-        {% block tabIssue %}
-        <div class="tab-pane container fade" id="issues">
-            Space for issues
-        </div>
-        {% endblock %}
-
-        {% block tabMilestone %}
-        <div class="tab-pane container fade" id="milestones">
-                <a href="{% url 'newMilestone' id=repository.id %}" style="margin-left: 770px; margin-top: -25px;" type="button" class="btn btn-success" >New milestone</a>
-            {% if milestones %}
-                {% for m in milestones %}
-                <div class="card border-secondary mb-3" style="margin-top: 15px; margin-left: -95px; max-width: 1000px;">
-                    <div class="card-header">
-                        {% bs_icon 'activity' size='1em' %}  {{m.status}}
-                    </div>
-                    <div class="card-body">
-                    <h5 class="card-title">{{m.title}}</h5>
-                    <p class="card-text">{{m.description}}</p>
-                    <p class="card-text">{% bs_icon 'calendar-check' size='1em' %} Due by: {{m.due_date}}</p>
-                    <a href="{% url 'getMilestoneById' id=m.id %}" class="link-primary">Edit</a>
-                    <a href="{% url 'deleteMilestone' id=m.id %}" class="link-primary" style="margin-left: 10px;">Delete</a>
-                    </div>
-                </div>
-                {% endfor %}
-            {% else %}
-            <p>There are no milestones yet.</p>
-            {% endif %}
-        </div>
-        {% endblock %}
-
-        {% block tabPullRequest %}
-        <div class="tab-pane container fade" id="pull_requests">
-            Space for PR
-        </div>
-        {% endblock %}
-
-        {% block tabProject %}
-        <div class="tab-pane container fade" id="projects">
-            Space for projects
-        </div>
-        {% endblock %}
-    </div>
-
-    {% endblock %}
+    </ul>    
+    
+    {% block page_content %} {%endblock%}  
+    {%endblock%}
 </body>
 
