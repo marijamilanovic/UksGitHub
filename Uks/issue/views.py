@@ -1,14 +1,13 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 
 from .models import Issue
+from repository.models import Repository
 
-def  issues(request):
-    return Issue.objects.all()
-
-def  issues_by_repo(request, id):
-    issues_by_repo = Issue.objects.all()
-    # todo: fix method
-    return render(request, 'issue.html', {'issues_by_repo':issues_by_repo})
+def  issues(request, id):
+    repository = get_object_or_404(Repository, id=id)
+    issues = Issue.objects.filter(repository=repository)
+    print(issues)
+    return render(request, 'issues.html', {"issues":issues, "repository":repository})
 
 def  issues_by_user(request):
     issues_by_user = Issue.objects.all()

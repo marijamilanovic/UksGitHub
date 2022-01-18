@@ -7,6 +7,7 @@ from home.views import repository
 from .models import Repository
 from pullrequest.models import Pullrequest
 from milestone.models import Milestone
+from issue.models import Issue
 
 # Create your views here.
 
@@ -16,7 +17,12 @@ def index(request, id):
     repository = Repository.objects.get(id=id)
     my_milestones = get_my_milestones(request,id)
     my_pullrequests = get_my_pullrequests(request, id)
-    return render(request, "repository/index.html", {'repository':repository ,'milestones': my_milestones, 'pullrequests': my_pullrequests})
+    issues = get_issues_by_repo(request, id)
+    return render(request, "repository/index.html", {
+        'repository':repository,
+        'milestones': my_milestones,
+        'pullrequests': my_pullrequests,
+        'issues': issues})
 
 def get_my_milestones(request, id):
     milestones = Milestone.objects.all()
@@ -30,3 +36,8 @@ def get_my_pullrequests(request, id):
     repository = get_object_or_404(Repository, id=id)
     pullrequests = Pullrequest.objects.all().filter(prRepository=repository)
     return pullrequests
+
+def get_issues_by_repo(request, id):
+    repository = get_object_or_404(Repository, id=id)
+    issues = Issue.objects.filter(repository = repository)
+    return issues

@@ -13,20 +13,22 @@
 <body>
     {% block content %}
     <ul class="nav">
-        <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="{% url 'milestones' id=repository.id  %}">Milestone</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="{% url 'pullrequests' id=repository.id  %}">Pull requests</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">Link</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
-        </li>
-    </ul>    
-    
+      <li class="nav-item">
+        <a class="nav-link active" aria-current="page">Code</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'issues' id=repository.id  %}">Issues</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'milestones' id=repository.id  %}">Milestone</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'pullrequests' id=repository.id  %}">Pull requests</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#">Link</a>
+      </li>
+    </ul>
     {% block page_content %} {%endblock%}  
     {%endblock%}
 </body>
