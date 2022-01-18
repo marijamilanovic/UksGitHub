@@ -49,11 +49,6 @@
             <a class="nav-link" data-toggle="tab" href="#projects">Projects</a>
             {% endblock %}
         </li>
-        <li class="nav-item">
-            {% block navPullRequest %}
-            <a class="nav-link" data-toggle="tab" href="#pull_requests">Pull requests</a>
-            {% endblock %}
-        </li>
     </ul>
 
     <!-- Tab panes -->
@@ -94,12 +89,6 @@
         </div>
         {% endblock %}
 
-
-        {% block tabPullRequest %}
-        <div class="tab-pane container fade" id="pull_requests">
-            Space for PR
-        </div>
-        {% endblock %}
     </div>
 
     {% endblock %}

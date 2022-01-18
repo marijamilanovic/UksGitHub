@@ -3,7 +3,8 @@ from .models import Milestone
 from repository.models import Repository
 
 def newMilestone(request, id):
-    return render(request, 'newMilestone.html', {"repository_id":id})
+    repository = get_object_or_404(Repository, id=id)
+    return render(request, 'newMilestone.html', { "repository":repository})
 
 def milestones(request,id):
     milestones = Milestone.objects.all()
@@ -11,8 +12,12 @@ def milestones(request,id):
     for m in milestones:
         if(m.repository.id == id):
             repositoryMilestones.append(m)
-    return repositoryMilestones
-    #return render(request, 'milestones.html', {"milestones":repositoryMilestones})
+    repository = get_object_or_404(Repository, id=id)
+    return render(request, 'milestones.html', {"milestones":repositoryMilestones, "repository":repository})
+
+def allMilestones(request):
+    milestones = Milestone.objects.all()
+    return render(request, 'milestones.html', {"milestones":milestones})
 
 def deleteMilestone(request, id):
     milestone = get_object_or_404(Milestone, id=id)
@@ -21,8 +26,8 @@ def deleteMilestone(request, id):
         if(r.id == milestone.repository.id):
             repository = r
     milestone.delete()
-    milestonesUpdated = milestones(request, repository.id)
-    return render(request, "milestones.html", {"milestones":milestonesUpdated, "repository_id":repository.id})
+    milestonesUpdated = Milestone.objects.all().filter(repository=milestone.repository)
+    return render(request, "milestones.html", {"milestones":milestonesUpdated, "repository":repository})
 
 def addMilestone(request):
     errorTitle = None
@@ -30,7 +35,7 @@ def addMilestone(request):
         title = request.POST['title']
         dueDate = request.POST['dueDate']
         description = request.POST['description']
-        repository = get_object_or_404(Repository, id = request.POST['repository_id'] )
+        repository = get_object_or_404(Repository, id = request.POST['repository'] )
         if title is not None and title == "":
             errorTitle = "Please enter title!"
             return render(request, "newMilestone.html", {"errorTitle": errorTitle})
@@ -41,12 +46,18 @@ def addMilestone(request):
                 newMilestone = Milestone(title = title, due_date = dueDate, description = description, repository = repository)
             newMilestone.save()
             newMilestones = milestones(request, repository.id)
+    
     #return redirect('milestones')
-    return render(request, "milestones.html", {"milestones":newMilestones, "repository_id": repository.id})
+    #return render(request, "milestones.html", {"milestones":newMilestones, "repository":repository})
+    return newMilestones
 
 def getMilestoneById(request, id):
+    print(id)
     milestone = get_object_or_404(Milestone, id = id)
-    return render(request, "updateMilestone.html", {"milestone": milestone})
+    repository = get_object_or_404(Repository, id = milestone.repository.id)
+    print(milestone.title)
+    print(repository.name)
+    return render(request, "updateMilestone.html", {"milestone": milestone, "repository": repository})
 
 def updateMilestone(request, id):
     if request.method == 'POST':
@@ -60,5 +71,6 @@ def updateMilestone(request, id):
                 repository = r
         milestone.save()
         milestonesUpdated = milestones(request, repository.id)
-        return render(request, "milestones.html", {"milestones":milestonesUpdated, "repository_id":repository.id})
+        #return render(request, "milestones.html", {"milestones":milestonesUpdated, "repository":repository})
+        return milestonesUpdated
         #return redirect('milestones')

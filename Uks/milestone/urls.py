@@ -8,7 +8,8 @@ from . import views
 
 urlpatterns = [
     path('newMilestone/<int:id>', views.newMilestone, name='newMilestone'),
-    path('milestones/', views.milestones, name='milestones'),
+    path('milestones/<int:id>', views.milestones, name='milestones'),
+    path('allMilestones/', views.allMilestones, name='allMilestones'),
     path('deleteMilestone/<int:id>', views.deleteMilestone, name='deleteMilestone'),
     path('addMilestone/', views.addMilestone, name='addMilestone'),
     path('getMilestoneById/<int:id>', views.getMilestoneById, name='getMilestoneById'),
