@@ -34,8 +34,8 @@
             {% endblock %}
         </li>
         <li class="nav-item">
-            {% block navPullRequest %}
-            <a class="nav-link" data-toggle="tab" href="#pull_requests">Pull requests</a>
+            {% block navPullrequest %}
+            <a class="nav-link" data-toggle="tab" href="#pullrequests">Pull requests</a>
             {% endblock %}
         </li>
         <li class="nav-item">
@@ -83,10 +83,30 @@
         </div>
         {% endblock %}
 
-        {% block tabPullRequest %}
-        <div class="tab-pane container fade" id="pull_requests">
-            Space for PR
-        </div>
+        {% block tabPullrequest %}
+            <div class="tab-pane container fade" id="pullrequests">
+                <a href="{% url 'newPullrequest' id=repository.id %}" style="margin-left: 763px; margin-top: -25px;" type="button" class="btn btn-success" >New pull request</a>
+                {% if pullrequests %}
+                    {% for pr in pullrequests %}
+                    <div class="card border-secondary mb-3" style="margin-top: 15px; margin-left: -90px; max-width: 1000px;">
+                        {% if pr.status == 'Opened' %}
+                        <div class="card-header" style="background-color: #d7f0db;">
+                            {% bs_icon 'bezier2' size='1em' color='green' %} <span style="padding-left:15px">{{pr.name}}</span>  <span style="padding-left:20px; color: green;"> {{pr.status}}</span>
+                        </div>
+                        {% else %}
+                        <div class="card-header" style="background-color: #e9d7f0;">
+                            {% bs_icon 'bezier' size='1em' color='purple' %} <span style="padding-left:15px">{{pr.name}}</span> <span style="padding-left:20px; color: purple;"> {{pr.status}}</span>
+                        </div>
+                        {% endif %}
+                        <div class="card-body">
+                            <h7 class="card-title">#23 opened {{pr.created}} by _____</h7>
+                        </div>
+                    </div>
+                    {% endfor %}
+                    {% else %}
+                    <p>There are no pullrequests yet.</p>
+                {% endif %}
+            </div>
         {% endblock %}
 
         {% block tabProject %}

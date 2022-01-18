@@ -1,37 +1,56 @@
-{% extends 'home/index.html' %}
+{% extends 'repository/index.html' %}
 {% load static %}
 {% load bootstrap_icons %}
 
-{% block content %}
-    <ul class="nav nav-tabs" style="margin-left: 200px; margin-right: 200px; margin-top: 20px;">
-        <li class="nav-item">
-            <a class="nav-link active" data-toggle="tab" href="#opened">Opened</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" data-toggle="tab" href="#closed">Closed</a>
-        </li>
-    </ul>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
 
-    <div class="tab-content" style="margin-left: 150px;">
-        <div class="tab-pane container active" id="Opened">
-            {% for pr in openedPRs %}
-            <div class="card border-secondary mb-3" style="margin-top: 5px; margin-left: 10px; max-width: 1000px;">
-                <div class="card-header">
-                    {% bs_icon 'bezier' size='1em' color='green'%} {{pr.name}} {{pr.status}}
-                    <p class="card-text" style="margin-left: 20px;">Opened -date- by </p>
-                </div>
-            </div>          
-            {% endfor %}
-        </div>
-        <div class="tab-pane container fade" id="Closed">
-            {% for pr in closedPRs %}
-            <div class="card border-secondary mb-3" style="margin-top: 5px; margin-left: 10px; max-width: 1000px;">
-                <div class="card-header">
-                    {% bs_icon 'bezier' size='1em' color='green'%} {{pr.name}} {{pr.status}}
-                    <p class="card-text" style="margin-left: 20px;">Closed -date- by </p>
-                </div>
-            </div>          
-            {% endfor %}
-        </div>
+<body>
+    
+    {% block navCode %}
+            <a class="nav-link " data-toggle="tab" href="#code">Code</a>
+    {% endblock %}
+
+    {% block navPullrequest %}
+    <a class="nav-link active" data-toggle="tab" href="#pullrequests">pullrequests</a>
+    {% endblock %}
+
+    {% block tabCode %}
+    <div class="tab-pane container " id="code">
+        Space for code
     </div>
-{% endblock %}
+    {% endblock %}
+
+    {% block tabPullrequest %}
+        <div class="tab-pane container fade" id="pullrequests">
+            <a href="{% url 'newPullrequest' id=repository.id %}" style="margin-left: 763px; margin-top: -25px;" type="button" class="btn btn-success" >New pull request</a>
+            {% if pullrequests %}
+                {% for pr in pullrequests %}
+                <div class="card border-secondary mb-3" style="margin-top: 15px; margin-left: -90px; max-width: 1000px;">
+                    {% if pr.status == 'Opened' %}
+                    <div class="card-header" style="background-color: #d7f0db;">
+                        {% bs_icon 'bezier2' size='1em' color='green' %} <span style="padding-left:15px">{{pr.name}}</span>  <span style="padding-left:20px; color: green;"> {{pr.status}}</span>
+                    </div>
+                    {% else %}
+                    <div class="card-header" style="background-color: #e9d7f0;">
+                        {% bs_icon 'bezier' size='1em' color='purple' %} <span style="padding-left:15px">{{pr.name}}</span> <span style="padding-left:20px; color: purple;"> {{pr.status}}</span>
+                    </div>
+                    {% endif %}
+                    <div class="card-body">
+                        <h7 class="card-title">#23 opened {{pr.created}} by _____</h7>
+                    </div>
+                </div>
+                {% endfor %}
+                {% else %}
+                <p>There are no pullrequests yet.</p>
+            {% endif %}
+        </div>
+    {% endblock %}
+</body>
+</html>

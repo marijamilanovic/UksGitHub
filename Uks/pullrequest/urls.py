@@ -7,7 +7,8 @@ from . import views
 #app_name = "pullrequest"
 
 urlpatterns = [
-     path('openedPRs', views.openedPRs, name='openedPRs'),
-     path('closedPRs', views.closedPRs, name='closedPRs')
+     path('pullrequests/<int:id>', views.pullrequests, name='pullrequests'),
+     path('newPullrequest/<int:id>', views.newPullrequest, name='newPullrequest'),
+     path('addPullrequest/', views.addPullrequest, name='addPullrequest'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
