@@ -8,7 +8,7 @@ from . import views
 
 urlpatterns = [
     path('issues/<int:id>', views.issues, name='issues'),
-    #path('new-issue/<int:id>', views.new_issue, name='new_issue'),
-    #path('delete-issue/<int:id>', views.new_issue, name='delete_issue')
+    path('new-issue/<int:id>', views.new_issue, name='new_issue'),
+    path('add-issue', views.add_issue, name='add_issue')
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
