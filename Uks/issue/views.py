@@ -1,3 +1,16 @@
 from django.shortcuts import render
 
-# Create your views here.
+from .models import Issue
+
+def  issues(request):
+    return Issue.objects.all()
+
+def  issues_by_repo(request, id):
+    issues_by_repo = Issue.objects.all()
+    # todo: fix method
+    return render(request, 'issue.html', {'issues_by_repo':issues_by_repo})
+
+def  issues_by_user(request):
+    issues_by_user = Issue.objects.all()
+    # todo: fix method
+    return render(request, 'issue.html', {'issues_by_user':issues_by_user})

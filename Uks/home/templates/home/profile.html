@@ -70,7 +70,16 @@
 
         {% block tabIssue %}
         <div class="tab-pane container fade" id="issues">
-            Space for issues
+            
+            <table class="table">
+                <tbody>
+                    {% for issue in my_issues %}
+                        <tr>
+                            <td><a  class="nav-link">{{issue.issue_title}}</a></td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+              </table>
         </div>
         {% endblock %}
 

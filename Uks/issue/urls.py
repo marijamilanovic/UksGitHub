@@ -6,5 +6,9 @@ from . import views
 
 app_name = "issue"
 
-urlpatterns = [] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+urlpatterns = [
+    path('', views.issues, name='issues'),
+    #path('new-issue/<int:id>', views.new_issue, name='new_issue'),
+    #path('delete-issue/<int:id>', views.new_issue, name='delete_issue')
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
