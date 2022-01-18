@@ -43,5 +43,6 @@ def get_my_milestones(request):
     return Milestone.objects.all()
 
 def get_my_issues(request):
-    # todo: fix method
-    return Issue.objects.all()
+    issues = Issue.objects.filter(opened_by=request.user.username)
+    issues = issues.union(Issue.objects.filter(assignee=request.user.username))
+    return issues
