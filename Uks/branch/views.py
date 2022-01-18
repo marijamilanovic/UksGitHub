@@ -32,6 +32,12 @@ def branchList(request):
         'branch_list': branch_list,
     }
     return render(request, "branch/branchList.html", context)
+
+
+def deleteBranch(request, id):
+    Branch.objects.get(pk=id).delete()
+    return redirect('branch:branchList')
+
     
 
 

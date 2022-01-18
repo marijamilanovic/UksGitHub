@@ -31,7 +31,7 @@
             <td>{{branch.name}}</td>
             <td>{{branch.repository}}</td>
             <td>{{branch.is_default}}</td>
-            <td><button class="btn btn-primary">Delete</button></td>
+            <td><form action="{% url 'branch:deleteBranch' branch.id  %}"><button type="submit" class="btn btn-primary">Delete</button></form></td>
           </tr>
           {% endfor %}
      
