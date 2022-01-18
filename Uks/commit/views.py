@@ -1,3 +1,53 @@
-from django.shortcuts import render
+from email import message
+from multiprocessing import context
+from django.shortcuts import render, redirect
 
-# Create your views here.
+from django.contrib.auth.decorators import login_required
+
+from django.http import HttpResponse
+from django.template import loader
+
+from branch.models import Branch
+from django.contrib.auth.models import User
+
+
+from .forms import CommitForm
+
+from .models import Commit
+
+from datetime import date, datetime
+
+import hashlib
+
+
+
+def createCommit(request):
+    form = CommitForm()
+
+    if request.method == 'POST':                            
+        #print('FORM DATA:', request.POST)                   
+        form = CommitForm(request.POST) 
+        print("Commit object: " + form.data.__str__())                    
+        if form.is_valid():
+            now = datetime.now()
+
+            commit = Commit.objects.create(
+                message = request.POST['message'],
+                branch = Branch.objects.get(pk = request.POST['branch']),
+                date_time = datetime.now(),
+                hash_id = " ", 
+                author = User.objects.get(pk = request.user.id)
+            )
+
+            print("commit id: ",  str(commit.pk))
+
+            hash = hashlib.sha1(str(commit.pk).encode('utf-8'))
+
+            commit.hash_id = hash.hexdigest()
+
+            commit.save()
+
+            return redirect('branch:branchList')
+        
+    context = {'form': form}
+    return render(request, "commit/createCommit.html", context)

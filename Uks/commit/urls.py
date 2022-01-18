@@ -6,5 +6,7 @@ from . import views
 
 app_name = "commit"
 
-urlpatterns = [] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+urlpatterns = [
+    path('createCommit', views.createCommit, name='newCommit'),
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 

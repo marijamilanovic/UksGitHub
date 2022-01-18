@@ -20,5 +20,3 @@ class Commit(models.Model):
     branch = models.ForeignKey(to=Branch, on_delete=models.CASCADE)
     author = models.ForeignKey(to=User, on_delete=models.SET_NULL, null=True)
 
-    def __str__(self):
-        return self.title
