@@ -14,6 +14,8 @@ class Issue(models.Model):
     issue_title = models.CharField(max_length=50, default='')
     description = models.CharField(max_length=50, default='')
     state = models.CharField(max_length=20, choices=ISSUE_STATE, default=OPENED)
+    opened_by = models.CharField(max_length=50, default='')
+    assignee = models.CharField(max_length=50, default='')
     repository = models.ForeignKey(to=Repository, on_delete=models.CASCADE)
     pullrequests = models.ManyToManyField(Pullrequest)
     

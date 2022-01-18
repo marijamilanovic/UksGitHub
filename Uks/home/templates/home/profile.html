@@ -75,7 +75,12 @@
                 <tbody>
                     {% for issue in my_issues %}
                         <tr>
-                            <td><a  class="nav-link">{{issue.issue_title}}</a></td>
+                            <td>
+                                <a  class="nav-link">{{issue.issue_title}}</a>
+                                <small style="margin-left: 15px;color: gray;">
+                                    opened by <b>{{issue.opened_by}}</b> and assignee to <b>{{issue.assignee}}</b>
+                                </small>
+                            </td>
                         </tr>
                     {% endfor %}
                 </tbody>
