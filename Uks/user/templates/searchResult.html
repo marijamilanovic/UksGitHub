@@ -13,42 +13,44 @@
 <body>
     {% block content %}
    
-    <ul class="nav flex-column" style="margin-top: 60px; margin-left: 220px; border-style: ridge; width: 180px;">
+    <ul class="nav flex-column" style="margin-top: 80px; margin-left: 220px; border-style: ridge; width: 180px;">
       {% block navRepositories %}
         <li class="nav-item" style="border-style: outset; border-left-color: darkviolet; border-left-width: 8px;">
-          
-          <a class="nav-link active" href="#">Repositories <span class="badge badge-success" style="margin-left: 10px;">{{foundRepositoriesNumber}}</span></a>
-          
+          <form name="repositoriesForm" id="repositoriesForm" method="POST" action="{% url 'searchedRepositories' %}">
+            {% csrf_token %}
+            <input class="form-control mr-sm-2" hidden  aria-label="Search" name="foundRepositories" value="{{foundRepositories}}" >
+            <input class="form-control mr-sm-2" hidden  aria-label="Search" name="foundIssues" value="{{foundIssues}}" >
+            <input class="form-control mr-sm-2" hidden  aria-label="Search" name="foundCommits" value="{{foundCommits}}" >
+          <a class="nav-link active" onclick="submitRepositoriesForm()">Repositories<span class="badge badge-success" style="margin-left: 10px;">{{foundRepositoriesNumber}}</span></a>
+          </form>  
         </li>
         {% endblock %}
         {% block navIssues %}
         <li class="nav-item" style="border-style: outset;">
-          
           <form name="issuesForm" id="issuesForm" method="POST" action="{% url 'searchedIssues' %}">
             {% csrf_token %}
             <input class="form-control mr-sm-2" hidden  aria-label="Search" name="foundIssues" value="{{foundIssues}}" >
             <input class="form-control mr-sm-2" hidden  aria-label="Search" name="foundCommits" value="{{foundCommits}}" >
+            <input class="form-control mr-sm-2" hidden  aria-label="Search" name="foundRepositories" value="{{foundRepositories}}" >
           <a class="nav-link" onclick="submitForm()">Issues<span class="badge badge-success" style="margin-left: 64px;">{{foundIssuesNumber}}</span></a>
           </form>
-          
         </li>
         {% endblock %}
         {% block navCommits %}
-        <li class="nav-item" style="border-style: outset;">
-          
+        <li class="nav-item" style="border-style: outset;"> 
           <form name="commitsForm" id="commitsForm" method="POST" action="{% url 'searchedCommits' %}">
             {% csrf_token %}
             <input class="form-control mr-sm-2" hidden aria-label="Search" name="foundCommits" value="{{foundCommits}}" >
             <input class="form-control mr-sm-2" hidden  aria-label="Search" name="foundIssues" value="{{foundIssues}}" >
+            <input class="form-control mr-sm-2" hidden  aria-label="Search" name="foundRepositories" value="{{foundRepositories}}" >
           <a class="nav-link" onclick="submitCommitsForm()">Commits<span class="badge badge-success" style="margin-left: 43px;">{{foundCommitsNumber}}</span></a>
           </form>
-         
         </li>   
         {% endblock %}
       </ul>
      
       {% block page_content %} 
-    <div class="tab-pane container active" id="milestones" style="margin-right: -190px; margin-top: -142px;">
+    <div class="tab-pane container active" id="milestones" style="margin-right: -190px; margin-top: -190px;">
         <h5 style="margin-left: -99px;">{{foundRepositoriesNumber}} repository results</h5>
     {% if foundRepos %}
         {% for r in foundRepos %}
@@ -70,30 +72,22 @@
 
     {% block javascript %}
     <script>
-      function submitForm() {
-            let form = document.getElementById("issuesForm");
-            /*var YOUR_JS_LIST = '{{foundIssues|safe}}';
-            alert(YOUR_JS_LIST.length)
-            for(i=0; i< YOUR_JS_LIST.length; i++){
-              alert(YOUR_JS_LIST[i])
-            }*/
-            
-            form.submit(); 
-            alert('ok')
+    function submitForm() {
+          let form = document.getElementById("issuesForm");
+          form.submit(); 
+          alert('ok')
                       
-        }
-        function submitCommitsForm() {
-            let form = document.getElementById("commitsForm");
-            /*var YOUR_JS_LIST = '{{foundIssues|safe}}';
-            alert(YOUR_JS_LIST.length)
-            for(i=0; i< YOUR_JS_LIST.length; i++){
-              alert(YOUR_JS_LIST[i])
-            }*/
-            
-            form.submit(); 
-            alert('ok')
-                      
-          }
+    }
+    function submitCommitsForm() {
+          let form = document.getElementById("commitsForm");
+          form.submit(); 
+          alert('ok')
+    }
+    function submitRepositoriesForm() {
+          let form = document.getElementById("repositoriesForm");
+          form.submit(); 
+          alert('ok')
+    }
         
     </script>
     {% endblock %}

@@ -13,5 +13,6 @@ urlpatterns = [
     path('search/', views.search, name = 'search'),
     path('searchedIssues/', views.searchedIssues, name = 'searchedIssues'),
     path('searchedCommits/', views.searchedCommits, name = 'searchedCommits'),
+    path('searchedRepositories/', views.searchedRepositories, name = 'searchedRepositories'),
 ]
 
