@@ -47,7 +47,15 @@ def createCommit(request):
 
             commit.save()
 
-            return redirect('branch:branchList')
+            return redirect('commit:commitList')
         
     context = {'form': form}
     return render(request, "commit/createCommit.html", context)
+
+
+def commitList(request):
+    commit_list = Commit.objects.all() 
+    context = {
+        'commit_list': commit_list,
+    }
+    return render(request, "commit/commitList.html", context)
