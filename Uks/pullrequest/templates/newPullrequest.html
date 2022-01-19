@@ -1,5 +1,6 @@
 {% extends 'repository/index.html' %}
 {% load static %}
+{% load bootstrap_icons %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -13,7 +14,31 @@
 
 <body>
     {% block page_content %}
-            
+    <div class="tab-pane container active" id="pullrequests">
+        <h2 style="margin-top: -20px;">New pull reuquest</h2>
+            <form style="margin-top: 20px; margin-left: -12px;" method="POST" action="{% url 'addPullrequest' %}"> 
+                {% csrf_token %}
+                <input type="hidden" name="repository"  value="{{repository.id}}"/>
+                <div class="card-header" style="background-color: #cacaca77;">
+                    {% bs_icon 'bezier2' size='1em' %} 
+                    <span style="padding-left:15px; padding-right: 10px;"><label>base:</label></span>
+                    <select name="branch_target_id">
+                        {% for b in branches %}
+                            <option value="{{ b.id }}">{{ b.name }}</option>
+                        {% endfor %}
+                    </select>
+                    <span style="padding-left:15px; padding-right: 5px;">{% bs_icon 'arrow-left' size='1.5em' %} </span>
+                    <span style="padding-left:15px; padding-right: 10px;"><label>compare:</label></span>
+                    <select name="branch_source_id">
+                        {% for b in branches %}
+                            <option value="{{ b.id }}">{{ b.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <input type="submit" style="margin-left: 960px; margin-top: 5px;"  class="btn btn-success" value="Create pull request">
+            </form>
+        </div>  
+    </div>
     {% endblock %}
 
 </body>

@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import Pullrequest, Repository, Branch
-import datetime
+from datetime import date
 
 def pullrequests(request, id):
     repository = get_object_or_404(Repository, id=id)
@@ -9,23 +9,21 @@ def pullrequests(request, id):
 
 
 def newPullrequest(request, id):
-    return render(request, 'newPullrequest.html', {"repository_id":id})
+    repository = get_object_or_404(Repository, id=id)
+    branches = Branch.objects.all().filter(repository=repository)
+    return render(request, 'newPullrequest.html', {"branches":branches, "repository":repository})
 
 def addPullrequest(request):
     if request.method == 'POST':
-        name = request.POST['name']
-        created = datetime.now()
-        prRepository = get_object_or_404(Repository, id = request.POST['repository_id'] )
+        created = date.today()
+        prRepository = get_object_or_404(Repository, id = request.POST['repository'] )
+        print(request.POST['branch_source_id'])
         source = get_object_or_404(Branch, id = request.POST['branch_source_id'] )
         target = get_object_or_404(Branch, id = request.POST['branch_target_id'] )
-        comments = request.POST['comment']
+        name = target.name
 
-        if title is not None and title == "":
-            errorTitle = "Please enter title!"
-            return render(request, "newPullrequest.html", {"errorTitle": errorTitle})
-        else:
-            newPullrequest = Pullrequest(name = name, status = status, created = created, prRepository = prRepository, source = source, target = target)
-            newPullrequest.save()
-            newPullrequest = pullrequests(request, repository.id)
+        newPullrequest = Pullrequest(name = name, status = 'Opened', created = created, prRepository = prRepository, source = source, target = target)
+        newPullrequest.save()
+        newPullrequests = pullrequests(request, prRepository.id)
     
-    return render(request, "pullrequests.html", {"pullrequests":newPullrequest, "prRepository": repository.id})
+    return redirect('/pullrequest/pullrequests/'+str(prRepository.id))
