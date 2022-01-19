@@ -58,7 +58,8 @@ def search(request):
             repositoriesIds.append(r.id)
 
     return render(request, 'searchResult.html', {"foundRepos":repositories, "foundRepositoriesNumber":number_of_repos, "foundRepositories":repositoriesIds, 
-    "foundIssues": issuesIds,  "foundIssuesNumber" : number_of_issues, "foundCommits": commitsIds, "foundCommitsNumber": number_of_commits})
+    "foundIssues": issuesIds,  "foundIssuesNumber" : number_of_issues, "foundCommits": commitsIds, "foundCommitsNumber": number_of_commits,
+    "searchedWords":searchedWord})
 
 def checkRepositories(words):
     repositories = []
@@ -113,9 +114,11 @@ def searchedRepositories(request):
        repositoriesNumber = len (repositories)
        commitsNumber = len(commits)
        issuesNumber = len(issues)
+       searchedWords = request.POST.get('searchedWords')
     return render(request, 'searchedRepositories.html',{"foundCommits":commitsIds, "foundCommitsNumber":commitsNumber,
     "commits":commits,"foundIssues":issuesIds, "foundIssuesNumber":issuesNumber, "issues":issues,
-    "repositories":repositories, "foundRepositories": repositoriesIds, "foundRepositoriesNumber":repositoriesNumber})
+    "repositories":repositories, "foundRepositories": repositoriesIds, "foundRepositoriesNumber":repositoriesNumber,
+    "searchedWords":searchedWords})
 
 def searchedIssues(request):
     if request.method == 'POST':
@@ -128,13 +131,16 @@ def searchedIssues(request):
        repositoriesNumber = len (repositories)
        commitsNumber = len(commits)
        issuesNumber = len(issues)
+       searchedWords = request.POST.get('searchedWords')
     return render(request, 'searchedIssues.html',{"foundCommits":commitsIds, "foundCommitsNumber":commitsNumber,
     "commits":commits,"foundIssues":issuesIds, "foundIssuesNumber":issuesNumber, "issues":issues,
-    "repositories":repositories, "foundRepositories": repositoriesIds, "foundRepositoriesNumber":repositoriesNumber})
+    "repositories":repositories, "foundRepositories": repositoriesIds, "foundRepositoriesNumber":repositoriesNumber,
+    "searchedWords":searchedWords})
 
 def searchedCommits(request):
     if request.method == 'POST':
        issues = findIssues(request)
+       print("NIJE NASAOO")
        issuesIds = findIssuesIds(request)
        commits = findCommits(request)
        commitsIds = findCommitsIds(request)
@@ -143,17 +149,20 @@ def searchedCommits(request):
        repositoriesNumber = len (repositories)
        commitsNumber = len(commits)
        issuesNumber = len(issues)
+       searchedWords = request.POST.get('searchedWords')
     return render(request, 'searchedCommits.html',{"foundCommits":commitsIds, "foundCommitsNumber":commitsNumber,
     "commits":commits,"foundIssues":issuesIds, "foundIssuesNumber":issuesNumber, "issues":issues,
-    "repositories":repositories, "foundRepositories": repositoriesIds, "foundRepositoriesNumber":repositoriesNumber})
+    "repositories":repositories, "foundRepositories": repositoriesIds, "foundRepositoriesNumber":repositoriesNumber,
+    "searchedWords":searchedWords})
 
 def findIssues(request):
     foundIssues = request.POST.get('foundIssues')
-    issuesFound = foundIssues.strip('][').split(', ')
     issues = []
-    for foundIssue in issuesFound:
-        issue = get_object_or_404(Issue, id = foundIssue)
-        issues.append(issue)
+    if (foundIssues != '[]'):
+        issuesFound = foundIssues.strip('][').split(', ')
+        for foundIssue in issuesFound:
+            issue = get_object_or_404(Issue, id = foundIssue)
+            issues.append(issue)
     return issues
 
 def findIssuesIds(request):
@@ -165,11 +174,12 @@ def findIssuesIds(request):
 
 def findCommits(request):
     foundCommits = request.POST.get('foundCommits')
-    commitsFound = foundCommits.strip('][').split(', ')
-    commits = []
-    for foundCommit in commitsFound:
-        commit = get_object_or_404(Commit, id = foundCommit)
-        commits.append(commit)
+    if (foundCommits != '[]'):
+        commitsFound = foundCommits.strip('][').split(', ')
+        commits = []
+        for foundCommit in commitsFound:
+            commit = get_object_or_404(Commit, id = foundCommit)
+            commits.append(commit)
     return commits
 
 def findCommitsIds(request):
@@ -181,11 +191,12 @@ def findCommitsIds(request):
 
 def findRepositories(request):
     foundRepositories = request.POST.get('foundRepositories')
-    repositoriesFound = foundRepositories.strip('][').split(', ')
-    repositories = []
-    for foundRepository in repositoriesFound:
-        repository = get_object_or_404(Repository, id = foundRepository)
-        repositories.append(repository)
+    if (foundRepositories != '[]'):
+        repositoriesFound = foundRepositories.strip('][').split(', ')
+        repositories = []
+        for foundRepository in repositoriesFound:
+            repository = get_object_or_404(Repository, id = foundRepository)
+            repositories.append(repository)
     return repositories
 
 def findRepositoriesIds(request):
