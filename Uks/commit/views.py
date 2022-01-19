@@ -59,3 +59,8 @@ def commitList(request):
         'commit_list': commit_list,
     }
     return render(request, "commit/commitList.html", context)
+
+
+def deleteCommit(request, id):
+    Commit.objects.get(pk=id).delete()
+    return redirect('commit:commitList')

@@ -10,5 +10,6 @@ app_name = "commit"
 urlpatterns = [
     path('createCommit', views.createCommit, name='newCommit'),
     path('commitList', views.commitList, name='commitList'),
+    path('deleteCommit/<int:id>', views.deleteCommit, name='deleteCommit'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
