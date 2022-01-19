@@ -36,6 +36,11 @@ def profile(request):
 def repository(request, id):
     return redirect('/repository/' + id)
 
+# def editRepository(request, id):
+#     return redirect('/editRepository/' + id)
+
+# def deleteRepository(request, id):
+#     return redirect('/deleteRepository/' + id)
 def get_my_repos(request):
     return Repository.objects.filter(creator_id=request.user.id)
 

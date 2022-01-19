@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_bootstrap_icons',
+    'crispy_forms',
 ]
 
 MIDDLEWARE = [
@@ -83,6 +84,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'Uks.wsgi.application'
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 
 
@@ -93,7 +95,7 @@ if local_mode == True:
             'ENGINE': 'django.db.backends.postgresql_psycopg2',
             'NAME': 'uks',
             'USER': 'postgres',
-            'PASSWORD': 'root',
+            'PASSWORD': '1111',
             'HOST': 'localhost',
             'PORT': 5432,
         }

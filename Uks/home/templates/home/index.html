@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
-
+{% load bootstrap_icons %}
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -24,11 +24,23 @@
         </form>
         <br>
         <!-- username/nameOfRepository -->
-        {% if all_repositories %}
-            {% for repo in all_repositories %}
-            <a  class="nav-link" href="{% url 'repository' id=repo.id %}">{{repo.creator_id}} / {{repo.name}}</a>
-            {% endfor %}
-        {% endif %}
+        <div class="row">
+            {% if all_repositories %}
+                {% for repo in all_repositories %}
+                <div class="card border-secondary mb-3" style="margin-top: 15px; margin-left: 95px; width: 400px;">
+                    <div class="card-header">
+                         {{repo.status}}
+                    </div>
+                    <div class="card-body">
+                    <h5 class="card-title">{{repo.name}}</h5>
+                    <a href="{% url 'repository' id=repo.id %}">Open</a>
+                    <a href="{% url 'transferToEditRepository' id=repo.id %}" style="margin-left: 10px;">Edit</a>
+                    <a href="{% url 'deleteRepository' id=repo.id %}" style="margin-left: 10px;">Delete</a>
+                    </div>
+                </div>
+                {% endfor %}
+            {% endif %}
+        </div>
     </div>
 
     {% endblock %}

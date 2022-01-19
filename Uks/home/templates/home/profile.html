@@ -52,8 +52,9 @@
     </ul>
 
     <!-- Tab panes -->
-    <div class="tab-content" style="margin-left: 350px;">
+    <div class="tab-content" id="repositories" style="margin-left: 350px;">
         {% block tabRepository %}
+        <a  href="{% url 'newRepository' %}" style="margin-left: 770px; margin-top: 25px;" type="button" class="btn btn-success" >New repository</a> 
         <div class="tab-pane container active" id="repositories">
             {% if my_repositories %}
                 {% for repo in my_repositories %}
