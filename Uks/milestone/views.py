@@ -27,7 +27,7 @@ def deleteMilestone(request, id):
             repository = r
     milestone.delete()
     milestonesUpdated = Milestone.objects.all().filter(repository=milestone.repository)
-    #return render(request, "milestones.html", {"milestones":milestonesUpdated, "repository":repository})
+    
     return redirect('/milestone/milestones/'+ str(repository.id))
 
 def addMilestone(request):
@@ -49,9 +49,6 @@ def addMilestone(request):
             newMilestones = milestones(request, repository.id)
     
     return redirect('/milestone/milestones/'+ str(repository.id))
-    #return render(request, "milestones.html", {"milestones":newMilestones, "repository":repository})
-    
-    #return newMilestones
 
 def getMilestoneById(request, id):
     print(id)
@@ -59,6 +56,7 @@ def getMilestoneById(request, id):
     repository = get_object_or_404(Repository, id = milestone.repository.id)
     print(milestone.title)
     print(repository.name)
+
     return render(request, "updateMilestone.html", {"milestone": milestone, "repository": repository})
 
 def updateMilestone(request, id):
@@ -73,7 +71,5 @@ def updateMilestone(request, id):
                 repository = r
         milestone.save()
         milestonesUpdated = milestones(request, repository.id)
-        #return render(request, "milestones.html", {"milestones":milestonesUpdated, "repository":repository})
-        return redirect('/milestone/milestones/'+ str(repository.id))
-        #return milestonesUpdated
-        #return redirect('milestones')
+        
+    return redirect('/milestone/milestones/'+ str(repository.id))
