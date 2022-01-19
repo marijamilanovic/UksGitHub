@@ -10,5 +10,7 @@ urlpatterns = [
      path('pullrequests/<int:id>', views.pullrequests, name='pullrequests'),
      path('newPullrequest/<int:id>', views.newPullrequest, name='newPullrequest'),
      path('addPullrequest/', views.addPullrequest, name='addPullrequest'),
+     path('updatePullrequestPage/<int:id>', views.updatePullrequestPage, name='updatePullrequestPage'),
+     path('changeStatusPullrequest/<int:id>', views.changeStatusPullrequest, name='changeStatusPullrequest'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 

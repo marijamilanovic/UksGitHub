@@ -22,14 +22,19 @@
                 <div class="card-header" style="background-color: #d7f0db;">
                     {% bs_icon 'bezier2' size='1em' color='green' %} <span style="padding-left:15px">{{pr.name}}</span>  <span style="padding-left:20px; color: green;"> {{pr.status}}</span>
                 </div>
-                {% else %}
+                {% elif pr.status == 'Merged' %}
                 <div class="card-header" style="background-color: #e9d7f0;">
-                    {% bs_icon 'bezier' size='1em' color='purple' %} <span style="padding-left:15px">{{pr.name}}</span> <span style="padding-left:20px; color: purple;"> {{pr.status}}</span>
+                    {% bs_icon 'bezier2' size='1em' color='purple' %} <span style="padding-left:15px">{{pr.name}}</span>  <span style="padding-left:20px; color: purple;"> {{pr.status}}</span>
+                </div>
+                {% else %}
+                <div class="card-header" style="background-color: #f1bebe;">
+                    {% bs_icon 'pause' size='1em' color='red' %} <span style="padding-left:15px">{{pr.name}}</span> <span style="padding-left:20px; color: red;"> {{pr.status}}</span>
                 </div>
                 {% endif %}
                 <div class="card-body">
                     <h7 class="card-title">#23 opened {{pr.created}} by _____</h7>
                 </div>
+                <a href="{% url 'updatePullrequestPage' id=pr.id %}" style="margin-left: 20px; margin-top: -10px; width: 150px; margin-bottom: 10px;" type="button" class="btn btn-success">Edit</a>
             </div>
             {% endfor %}
         {% else %}
