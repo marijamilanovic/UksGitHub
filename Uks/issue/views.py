@@ -44,3 +44,13 @@ def update_issue(request, id):
                 repository = r
         issue.save()
         return issues(request, repository.id)
+
+def delete_issue(request, id):
+    issue = get_object_or_404(Issue, id=id)
+    all_repos = Repository.objects.all()
+    for r in all_repos:
+        if(r.id == issue.repository.id):
+            repository = r
+    issue.delete()
+    issue_update = Issue.objects.filter(repository=issue.repository)
+    return render(request, "issues.html", {"issues":issue_update, "repository":repository})

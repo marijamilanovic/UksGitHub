@@ -27,6 +27,9 @@
                                     opened by <b>{{issue.opened_by}}</b> and assignee to <b>{{issue.assignee}}</b>
                                 </small>
                             </td>
+                            <td>
+                                <a href="{% url 'delete_issue' id=issue.id %}" class="link-primary" style="margin-left: 10px;">❌</a>
+                            </td>
                         </tr>
                     {% endfor %}
                 </tbody>
