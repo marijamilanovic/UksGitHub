@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load bootstrap_icons %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %} UksGithub {% endblock %}</title>
+</head>
+<body>
+    {% block content %}
+    <ul class="nav flex-column" style="margin-top: 60px; margin-left: 220px; border-style: ridge; width: 180px;">
+        <li class="nav-item" style="border-style: outset;">
+          {% block navRepositories %}
+          <a class="nav-link " href="#">Repositories <span class="badge badge-success" style="margin-left: 10px;">{{foundRepositoriesNumber}}</span></a>
+          {% endblock %}
+        </li>
+        <li class="nav-item" style="border-style: outset;border-left-color">
+            {% block navIssues %}
+            <a class="nav-link active" href="#">Issues</a>
+            {% endblock %}
+          </li>
+        <li class="nav-item" style="border-style: outset;border-left-color: darkviolet; border-left-width: 8px;">
+          {% block navCommits %}
+          <a class="nav-link active" href="#">Commits</a>
+          {% endblock %}
+        </li>   
+      </ul>
+
+    
+    <div class="tab-pane container active" id="milestones" style="margin-right: -190px; margin-top: -142px;">
+        <h5 style="margin-left: -99px;">{{foundCommitsNumber}} commits results</h5>
+    {% if foundCommits %}
+        {% for c in foundCommits %}
+        <div class="card border-secondary mb-3" style="margin-top: 15px; margin-left: -95px; max-width: 730px;">
+            <div class="card-header" style="background-color: #d7f0db;">
+                {% bs_icon 'code-square' size='1.2em' color='green' %} <span style="padding-left:15px">{{c.message}}</span>  
+            </div>
+            <div class="card-body">
+            <p>Commited on {{c.date_time}}</p>
+            <a href="#" class="link-primary">Visit</a>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+    <p>There are no issues.</p>
+    {% endif %}
+    </div>
+
+    {% endblock %}
+</body>
+</html>

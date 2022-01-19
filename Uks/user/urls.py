@@ -11,5 +11,7 @@ urlpatterns = [
     path('/', views.home, name = 'home'),
     path('/profile/', views.profile, name = 'profile'),
     path('search/', views.search, name = 'search'),
+    path('searchedIssues/', views.searchedIssues, name = 'searchedIssues'),
+    path('searchedCommits/', views.searchedCommits, name = 'searchedCommits'),
 ]
 

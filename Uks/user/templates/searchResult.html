@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load bootstrap_icons %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -11,8 +12,80 @@
 </head>
 <body>
     {% block content %}
-    <h1>Hello</h1>
+    <ul class="nav flex-column" style="margin-top: 60px; margin-left: 220px; border-style: ridge; width: 180px;">
+        <li class="nav-item" style="border-style: outset; border-left-color: darkviolet; border-left-width: 8px;">
+          {% block navRepositories %}
+          <a class="nav-link active" href="#">Repositories <span class="badge badge-success" style="margin-left: 10px;">{{foundRepositoriesNumber}}</span></a>
+          {% endblock %}
+        </li>
+        <li class="nav-item" style="border-style: outset;">
+          {% block navIssues %}
+          <form name="issuesForm" id="issuesForm" method="POST" action="{% url 'searchedIssues' %}">
+            {% csrf_token %}
+            <input class="form-control mr-sm-2" hidden  aria-label="Search" name="foundIssues" value="{{foundIssues}}" >
+          <a class="nav-link" onclick="submitForm()">Issues<span class="badge badge-success" style="margin-left: 64px;">{{foundIssuesNumber}}</span></a>
+          </form>
+          {% endblock %}
+        </li>
+        <li class="nav-item" style="border-style: outset;">
+          {% block navCommits %}
+          <form name="commitsForm" id="commitsForm" method="POST" action="{% url 'searchedCommits' %}">
+            {% csrf_token %}
+            <input class="form-control mr-sm-2" hidden aria-label="Search" name="foundCommits" value="{{foundCommits}}" >
+          <a class="nav-link" onclick="submitCommitsForm()">Commits<span class="badge badge-success" style="margin-left: 43px;">{{foundCommitsNumber}}</span></a>
+          </form>
+          {% endblock %}
+        </li>   
+      </ul>
 
+    
+    <div class="tab-pane container active" id="milestones" style="margin-right: -190px; margin-top: -142px;">
+        <h5 style="margin-left: -99px;">{{foundRepositoriesNumber}} repository results</h5>
+    {% if foundRepos %}
+        {% for r in foundRepos %}
+        <div class="card border-secondary mb-3" style="margin-top: 15px; margin-left: -95px; max-width: 730px;">
+            <div class="card-header" style="background-color: #d7f0db;">
+                {% bs_icon 'pc-display-horizontal' size='1.2em' color='green' %} <span style="padding-left:15px">{{r.creator_id}} / {{r.name}}</span>  
+            </div>
+            <div class="card-body">
+            <a href="#" class="link-primary">Visit</a>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+    <p>There are no repositories.</p>
+    {% endif %}
+    </div>
+    {% endblock %}
+
+    {% block javascript %}
+    <script>
+      function submitForm() {
+            let form = document.getElementById("issuesForm");
+            /*var YOUR_JS_LIST = '{{foundIssues|safe}}';
+            alert(YOUR_JS_LIST.length)
+            for(i=0; i< YOUR_JS_LIST.length; i++){
+              alert(YOUR_JS_LIST[i])
+            }*/
+            
+            form.submit(); 
+            alert('ok')
+                      
+        }
+        function submitCommitsForm() {
+            let form = document.getElementById("commitsForm");
+            /*var YOUR_JS_LIST = '{{foundIssues|safe}}';
+            alert(YOUR_JS_LIST.length)
+            for(i=0; i< YOUR_JS_LIST.length; i++){
+              alert(YOUR_JS_LIST[i])
+            }*/
+            
+            form.submit(); 
+            alert('ok')
+                      
+          }
+        
+    </script>
     {% endblock %}
 </body>
 </html>

@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
@@ -42,28 +42,83 @@ def search(request):
     if request.method == 'POST':
         searchedWord = request.POST['search']
         words = searchedWord.split()
-        print(words)
-        print(words[0])
-        i = len(words)
         repositories = []
         issues = []
         commits = []
         all_repositories = Repository.objects.all()
         for repository in all_repositories:
-            if (words[i-1].lower() in repository.name.lower()):
-                #ako se rec sadrzi negde u nazivu stringa
-                #ubaci taj repo u listu rezultata koju vracas
-                repositories.append(repository)
-                print('NASAOOO')
+            for word in words:
+                if (word.lower() in repository.name.lower()):
+                    #ako se rec sadrzi negde u nazivu stringa
+                    #ubaci taj repo u listu rezultata koju vracas
+                    #proveri da li je u listu vec dodat taj repo za neku rec
+                    if (len(repositories) == 0):
+                        repositories.append(repository)
+                    else:
+                        for r in repositories:
+                            if (r.id != repository.id):
+                                repositories.append(repository)
         all_issues = Issue.objects.all()
         for issue in all_issues:
-            if ((words[i-1].lower() in issue.issue_title) or (words[i-1].lower() in issue.description)):
-                issues.append(issue)
-                print('NASAOOO ISSUE')
+            for word in words:
+                if (word.lower() in issue.issue_title.lower()):
+                    #ako se rec sadrzi negde u nazivu stringa
+                    #ubaci taj repo u listu rezultata koju vracas
+                    #proveri da li je u listu vec dodat taj repo za neku rec
+                    if (len(issues) == 0):
+                        issues.append(issue)
+                    else:
+                        for i in issues:
+                            if (i.id != issue.id):
+                                issues.append(issue)
         all_commits = Commit.objects.all()
         for commit in all_commits:
-            if (words[i-1].lower() in commit.message):
-                commits.append(commit)
-                print('NASAOOO COMMIT')
+            for word in words:
+                if (word.lower() in commit.message.lower()):
+                    if (len(commits) == 0):
+                        commits.append(commit)
+                    else:
+                        for c in commits:
+                            if (c.id != commit.id):
+                                commits.append(commit)
+        print(len(repositories))
+        print(len(issues))
+        print(len(commits))
+        number_of_repos = len(repositories)
+        number_of_issues = len (issues)
+        number_of_commits = len(commits)
+        issuesIds=[]
+        for issu in issues:
+            issuesIds.append(issu.id)
 
-    return render(request, 'searchResult.html', {})
+        commitsIds=[]
+        for c in commits:
+            commitsIds.append(c.id)
+    return render(request, 'searchResult.html', {"foundRepos":repositories, "foundRepositoriesNumber":number_of_repos, "foundIssues": issuesIds, 
+    "foundIssuesNumber" : number_of_issues, "foundCommits": commitsIds, "foundCommitsNumber": number_of_commits})
+
+def searchedIssues(request):
+    if request.method == 'POST':
+        foundIssues = request.POST.get('foundIssues')
+        issuesFound = foundIssues.strip('][').split(', ')
+        issues = []
+        for foundIssue in issuesFound:
+            issue = get_object_or_404(Issue, id = foundIssue)
+            issues.append(issue)
+            print(len(issues))
+            issuesNumber = len(issues)
+        
+    return render(request, 'searchedIssues.html',{"foundIssues":issues, "foundIssuesNumber":issuesNumber })
+
+def searchedCommits(request):
+    if request.method == 'POST':
+        foundCommits = request.POST.get('foundCommits')
+        commitsFound = foundCommits.strip('][').split(', ')
+        commits = []
+        for foundCommit in commitsFound:
+            commit = get_object_or_404(Commit, id = foundCommit)
+            commits.append(commit)
+            print(len(commits))
+            commitsNumber = len(commits)
+        
+    return render(request, 'searchedCommits.html',{"foundCommits":commits, "foundCommitsNumber":commitsNumber })

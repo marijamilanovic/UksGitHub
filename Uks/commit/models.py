@@ -21,4 +21,4 @@ class Commit(models.Model):
     author = models.ForeignKey(to=User, on_delete=models.SET_NULL, null=True)
 
     def __str__(self):
-        return self.title
+        return self.message
