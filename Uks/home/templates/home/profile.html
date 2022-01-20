@@ -66,7 +66,20 @@
 
         {% block tabIssue %}
         <div class="tab-pane container fade" id="issues">
-            Space for issues
+            <table class="table">
+                <tbody>
+                    {% for issue in my_issues %}
+                        <tr>
+                            <td>
+                                <a  class="nav-link" href="{% url 'view_issue' id=issue.id %}">{{issue.issue_title}}</a>
+                                <small style="margin-left: 15px;color: gray;">
+                                    opened by <b>{{issue.opened_by}}</b> and assignee to <b>{{issue.assignee}}</b>
+                                </small>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
         {% endblock %}
 
