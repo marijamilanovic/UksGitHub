@@ -19,6 +19,7 @@ class Issue(models.Model):
     # todo: add project
     repository = models.ForeignKey(to=Repository, on_delete=models.CASCADE)
     pullrequests = models.ManyToManyField(Pullrequest)
+    description = models.CharField(max_length=50)
     
     def __str__(self):
         return self.issue_title

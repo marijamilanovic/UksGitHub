@@ -13,19 +13,24 @@
 
 <body>
     {%block page_content%}
-        <div class="tab-pane container active" id="milestones">
+        <div class="tab-pane container active" id="milestones" style="margin-right: 60px;">
             <a href="{% url 'newMilestone' id=repository.id %}" style="margin-left: 763px; margin-top: -25px;" type="button" class="btn btn-success" >New milestone</a>
         {% if milestones %}
             {% for m in milestones %}
             <div class="card border-secondary mb-3" style="margin-top: 15px; margin-left: -95px; max-width: 1000px;">
-                <div class="card-header">
-                    {% bs_icon 'activity' size='1em' %}  {{m.status}}
+                {% if m.status == 'Opened' %}
+                <div class="card-header" style="background-color: #d7f0db;">
+                    {% bs_icon 'activity' size='1em' color='green' %} <span style="padding-left:15px">{{m.status}}</span>  <span style="padding-left:20px; color: green;"> {{pr.status}}</span>
                 </div>
+                {% else %}
+                <div class="card-header" style="background-color: #e9d7f0;">
+                    {% bs_icon 'activity' size='1em' color='purple' %} <span style="padding-left:15px">{{m.status}}</span> <span style="padding-left:20px; color: purple;"> {{pr.status}}</span>
+                </div>
+                {% endif %}
                 <div class="card-body">
                 <h5 class="card-title">{{m.title}}</h5>
                 <p class="card-text">{{m.description}}</p>
                 <p class="card-text">{% bs_icon 'calendar-check' size='1em' %} Due by: {{m.due_date}}</p>
-                <h1>{{m.id}}</h1>
                 <a href="{% url 'getMilestoneById' id=m.id %}" class="link-primary">Edit</a>
                 <a href="{% url 'deleteMilestone' id=m.id %}" class="link-primary" style="margin-left: 10px;">Delete</a>
                 </div>
