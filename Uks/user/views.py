@@ -227,3 +227,24 @@ def registrate(request):
         user.first_name = first_name
         user.save()
     return redirect('login')
+
+def edit_user(request, id):
+    user = User.objects.get(id = id)
+    user.first_name = request.POST.get('first_name')
+    user.last_name = request.POST.get('last_name')
+    user.email = request.POST.get('email')
+    user.username = request.POST.get('username')
+    password = request.POST.get('password')
+    if password != "":
+        user.set_password(request.POST.get('password'))
+    user.save()
+    return redirect("../home/profile")
+   
+def go_to_edit_user(request, id):
+    user = User.objects.get(id = id)
+    return render(request, 'edit_user.html',{"user_to_edit" : user})
+
+def delete_user(request, id):
+    user = User.objects.get(id = id)
+    user.delete()
+    return redirect("../home/profile")
