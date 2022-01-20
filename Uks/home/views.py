@@ -8,6 +8,7 @@ from Uks.decorators import authorized
 from repository.models import Repository
 from user.models import User
 from milestone.models import Milestone
+from issue.models import Issue
 
 # Create your views here.
 
@@ -25,14 +26,28 @@ def profile(request):
     template = loader.get_template('home/profile.html')
     my_repositories = get_my_repos(request)
     my_milestones = get_my_milestones(request)
-    return render(request, "home/profile.html", {'my_repositories': my_repositories, 'milestones': my_milestones})
+    my_issues = get_my_issues(request)
+    return render(request, "home/profile.html", {
+        'my_repositories': my_repositories, 
+        'milestones': my_milestones,
+        'my_issues': my_issues})
 
 
 def repository(request, id):
     return redirect('/repository/' + id)
 
+# def editRepository(request, id):
+#     return redirect('/editRepository/' + id)
+
+# def deleteRepository(request, id):
+#     return redirect('/deleteRepository/' + id)
 def get_my_repos(request):
     return Repository.objects.filter(creator_id=request.user.id)
 
 def get_my_milestones(request):
     return Milestone.objects.all()
+
+def get_my_issues(request):
+    issues = Issue.objects.filter(opened_by=request.user.username)
+    issues = issues.union(Issue.objects.filter(assignee=request.user.username))
+    return issues

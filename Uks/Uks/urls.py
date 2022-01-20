@@ -27,7 +27,6 @@ urlpatterns = [
     path('label/', include('label.urls')),
     path('milestone/', include('milestone.urls')),
     path('project/', include('project.urls')),
-    path('task/', include('task.urls')),
     path('branch/', include('branch.urls')),
     path('commit/', include('commit.urls')),
     path('pullrequest/', include('pullrequest.urls')),
