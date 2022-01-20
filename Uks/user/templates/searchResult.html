@@ -68,7 +68,7 @@
                 {% bs_icon 'pc-display-horizontal' size='1.2em' color='green' %} <span style="padding-left:15px">{{r.creator_id}} / {{r.name}}</span>  
             </div>
             <div class="card-body">
-            <a href="#" class="link-primary">Visit</a>
+            <a href="{% url 'repository' id=r.id %}" class="link-primary">Visit</a>
             </div>
         </div>
         {% endfor %}

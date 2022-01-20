@@ -174,9 +174,9 @@ def findIssuesIds(request):
 
 def findCommits(request):
     foundCommits = request.POST.get('foundCommits')
+    commits = []
     if (foundCommits != '[]'):
         commitsFound = foundCommits.strip('][').split(', ')
-        commits = []
         for foundCommit in commitsFound:
             commit = get_object_or_404(Commit, id = foundCommit)
             commits.append(commit)
@@ -191,9 +191,9 @@ def findCommitsIds(request):
 
 def findRepositories(request):
     foundRepositories = request.POST.get('foundRepositories')
+    repositories = []
     if (foundRepositories != '[]'):
         repositoriesFound = foundRepositories.strip('][').split(', ')
-        repositories = []
         for foundRepository in repositoriesFound:
             repository = get_object_or_404(Repository, id = foundRepository)
             repositories.append(repository)
