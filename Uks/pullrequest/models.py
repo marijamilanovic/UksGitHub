@@ -21,6 +21,7 @@ class Pullrequest(models.Model):
     status = models.CharField(max_length=20, choices=PULL_REQUEST_STATE, default=OPENED)
     created = models.DateField(null=True, blank=True)
     prRepository = models.ForeignKey(to=Repository, null=True, on_delete=models.CASCADE)
+    #prRepository = models.ForeignKey(to=Repository, null=True, on_delete=models.DO_NOTHING)
     source = models.ForeignKey(to=Branch, related_name='source_branch', null=True, on_delete=models.CASCADE)
     target = models.ForeignKey(to=Branch, related_name='target_branch', null=True, on_delete=models.CASCADE)
     comments = models.ManyToManyField(Comment)

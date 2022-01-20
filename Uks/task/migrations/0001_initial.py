@@ -24,7 +24,7 @@ class Migration(migrations.Migration):
                 ('opened', models.DateField(auto_now_add=True)),
                 ('closed', models.DateField(blank=True, null=True)),
                 ('assigned', models.ManyToManyField(to=settings.AUTH_USER_MODEL)),
-                ('author', models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, related_name='author', to='auth.user')),
+                ('author', models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, related_name='author', to=settings.AUTH_USER_MODEL)),
                 ('milestone', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='milestone.milestone')),
             ],
         ),
