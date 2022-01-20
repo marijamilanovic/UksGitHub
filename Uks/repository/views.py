@@ -1,6 +1,7 @@
 from unicodedata import name
 from xml.etree.ElementTree import Comment
 from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.template import loader
@@ -9,6 +10,7 @@ from user.models import UserAccount
 from home.views import repository
 from .models import Repository
 from django.contrib.auth.models import User
+from pullrequest.models import Pullrequest
 from milestone.models import Milestone
 
 # Create your views here.
@@ -18,7 +20,8 @@ def index(request, id):
     template = loader.get_template('repository/index.html')
     repository = Repository.objects.get(id=id)
     my_milestones = get_my_milestones(request,id)
-    return render(request, "repository/index.html", {'repository':repository ,'milestones': my_milestones})
+    my_pullrequests = get_my_pullrequests(request, id)
+    return render(request, "repository/index.html", {'repository':repository ,'milestones': my_milestones, 'pullrequests': my_pullrequests})
 
 def get_my_milestones(request, id):
     milestones = Milestone.objects.all()
@@ -62,5 +65,15 @@ def editRepository(request):
 
 def deleteRepository(request,id):
     repo = Repository.objects.get(id=id)
+    pullrequests = Pullrequest.objects.all()
+    for pr in pullrequests:
+        if pr.prRepository == repo:
+            pr.prRepository = None
+    
     repo.delete()
     return redirect("../../home/")
+
+def get_my_pullrequests(request, id):
+    repository = get_object_or_404(Repository, id=id)
+    pullrequests = Pullrequest.objects.all().filter(prRepository=repository)
+    return pullrequests

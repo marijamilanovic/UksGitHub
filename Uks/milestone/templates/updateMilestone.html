@@ -13,21 +13,7 @@
 
 <body>
 
-    {% block navCode %}
-    <a class="nav-link" data-toggle="tab" href="#code">Code</a>
-    {% endblock %}
-
-    {% block navMilestone %}
-    <a class="nav-link active" data-toggle="tab" href="#milestones">Milestones</a>
-    {% endblock %}
-
-    {% block tabCode %}
-    <div class="tab-pane container" id="code">
-        Space for code
-    </div>
-    {% endblock %}
-
-    {% block tabMilestone %}
+    {% block page_content %}
     <div class="tab-pane container active" id="milestones">
     {% if milestone %}
     <h2 style="margin-top: -20px;">Milestone</h2>
