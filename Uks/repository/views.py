@@ -1,4 +1,3 @@
-from django.shortcuts import render, get_object_or_404
 from unicodedata import name
 from xml.etree.ElementTree import Comment
 from django.shortcuts import render
@@ -9,8 +8,8 @@ from django.shortcuts import render, get_object_or_404, redirect
 from user.models import UserAccount
 from home.views import repository
 from .models import Repository
-from pullrequest.models import Pullrequest
 from django.contrib.auth.models import User
+from pullrequest.models import Pullrequest
 from milestone.models import Milestone
 from issue.models import Issue
 
@@ -79,5 +78,15 @@ def editRepository(request):
 
 def deleteRepository(request,id):
     repo = Repository.objects.get(id=id)
+    pullrequests = Pullrequest.objects.all()
+    for pr in pullrequests:
+        if pr.prRepository == repo:
+            pr.prRepository = None
+    
     repo.delete()
     return redirect("../../home/")
+
+def get_my_pullrequests(request, id):
+    repository = get_object_or_404(Repository, id=id)
+    pullrequests = Pullrequest.objects.all().filter(prRepository=repository)
+    return pullrequests
