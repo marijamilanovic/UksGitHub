@@ -5,7 +5,7 @@ from django.conf.urls.static import static
 
 from . import views
 
-#app_name = "commit"
+app_name = "commit"
 
 urlpatterns = [
     path('createCommit', views.createCommit, name='newCommit'),

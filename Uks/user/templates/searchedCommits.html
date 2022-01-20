@@ -57,7 +57,7 @@
             </div>
             <div class="card-body">
             <p>Commited on {{c.date_time}}</p>
-            <a href="{% url 'viewFoundCommit' id=c.id %}" class="link-primary">Visit</a>
+            <a href="{% url 'commit:viewFoundCommit' id=c.id %}" class="link-primary">Visit</a>
             </div>
         </div>
         {% endfor %}
