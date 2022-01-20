@@ -27,11 +27,15 @@ def profile(request):
     my_repositories = get_my_repos(request)
     my_milestones = get_my_milestones(request)
     my_issues = get_my_issues(request)
+    all_users = get_all_users()
     return render(request, "home/profile.html", {
         'my_repositories': my_repositories, 
         'milestones': my_milestones,
-        'my_issues': my_issues})
+        'my_issues': my_issues,
+        'all_users':all_users})
 
+def get_all_users():
+    return User.objects.all()
 
 def repository(request, id):
     return redirect('/repository/' + id)
