@@ -1,24 +1,16 @@
 from email import message
 from multiprocessing import context
-from django.shortcuts import render, redirect
-
+from django.shortcuts import render, redirect,get_object_or_404
 from django.contrib.auth.decorators import login_required
-
 from django.http import HttpResponse
 from django.template import loader
-
 from branch.models import Branch
 from django.contrib.auth.models import User
-
-
 from .forms import CommitForm
-
 from .models import Commit
-
 from datetime import date, datetime
-
 import hashlib
-
+from repository.models import Repository
 
 
 def createCommit(request):
@@ -64,3 +56,7 @@ def commitList(request):
 def deleteCommit(request, id):
     Commit.objects.get(pk=id).delete()
     return redirect('commit:commitList')
+
+def viewFoundCommit(request, id):
+    commit = get_object_or_404(Commit, id = id)
+    return render(request, 'commit/viewFoundCommit.html', {'commit':commit})

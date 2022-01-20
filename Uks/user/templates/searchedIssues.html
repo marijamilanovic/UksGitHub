@@ -56,7 +56,7 @@
             </div>
             <div class="card-body">
             <p>{{i.description}}</p>
-            <a href="#" class="link-primary">Visit</a>
+            <a href="{% url 'view_found_issue' id=i.id %}" class="link-primary">Visit</a>
             </div>
         </div>
         {% endfor %}

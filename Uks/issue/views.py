@@ -54,3 +54,8 @@ def delete_issue(request, id):
     issue.delete()
     issue_update = Issue.objects.filter(repository=issue.repository)
     return render(request, "issues.html", {"issues":issue_update, "repository":repository})
+
+def view_found_issue(request, id):
+    issue = get_object_or_404(Issue, id = id)
+    repository = get_object_or_404(Repository, id = issue.repository.id)
+    return render(request, 'viewFoundIssue.html', {'repository': repository, 'issue':issue})

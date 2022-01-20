@@ -52,10 +52,10 @@
         {% for r in repositories %}
         <div class="card border-secondary mb-3" style="margin-top: 15px; margin-left: -95px; max-width: 730px;">
             <div class="card-header" style="background-color: #d7f0db;">
-                {% bs_icon 'pc-display-horizontal' size='1.2em' color='green' %} <span style="padding-left:15px">{{r.creator_id}} / {{r.name}}</span>  
+                {% bs_icon 'pc-display-horizontal' size='1.2em' color='green' %} <span style="padding-left:15px">{{r.creator}} / {{r.name}}</span>  
             </div>
             <div class="card-body">
-            <a href="{% url 'repository' id=r.id %}" class="link-primary">Visit</a>
+            <a href="{% url 'repository' id=r.id %}" class="link-primary">Visit</a><span class="badge badge-success" style="margin-left: 580px;">{{r.status}}</span>
             </div>
         </div>
         {% endfor %}
