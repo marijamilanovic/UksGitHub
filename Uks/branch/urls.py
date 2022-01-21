@@ -6,5 +6,10 @@ from . import views
 
 app_name = "branch"
 
-urlpatterns = [] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+urlpatterns = [
+    path('createBranch', views.createBranch, name='newBranch'),
+    path('branchList', views.branchList, name='branchList'),
+    path('deleteBranch/<int:id>', views.deleteBranch, name='deleteBranch'),
+
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 

@@ -4,7 +4,7 @@ from django.utils import timezone
 from datetime import datetime, timezone
 
 from branch.models import Branch
-from user.models import User
+from django.contrib.auth.models import User
 
 OPENED = "Opened"
 CLOSE = "Close"
@@ -21,4 +21,4 @@ class Commit(models.Model):
     author = models.ForeignKey(to=User, on_delete=models.SET_NULL, null=True)
 
     def __str__(self):
-        return self.title
+        return self.message

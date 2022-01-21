@@ -19,7 +19,7 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 
-urlpatterns = [
+urlpatterns = [  
     path('', include('user.urls')),
     path('home/', include('home.urls')),
     path('repository/', include('repository.urls')),
@@ -27,7 +27,6 @@ urlpatterns = [
     path('label/', include('label.urls')),
     path('milestone/', include('milestone.urls')),
     path('project/', include('project.urls')),
-    path('task/', include('task.urls')),
     path('branch/', include('branch.urls')),
     path('commit/', include('commit.urls')),
     path('pullrequest/', include('pullrequest.urls')),

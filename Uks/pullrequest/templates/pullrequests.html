@@ -1,0 +1,46 @@
+{% extends 'repository/index.html' %}
+{% load static %}
+{% load bootstrap_icons %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    {% block page_content %}
+        <div class="tab-pane container active" id="milestones">
+            <a href="{% url 'newPullrequest' id=repository.id %}" style="margin-left: 850px; margin-top: -25px;" type="button" class="btn btn-success" >New pull request</a>
+        {% if pullrequests %}
+            {% for pr in pullrequests %}
+            <div class="card border-secondary mb-3" style="margin-top: 15px;  max-width: 1000px;">
+                {% if pr.status == 'Opened' %}
+                <div class="card-header" style="background-color: #d7f0db;">
+                    {% bs_icon 'bezier2' size='1em' color='green' %} <span style="padding-left:15px">{{pr.name}}</span>  <span style="padding-left:20px; color: green;"> {{pr.status}}</span>
+                </div>
+                {% elif pr.status == 'Merged' %}
+                <div class="card-header" style="background-color: #e9d7f0;">
+                    {% bs_icon 'bezier2' size='1em' color='purple' %} <span style="padding-left:15px">{{pr.name}}</span>  <span style="padding-left:20px; color: purple;"> {{pr.status}}</span>
+                </div>
+                {% else %}
+                <div class="card-header" style="background-color: #f1bebe;">
+                    {% bs_icon 'pause' size='1em' color='red' %} <span style="padding-left:15px">{{pr.name}}</span> <span style="padding-left:20px; color: red;"> {{pr.status}}</span>
+                </div>
+                {% endif %}
+                <div class="card-body">
+                    <h7 class="card-title">#23 opened {{pr.created}} by _____</h7>
+                </div>
+                <a href="{% url 'updatePullrequestPage' id=pr.id %}" style="margin-left: 20px; margin-top: -10px; width: 150px; margin-bottom: 10px;" type="button" class="btn btn-success">Edit</a>
+            </div>
+            {% endfor %}
+        {% else %}
+        <p>There are no pullrequests yet.</p>
+        {% endif %}
+        </div>
+        {%endblock%}
+</body>
+</html>

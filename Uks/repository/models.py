@@ -1,5 +1,6 @@
 from django.db import models
-from user.models import User
+#from django.contrib.auth.models import User
+from django.contrib.auth.models import User
 
 PUBLIC = "Public"
 PRIVATE = "Private"
@@ -11,7 +12,7 @@ REPOSITORY_STATUS = [
 class Repository(models.Model):
     name = models.CharField(max_length=50)
     status = models.CharField(max_length=20, choices=REPOSITORY_STATUS, default=PRIVATE)
-    creator = models.ForeignKey(to=User, null=True, related_name='user_creator', on_delete=models.CASCADE)
+    creator = models.ForeignKey(User, null=True, related_name='user_creator', on_delete=models.CASCADE)
     developers = models.ManyToManyField(User, related_name='user_developers')
 
     def __str__(self):

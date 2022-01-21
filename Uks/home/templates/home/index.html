@@ -1,5 +1,6 @@
+{% extends 'base.html' %}
 {% load static %}
-
+{% load bootstrap_icons %}
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -9,13 +10,39 @@
 </head>
 
 <body>
+    {% block content %}
     <div class="welcome">
-        <h1 id="wtitle">Welcome to GitHub</h1>
+        <h3 id="wtitle">Welcome back, {{request.user}}.</h3>
+    </div>
+    <br><br>
+    <!-- LIST OF REPOSITORIES -->
+    <div class="repositories" style="margin-left: 20px;">
+        Find a repository
+        <form class="form-inline my-3 my-lg-0">
+            <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" name="search" >
+            <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">Search</button>
+        </form>
+        <br>
+        <!-- username/nameOfRepository -->
+        <div class="row">
+            {% if all_repositories %}
+                {% for repo in all_repositories %}
+                <div class="card border-secondary mb-3" style="margin-top: 15px; margin-left: 95px; width: 400px;">
+                    <div class="card-header">
+                         {{repo.status}}
+                    </div>
+                    <div class="card-body">
+                    <h5 class="card-title">{{repo.name}}</h5>
+                    <a href="{% url 'repository' id=repo.id %}">Open</a>
+                    <a href="{% url 'transferToEditRepository' id=repo.id %}" style="margin-left: 10px;">Edit</a>
+                    <a href="{% url 'deleteRepository' id=repo.id %}" style="margin-left: 10px;">Delete</a>
+                    </div>
+                </div>
+                {% endfor %}
+            {% endif %}
+        </div>
     </div>
 
-
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.min.js" integrity="sha384-w1Q4orYjBQndcko6MimVbzY0tgp4pWB4lZ7lr30WKz0vr/aWKhXdBNmNb5D92v7s" crossorigin="anonymous"></script>
+    {% endblock %}
 </body>
 
