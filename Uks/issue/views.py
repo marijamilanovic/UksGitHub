@@ -11,6 +11,15 @@ def issues(request, id):
     print(issues)
     return render(request, 'issues.html', {"issues":issues, "repository":repository})
 
+def all_issues(request):
+    my_issues = get_my_issues(request)
+    return render(request,"all_issues.html",{'my_issues':my_issues})
+
+def get_my_issues(request):
+    issues = Issue.objects.filter(opened_by=request.user.username)
+    issues = issues.union(Issue.objects.filter(assignee=request.user.username))
+    return issues
+
 def new_issue(request, id):
     repository = get_object_or_404(Repository, id=id)
     users = User.objects.all()

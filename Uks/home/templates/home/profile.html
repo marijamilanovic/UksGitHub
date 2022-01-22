@@ -32,110 +32,29 @@
         </div>
     </div>
     
-    <!-- Nav tabs -->
-    <ul class="nav nav-tabs" style="margin-left: 350px;">
-        <li class="nav-item">
-            {% block navRepository %}
-            <a class="nav-link active" data-toggle="tab" href="#repositories">Repositories</a>
-            {% endblock %}
-        </li>
-        <li class="nav-item">
-            {% block navIssue %}
-            <a class="nav-link" data-toggle="tab" href="#issues">Issues</a>
-            {% endblock %}
-        </li>
-        <li class="nav-item">
-            {% block navProject %}
-            <a class="nav-link" data-toggle="tab" href="#projects">Projects</a>
-            {% endblock %}
-        </li>
-        {% if request.user.is_superuser%}
+
+    <div style="margin-left: 300px;" class="elements">
+      <ul class="nav">
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page">Code</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'all_repositories' %}">Repositories</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'all_issues' %}">Issues</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'project:all_projects' %}">Projects</a>
+          </li>
+          {% if request.user.is_superuser %}
             <li class="nav-item">
-                {% block navUser %}
-                <a class="nav-link" data-toggle="tab" href="#users">Users</a>
-                {% endblock %}
+                <a class="nav-link" href="{% url 'all_users' %}">Users</a>
             </li>
-        {% endif %}
-    </ul>
-
-    <!-- Tab panes -->
-    <div class="tab-content" id="repositories" style="margin-left: 350px;">
-        {% block tabRepository %}
-        <a  href="{% url 'newRepository' %}" style="margin-left: 770px; margin-top: 25px;" type="button" class="btn btn-success" >New repository</a> 
-        <div class="tab-pane container active" id="repositories">
-            {% if my_repositories %}
-                {% for repo in my_repositories %}
-                    <a  class="nav-link" href="{% url 'repository' id=repo.id %}">{{repo.creator_id}} / {{repo.name}}</a>
-                {% endfor %}
-            {% endif %}
-        </div>
-        {% endblock %}
-
-        {% block tabIssue %}
-        <div class="tab-pane container fade" id="issues">
-            <table class="table">
-                <tbody>
-                    {% for issue in my_issues %}
-                        <tr>
-                            <td>
-                                <a  class="nav-link" href="{% url 'view_issue' id=issue.id %}">{{issue.issue_title}}</a>
-                                <small style="margin-left: 15px;color: gray;">
-                                    opened by <b>{{issue.opened_by}}</b> and assignee to <b>{{issue.assignee}}</b>
-                                </small>
-                            </td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-        {% endblock %}
-
-        {% block tabProject %}
-        <div class="tab-pane container fade" id="projects">
-            Space for projects
-        </div>
-        {% endblock %}
-
-        {% block tabUser %}
-        <div class="tab-pane container fade" id="users">
-            <table class="table">
-                <tbody>
-                    {% for user in all_users %}
-                        <tr>
-                            <td>
-                                <small style="margin-left: 15px;color: gray;">
-                                    Name:  <b>{{user.first_name}}</b>
-                                </small>
-                            </td>
-                            <td>
-                                <small style="margin-left: -25px;color: gray;">
-                                    Surname: <b>{{user.last_name}}</b>
-                                </small>
-                            </td>
-                            <td>
-                                <small style="margin-left: -25px;color: gray;">
-                                    Email: <b>{{user.email}}</b>
-                                </small>
-                            </td>
-                            <td>
-                                <small style="margin-left: -25px;color: gray;">
-                                    Username: <b>{{user.username}}</b>
-                                </small>
-                            </td>
-                            <td>
-                                <a  href="{% url 'go_to_edit_user' id=user.id %}" style="margin-left: 200px; " type="button" class="btn btn-success" >Edit</a> 
-                                <a  href="{% url 'delete_user' id=user.id %}" style="margin-left: 20px; " type="button" class="btn btn-success" >Delete</a> 
-                            </td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-        {% endblock %}
-        
-
-    </div>
-
-    {% endblock %}
+          {% endif %}
+        </ul>
+        {% block page_content %} {%endblock%} 
+    </div>  
+      {%endblock%}  
 </body>
 

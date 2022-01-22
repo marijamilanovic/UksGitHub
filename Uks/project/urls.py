@@ -6,4 +6,6 @@ from . import views
 
 app_name = "project"
 
-urlpatterns = [] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+urlpatterns = [
+    path('all_projects', views.all_projects, name = 'all_projects')
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

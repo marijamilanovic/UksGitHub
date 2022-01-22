@@ -1,0 +1,23 @@
+{% extends 'home/profile.html' %}
+{% block page_content  %}
+<div class="tab-pane container" id="projects">
+    <table class="table">
+        <tbody>
+            {% if all_projects %}
+                {% for project in all_projects %}
+                    <tr>
+                        <td>
+                            <a  class="nav-link" href="{% url 'view_issue' id=issue.id %}">{{issue.issue_title}}</a>
+                            <small style="margin-left: 15px;color: gray;">
+                                name <b>{{project.name}}</b>
+                            </small>
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% else %}
+                <p>There are no projects yet.</p>
+            {% endif %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

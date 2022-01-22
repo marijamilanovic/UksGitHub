@@ -14,5 +14,6 @@ urlpatterns = [
     path('update-issue/<int:id>', views.update_issue, name='update_issue'),
     path('delete-issue/<int:id>', views.delete_issue, name='delete_issue'),
     path('view-found-issue/<int:id>', views.view_found_issue, name='view_found_issue'),
+    path('all_issues', views.all_issues, name = 'all_issues'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 

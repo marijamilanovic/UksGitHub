@@ -8,7 +8,8 @@ from . import views
 
 urlpatterns = [
     path('<int:id>', views.index, name='repository'),
-    path('newRepository/', views.newRepository, name='newRepository'),
+    path('newRepository', views.newRepository, name='newRepository'),
+    path('all_repositories', views.all_repositories, name = 'all_repositories'),
     path('addRepository/', views.addRepository, name = 'addRepository'),
     path('editRepository/', views.editRepository, name = 'editRepository'),
     path('transferToEditRepository/<int:id>', views.transferToEditRepository, name='transferToEditRepository'),
