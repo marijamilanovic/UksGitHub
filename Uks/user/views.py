@@ -248,3 +248,7 @@ def delete_user(request, id):
     user = User.objects.get(id = id)
     user.delete()
     return redirect("../home/profile")
+
+def all_users(request):
+    users = User.objects.all()
+    return render(request, "all_users.html",{"all_users":users})

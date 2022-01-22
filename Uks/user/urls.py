@@ -18,6 +18,7 @@ urlpatterns = [
     path('go_to_registration/', views.go_to_registration, name = 'go_to_registration'),
     path('/edit_user/<int:id>', views.edit_user, name = 'edit_user'),
     path('/go_to_edit_user/<int:id>', views.go_to_edit_user, name = 'go_to_edit_user'),
-    path('/delete_user/<int:id>', views.delete_user, name = 'delete_user')
+    path('/delete_user/<int:id>', views.delete_user, name = 'delete_user'),
+    path('all_users', views.all_users, name = 'all_users')
 ]
 

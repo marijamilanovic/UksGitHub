@@ -44,8 +44,9 @@ def get_issues_by_repo(request, id):
     repository = get_object_or_404(Repository, id=id)
     issues = Issue.objects.filter(repository = repository)
     return issues
+
 def newRepository(request):
-    return render(request, "repository/newRepository.html", {})
+    return render(request, "repository/newRepository.html")
 
 def addRepository(request):
     errorTitle = None
@@ -60,7 +61,7 @@ def addRepository(request):
             newRepository = Repository(name = name, status = status, creator = creator)
             newRepository.save()
             newRepository.developers.add(creator)
-    return redirect("../../home/")
+    return redirect("all_repositories")
 
 def transferToEditRepository(request,id):
     repo = Repository.objects.get(id = id)
@@ -90,3 +91,10 @@ def get_my_pullrequests(request, id):
     repository = get_object_or_404(Repository, id=id)
     pullrequests = Pullrequest.objects.all().filter(prRepository=repository)
     return pullrequests
+
+def all_repositories(request):
+    #prikazuju se samo koje je kreirao
+    #koristi se na profilnoj stranici
+    #treba obratiti paznju i na one gde je on developer
+    all_repositories = Repository.objects.all().filter(creator = request.user)
+    return render(request, 'repository/all_repositories.html',{'all_repositories':all_repositories})
