@@ -14,15 +14,18 @@ from .models import Branch
 
 
 
-def createBranch(request):
+def createBranch(request, id):
     form = BranchForm()
 
     if request.method == 'POST':                            #Provera da li je POST
         #print('FORM DATA:', request.POST)                   #Print forme - radi provere
         form = BranchForm(request.POST)                     
         if form.is_valid():                                 #Validacija polja forme
-            form.save()                                     #Cuvanje u bazi
-            return redirect('branch:branchList')
+            branch = Branch.objects.create(
+                name = request.POST['name'],
+                repository = Repository.objects.get(pk = id)
+            )                                                #Cuvanje u bazi
+            return redirect('branch:repoBranchList', id = id)
         
     context = {'form': form}
     return render(request, "branch/createBranch.html", context)

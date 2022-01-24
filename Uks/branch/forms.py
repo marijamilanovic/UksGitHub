@@ -8,4 +8,4 @@ from .models import Branch
 class BranchForm(ModelForm):
     class Meta:
         model = Branch
-        fields = ['name', 'repository']
+        fields = ['name']
