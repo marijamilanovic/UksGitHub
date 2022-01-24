@@ -7,9 +7,9 @@ from . import views
 app_name = "branch"
 
 urlpatterns = [
-    path('createBranch', views.createBranch, name='newBranch'),
+    path('createBranch/<int:id>', views.createBranch, name='newBranch'),
     path('branchList', views.branchList, name='branchList'),
     path('deleteBranch/<int:id>', views.deleteBranch, name='deleteBranch'),
-
+    path('repoBranchList/<int:id>', views.repoBranchList, name='repoBranchList'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 

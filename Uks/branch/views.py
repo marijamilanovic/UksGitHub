@@ -1,10 +1,12 @@
 from multiprocessing import context
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 
 from django.contrib.auth.decorators import login_required
 
 from django.http import HttpResponse
 from django.template import loader
+
+from .models import Repository
 
 from .forms import BranchForm
 
@@ -37,6 +39,16 @@ def branchList(request):
 def deleteBranch(request, id):
     Branch.objects.get(pk=id).delete()
     return redirect('branch:branchList')
+
+
+def repoBranchList(request, id):
+    repo = get_object_or_404(Repository, id=id)
+    branch_list = Branch.objects.all().filter(repository=repo)
+    context = {
+        'branch_list': branch_list,
+        'repository': repo,
+    }
+    return render(request, "branch/repoBranchList.html", context)
 
     
 

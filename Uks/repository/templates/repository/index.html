@@ -17,6 +17,9 @@
         <a class="nav-link active" aria-current="page">Code</a>
       </li>
       <li class="nav-item">
+        <a class="nav-link" href="{% url 'branch:repoBranchList' id=repository.id  %}">Branches</a>
+      </li>
+      <li class="nav-item">
         <a class="nav-link" href="{% url 'issues' id=repository.id  %}">Issues</a>
       </li>
       <li class="nav-item">
