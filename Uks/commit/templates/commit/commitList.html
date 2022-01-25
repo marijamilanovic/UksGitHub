@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'repository/index.html' %}
 {% load static %}
 
 {% load crispy_forms_tags %}
@@ -6,7 +6,7 @@
 
 <body>
     
-{% block content %}
+{% block page_content %}
 <div class="table_content">
 <link rel="stylesheet" type="text/css" href="{% static 'commit/style.css' %}">
 <table id="commitTable" class="table table-striped table-bordered table-hover table-sm text-center" cellspacing="0" width="100%">

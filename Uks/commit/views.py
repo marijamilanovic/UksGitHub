@@ -45,10 +45,12 @@ def createCommit(request):
     return render(request, "commit/createCommit.html", context)
 
 
-def commitList(request):
-    commit_list = Commit.objects.all() 
+def commitList(request, id):
+    branch = get_object_or_404(Branch, id=id)
+    commit_list = Commit.objects.all().filter(branch = branch) 
     context = {
         'commit_list': commit_list,
+        'repository': branch.repository,
     }
     return render(request, "commit/commitList.html", context)
 
