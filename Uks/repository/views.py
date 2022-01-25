@@ -12,6 +12,7 @@ from django.contrib.auth.models import User
 from pullrequest.models import Pullrequest
 from milestone.models import Milestone
 from issue.models import Issue
+from branch.models import Branch
 
 
 @login_required(login_url="login")
@@ -61,6 +62,11 @@ def addRepository(request):
             newRepository = Repository(name = name, status = status, creator = creator)
             newRepository.save()
             newRepository.developers.add(creator)
+            branch = Branch.objects.create(
+                name = 'master',
+                is_default = True,
+                repository = Repository.objects.get(pk = newRepository.id)
+            )  
     return redirect("all_repositories")
 
 def transferToEditRepository(request,id):
