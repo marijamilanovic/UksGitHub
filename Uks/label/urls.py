@@ -8,5 +8,7 @@ from . import views
 
 urlpatterns = [
     path('labels/<int:id>', views.labels, name='labels'),
+    path('newLabel/<int:id>', views.newLabel, name='newLabel'),
+    path('addLabel/', views.addLabel, name='addLabel'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
