@@ -1,3 +1,4 @@
+from xml.etree.ElementTree import Comment
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import Pullrequest, Repository, Branch
 from datetime import date
@@ -20,7 +21,6 @@ def addPullrequest(request):
         source = get_object_or_404(Branch, id = request.POST['branch_source_id'] )
         target = get_object_or_404(Branch, id = request.POST['branch_target_id'] )
         name = target.name
-
         newPullrequest = Pullrequest(name = name, status = 'Opened', created = created, prRepository = prRepository, source = source, target = target)
         newPullrequest.save()
     
@@ -29,7 +29,8 @@ def addPullrequest(request):
 def updatePullrequestPage(request, id):
     pullrequest = get_object_or_404(Pullrequest, id = id)
     repository = get_object_or_404(Repository, id = pullrequest.prRepository.id)
-    return render(request, "updatePullrequest.html", {"pullrequest": pullrequest, "repository": repository})
+    comments = pullrequest.comments.all()
+    return render(request, "updatePullrequest.html", {"pullrequest": pullrequest, "repository": repository, "comments":comments})
 
 
 def changeStatusPullrequest(request, id):
@@ -40,3 +41,4 @@ def changeStatusPullrequest(request, id):
         pullrequest.status = 'Closed'
     pullrequest.save()
     return redirect('/pullrequest/pullrequests/'+str(pullrequest.prRepository.id))
+
