@@ -4,7 +4,9 @@ from django.conf.urls.static import static
 
 from . import views
 
-app_name = "label"
+#app_name = "label"
 
-urlpatterns = [] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+urlpatterns = [
+    path('labels/<int:id>', views.labels, name='labels'),
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
