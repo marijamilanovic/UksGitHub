@@ -16,6 +16,7 @@ from .models import Branch
 
 def createBranch(request, id):
     form = BranchForm()
+    repository = get_object_or_404(Repository, id=id)
 
     if request.method == 'POST':                            #Provera da li je POST
         #print('FORM DATA:', request.POST)                   #Print forme - radi provere
@@ -27,7 +28,10 @@ def createBranch(request, id):
             )                                                #Cuvanje u bazi
             return redirect('branch:repoBranchList', id = id)
         
-    context = {'form': form}
+    context = {
+        'form': form,
+        'repository': repository,
+        }
     return render(request, "branch/createBranch.html", context)
 
 

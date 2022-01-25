@@ -13,8 +13,9 @@ import hashlib
 from repository.models import Repository
 
 
-def createCommit(request):
+def createCommit(request, id):
     form = CommitForm()
+    branch = get_object_or_404(Branch, id=id)
 
     if request.method == 'POST':                            
         #print('FORM DATA:', request.POST)                   
@@ -25,7 +26,7 @@ def createCommit(request):
 
             commit = Commit.objects.create(
                 message = request.POST['message'],
-                branch = Branch.objects.get(pk = request.POST['branch']),
+                branch = Branch.objects.get(pk = id),
                 date_time = datetime.now(),
                 hash_id = " ", 
                 author = User.objects.get(pk = request.user.id)
@@ -39,9 +40,13 @@ def createCommit(request):
 
             commit.save()
 
-            return redirect('commit:commitList')
+            return redirect('commit:commitList', id=branch.id)
         
-    context = {'form': form}
+    context = {
+        'form': form,
+        'repository': branch.repository,
+        'branch': branch,
+    }
     return render(request, "commit/createCommit.html", context)
 
 
@@ -51,13 +56,15 @@ def commitList(request, id):
     context = {
         'commit_list': commit_list,
         'repository': branch.repository,
+        'branch': branch,
     }
     return render(request, "commit/commitList.html", context)
 
 
 def deleteCommit(request, id):
+    commit = get_object_or_404(Commit, id=id)
     Commit.objects.get(pk=id).delete()
-    return redirect('commit:commitList')
+    return redirect('commit:commitList', id=commit.branch.id)
 
 def viewFoundCommit(request, id):
     commit = get_object_or_404(Commit, id = id)
