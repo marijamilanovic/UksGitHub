@@ -46,3 +46,14 @@ def editLabel(request, id):
         labelsUpdated = labels(request, repository.id)
         
     return redirect('/label/labels/'+ str(repository.id))
+
+def deleteLabel(request, id):
+    label = get_object_or_404(Label, id = id)
+    all_repos = Repository.objects.all()
+    for r in all_repos:
+        if(r.id == label.repository.id):
+            repository = r
+    label.delete()
+    labelsUpdated = Label.objects.all().filter(repository=label.repository)
+    
+    return redirect('/label/labels/'+ str(repository.id))

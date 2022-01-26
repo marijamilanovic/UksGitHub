@@ -11,6 +11,7 @@ urlpatterns = [
     path('newLabel/<int:id>', views.newLabel, name='newLabel'),
     path('addLabel/', views.addLabel, name='addLabel'),
     path('getLabelById/<int:id>', views.getLabelById, name='getLabelById'),
-    path('editLabel/<int:id>', views.editLabel, name='editLabel')
+    path('editLabel/<int:id>', views.editLabel, name='editLabel'),
+    path('deleteLabel/<int:id>', views.deleteLabel, name='deleteLabel'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 

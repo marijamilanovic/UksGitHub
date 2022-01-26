@@ -32,7 +32,7 @@
                 <a href="{% url 'getLabelById' id=l.id %}" class="link" style="color: black;" >Edit</a>
                 </div>
                 <div style="margin-top: -25px; margin-left: 1000px;">
-                <a href="#" class="link" style=" color: black;">Delete</a>
+                <a href="{% url 'deleteLabel' id=l.id %}" class="link" style=" color: black;">Delete</a>
                 </div>
                 </li>
                 {% endfor %}
