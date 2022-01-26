@@ -1,0 +1,48 @@
+{% extends 'repository/index.html' %}
+{% load static %}
+{% load bootstrap_icons %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    {%block page_content%}
+    {% if labels %}
+    <div class="tab-pane container active" id="milestones" style="margin-right: 180px;">
+        <a href="{% url 'newLabel' id=repository.id %}" style="margin-left: 1000px; margin-top: -35px;" type="button" class="btn btn-success" >New label</a>
+        <div class="card" style="width: 1100px; margin-top: 15px;">
+            <div class="card-header">
+                {% bs_icon 'tag' size='1.3em' %}  Labels 
+            </div>
+            <ul class="list-group list-group-flush">
+                {% for l in labels %}   
+                <li class="list-group-item" style="height: 65px;"> 
+                <span class="badge badge-pill d-inline-flex align-items-center justify-content-center  "
+                 style="margin-top: 5px; margin-left: 5px; font-size: 0.9em;  height: 30px;  
+                 background-color:{{l.color}}">{{l.name}}
+                 </span>
+                <label style="margin-left: 250px; margin-top: -30px;">{{l.description}}</label>
+                <div style="margin-left: 955px; margin-top: -30px;">
+                <a href="{% url 'getLabelById' id=l.id %}" class="link" style="color: black;" >Edit</a>
+                </div>
+                <div style="margin-top: -25px; margin-left: 1000px;">
+                <a href="{% url 'deleteLabel' id=l.id %}" class="link" style=" color: black;">Delete</a>
+                </div>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% else %}
+    <p>There are no labels yet.</p>
+    {% endif %}
+    </div>
+    {% endblock %}
+   
+</body>
+</html>

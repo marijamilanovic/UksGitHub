@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django_bootstrap_icons',
     'crispy_forms',
+    'colorfield',
 ]
 
 MIDDLEWARE = [
