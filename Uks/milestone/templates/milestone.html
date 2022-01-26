@@ -27,19 +27,30 @@
 
         <div class="card" style="width: 870px;">
             <div class="card-header" style="background-color: #d7f0db;">
-                {% bs_icon 'record-circle' size='1em' %}<a style="color: black;" href="#" >Open </a>
+                {% bs_icon 'record-circle' size='1em' %}<a style="color: black;" href="#" id="open" >Open </a>
                 <span style="margin-left: 15px;"></span>
-                {% bs_icon 'check-circle' size='1em' %}<a style="color: black;" href="#" >Closed </a>
+                {% bs_icon 'check-circle' size='1em' %}<a style="color: black;" href="#" id="close" >Closed </a>
             </div>
             <ul class="list-group list-group-flush">
                 {% for i in issues %} 
                 {% if i.state == 'Opened' %}
+                <div class="opened" id="Div1">
                 <li class="list-group-item" style="height: 95px;"> 
-                    <a  class="nav-link" href="{% url 'view_found_issue' id=i.id %}">{{i.issue_title}}</a>
+                    <a style="margin-left: -4px;" class="nav-link" href="{% url 'view_found_issue' id=i.id %}">{% bs_icon 'record-circle' size='1em' %}{{i.issue_title}}</a>
                     <small style="margin-left: 15px;color: gray;">
-                        opened by <b>{{i.opened_by}}</b> and assignee to <b>{{i.assignee}}</b>
+                        opened by <b>{{i.opened_by}}</b> and assigned to <b>{{i.assignee}}</b>
                     </small>
                 </li>
+                </div>
+                {% else %}
+                <div class="closed" id="Div2" style="display: none;">
+                <li class="list-group-item" style="height: 95px;"> 
+                    <a style="margin-left: -4px;" class="nav-link" href="{% url 'view_found_issue' id=i.id %}">{% bs_icon 'check-circle' size='1em' %}{{i.issue_title}}</a>
+                    <small style="margin-left: 15px;color: gray;">
+                        opened by <b>{{i.opened_by}}</b> and assigned to <b>{{i.assignee}}</b>
+                    </small>
+                </li>
+                </div>
                 {% endif %}
                 {% endfor %}
             </ul>
@@ -50,5 +61,31 @@
         {% endif %}
         </div>
         {%endblock%}
+
+    {% block javascript %}
+    <script>
+        var el = document.getElementById('open');
+        el.onclick = switchVisible;
+
+        var el2 = document.getElementById('close');
+        el2.onclick = proba;
+
+        function switchVisible() {
+            if (document.getElementById('Div1')) {
+                document.getElementById('Div1').style.display = 'block';
+                document.getElementById('Div2').style.display = 'none';
+                document.getElementById('open').style.color = "blue";;
+            }
+        }
+
+        function proba(){
+            if (document.getElementById('Div2')) {
+                document.getElementById('Div2').style.display = 'block';
+                document.getElementById('Div1').style.display = 'none';
+                document.getElementById('close').style.color = "blue";
+            }
+        }
+    </script>
+    {% endblock %}
 </body>
 </html>
