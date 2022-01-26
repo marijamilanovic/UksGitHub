@@ -24,3 +24,25 @@ def addLabel(request):
         newLabel = Label(name = name, description = description, color = color, repository = repository)
         newLabel.save()    
     return redirect('/label/labels/'+ str(repository.id))
+
+def getLabelById(request, id):
+    label = get_object_or_404(Label, id = id)
+    repository = get_object_or_404(Repository, id = label.repository.id)
+    labelColor = label.color
+    print(labelColor.lower())
+    return render(request, "editLabel.html", {"label": label, "repository": repository, "color": labelColor.lower()})
+
+def editLabel(request, id):
+    if request.method == 'POST':
+        label = get_object_or_404(Label, id = id)
+        label.name = request.POST['name']
+        label.description = request.POST['description']
+        label.color = request.POST['color']
+        all_repos = Repository.objects.all()
+        for r in all_repos:
+            if(r.id == label.repository.id):
+                repository = r
+        label.save()
+        labelsUpdated = labels(request, repository.id)
+        
+    return redirect('/label/labels/'+ str(repository.id))

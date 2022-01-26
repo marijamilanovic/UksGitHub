@@ -69,6 +69,5 @@ def updateMilestone(request, id):
             if(r.id == milestone.repository.id):
                 repository = r
         milestone.save()
-        milestonesUpdated = milestones(request, repository.id)
         
     return redirect('/milestone/milestones/'+ str(repository.id))
