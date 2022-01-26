@@ -21,10 +21,10 @@
                 {% bs_icon 'tag' size='1.3em' %}  Labels 
             </div>
             <ul class="list-group list-group-flush">
-                {% for l in labels %}  
+                {% for l in labels %}   
                 <li class="list-group-item" style="height: 65px;"> 
                 <span class="badge badge-pill d-inline-flex align-items-center justify-content-center  "
-                 style="margin-top: 5px; margin-left: 5px; font-size: 0.9em;  height: 30px; width: 130px; 
+                 style="margin-top: 5px; margin-left: 5px; font-size: 0.9em;  height: 30px;  
                  background-color:{{l.color}}">{{l.name}}
                  </span>
                 <label style="margin-left: 250px; margin-top: -30px;">{{l.description}}</label>
