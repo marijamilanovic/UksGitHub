@@ -1,0 +1,54 @@
+{% extends 'repository/index.html' %}
+{% load static %}
+{% load bootstrap_icons %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    {%block page_content%}
+        <div class="tab-pane container active" id="milestones" style="margin-right: 60px;">
+            <a href="{% url 'new_issue' id=repository.id %}" style="margin-left: 763px; margin-top: -25px;" type="button" class="btn btn-success" >New issue</a>
+        {% if milestone %}
+        <h3>{{milestone.title}}</h3>
+        <div class="progress" style="width: 350px; margin-top: 10px;">
+            <div class="progress-bar bg-success" role="progressbar" style="width: 45%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+        </div>
+        <p style="margin-top: 10px;" class="card-text">{% bs_icon 'calendar-check' size='1em' %} Due by: {{milestone.due_date}} 
+            <span style="margin-left: 20px;"></span>
+            45% complete
+        </p>
+
+        <div class="card" style="width: 870px;">
+            <div class="card-header" style="background-color: #d7f0db;">
+                {% bs_icon 'record-circle' size='1em' %}<a style="color: black;" href="#" >Open </a>
+                <span style="margin-left: 15px;"></span>
+                {% bs_icon 'check-circle' size='1em' %}<a style="color: black;" href="#" >Closed </a>
+            </div>
+            <ul class="list-group list-group-flush">
+                {% for i in issues %} 
+                {% if i.state == 'Opened' %}
+                <li class="list-group-item" style="height: 95px;"> 
+                    <a  class="nav-link" href="{% url 'view_found_issue' id=i.id %}">{{i.issue_title}}</a>
+                    <small style="margin-left: 15px;color: gray;">
+                        opened by <b>{{i.opened_by}}</b> and assignee to <b>{{i.assignee}}</b>
+                    </small>
+                </li>
+                {% endif %}
+                {% endfor %}
+            </ul>
+          </div>
+           
+        {% else %}
+        <p>There are no milestones yet.</p>
+        {% endif %}
+        </div>
+        {%endblock%}
+</body>
+</html>
