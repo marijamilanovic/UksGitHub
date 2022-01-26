@@ -13,6 +13,17 @@
 </head>
 
 <body>
+    {% block navCode %}
+      <li class="nav-item">
+        <a class="nav-link active" style= "color: black;" id="code" aria-current="page">{% bs_icon 'code' size='1em' %} Code</a>
+      </li>
+    {% endblock %}
+
+    {% block navIssues %}
+      <li class="nav-item">
+        <a class="nav-link"  id="issues" style="border-bottom:3px solid darkviolet;color: black;" href="{% url 'issues' id=repository.id  %}">{% bs_icon 'record-circle' size='1em' %} Issues</a>
+      </li>
+    {% endblock %}
 
     {% block page_content %}
     <div class="tab-pane container active" id="issues">

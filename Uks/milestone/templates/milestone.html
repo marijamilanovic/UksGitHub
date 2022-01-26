@@ -12,6 +12,17 @@
 </head>
 
 <body>
+    {% block navCode %}
+    <li class="nav-item">
+      <a class="nav-link active" style=" color: black;" id="code" aria-current="page">{% bs_icon 'code' size='1em' %} Code</a>
+    </li>
+    {% endblock %}
+
+    {% block navMilestones %}
+      <li class="nav-item">
+        <a class="nav-link" id="milestones" style="border-bottom:3px solid darkviolet;color: black;" href="{% url 'milestones' id=repository.id  %}">{% bs_icon 'signpost' size='1em' %} Milestones</a>
+      </li>
+    {% endblock %}
     {%block page_content%}
         <div class="tab-pane container active" id="milestones" style="margin-right: 60px;">
             <a href="{% url 'new_issue' id=repository.id %}" style="margin-left: 763px; margin-top: -25px;" type="button" class="btn btn-success" >New issue</a>
@@ -47,7 +58,7 @@
                     {% endfor %}
 
             {% else %}
-            <p>There are no open issues yet.</p>
+            <p>There are no  issues yet.</p>
             {% endif %}
             </ul> 
         </div>
@@ -65,16 +76,13 @@
                     </li>
                     {% endif %}
                     {% endfor %}
-
-            {% else %}
-            <p>There are no closed issues yet.</p>
             {% endif %}
             </ul> 
         </div>
         </div>
            
         {% else %}
-        <p>There are no milestones yet.</p>
+        <p>There are no issues yet.</p>
         {% endif %}
         </div>
         {%endblock%}
@@ -82,13 +90,13 @@
     {% block javascript %}
     <script>
         var el = document.getElementById('open');
-        el.onclick = switchVisible;
+        el.onclick = opened;
         document.getElementById('open').style.color = "blue";
 
         var el2 = document.getElementById('close');
-        el2.onclick = proba;
+        el2.onclick = closed;
 
-        function switchVisible() {
+        function opened() {
             if (document.getElementById('Div1')) {
                 document.getElementById('Div1').style.display = 'block';
                 document.getElementById('Div2').style.display = 'none';
@@ -97,7 +105,7 @@
             }
         }
 
-        function proba(){
+        function closed(){
             if (document.getElementById('Div2')) {
                 document.getElementById('Div2').style.display = 'block';
                 document.getElementById('Div1').style.display = 'none';

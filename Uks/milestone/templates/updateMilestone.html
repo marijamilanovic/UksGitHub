@@ -1,5 +1,6 @@
 {% extends 'repository/index.html' %}
 {% load static %}
+{% load bootstrap_icons %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -12,6 +13,17 @@
 </head>
 
 <body>
+    {% block navCode %}
+    <li class="nav-item">
+      <a class="nav-link active" style=" color: black;" id="code" aria-current="page">{% bs_icon 'code' size='1em' %} Code</a>
+    </li>
+    {% endblock %}
+
+    {% block navMilestones %}
+      <li class="nav-item">
+        <a class="nav-link" id="milestones" style="border-bottom:3px solid darkviolet;color: black;" href="{% url 'milestones' id=repository.id  %}">{% bs_icon 'signpost' size='1em' %} Milestones</a>
+      </li>
+    {% endblock %}
 
     {% block page_content %}
     <div class="tab-pane container active" id="milestones">
