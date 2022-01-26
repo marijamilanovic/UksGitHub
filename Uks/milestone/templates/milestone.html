@@ -14,7 +14,7 @@
 <body>
     {% block navCode %}
     <li class="nav-item">
-      <a class="nav-link active" style=" color: black;" id="code" aria-current="page">{% bs_icon 'code' size='1em' %} Code</a>
+      <a class="nav-link active" style=" color: black;" id="code" href="{% url 'repository' id=repository.id %}" aria-current="page">{% bs_icon 'code' size='1em' %} Code</a>
     </li>
     {% endblock %}
 
