@@ -64,7 +64,7 @@ rel="stylesheet"
             <td>{{branch.name}}</td>
             <td>{{branch.repository}}</td>
             <td>{{branch.is_default}}</td>
-            <td><form action="{% url 'branch:deleteBranch' branch.id  %}" name="form"><button type="submit"><i class="bi bi-trash-fill"></i></button></form> </td>
+            <td><form action="{% url 'branch:deleteBranch' branch.id  %}" name="form"><button {% if branch.is_default %} hidden {% endif %} type="submit"><i class="bi bi-trash-fill"></i></button></form> </td>
             <td><form action="{% url 'branch:editBranch' branch.id  %}" name="form"><button type="submit"><i class="bi bi-pencil-square"></i></button></form> </td>
           </tr>
           {% endfor %}

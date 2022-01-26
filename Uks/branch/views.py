@@ -114,6 +114,9 @@ def editBranch(request, id):
     my_record = Branch.objects.get(pk=id)
     form = EditBranchForm(instance=my_record)
 
+    if branch.is_default:
+        form = BranchForm(instance=my_record)
+
     context = {
         'form': form,
         'repository': repo,
