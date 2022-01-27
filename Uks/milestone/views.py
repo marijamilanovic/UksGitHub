@@ -14,6 +14,8 @@ def milestones(request,id):
         if(m.repository.id == id):
             repositoryMilestones.append(m)
     repository = get_object_or_404(Repository, id=id)
+    # to do : dodati deo ako je due date prosao vec
+    # to do : procenat zavrsenosti milestone-a naci
     return render(request, 'milestones.html', {"milestones":repositoryMilestones, "repository":repository})
 
 def allMilestones(request):
@@ -75,5 +77,22 @@ def seeMilestone(request, id):
     repository = get_object_or_404(Repository, id = milestone.repository.id)
     #dobavi i issue od tog milestona
     issues = Issue.objects.all().filter(milestone=milestone.id)
+    # to do : naci procenat zavrsenosti milestone-a
+    closed_issues_count = 0
+    opened_issues_count = 0
+    for issue in issues:
+        #naci broj zatvorenih issuea
+        if (issue.state == 'Close'):
+            closed_issues_count += 1
+        else:
+            opened_issues_count += 1
+    issues_count = len(issues)
+    #proveri sta je ako nema issuea uopste => delilo bi se sa 0
+    if (len(issues) != 0):
+        percentage = (closed_issues_count * 100) / issues_count
+    else:
+        percentage = 0
+    print(percentage)
 
-    return render(request, "milestone.html", {"milestone": milestone, "repository": repository, "issues":issues})
+    return render(request, "milestone.html", {"milestone": milestone, "repository": repository, "issues":issues,
+     "percentage":percentage, "opened_issues_count":opened_issues_count, "closed_issues_count":closed_issues_count })
