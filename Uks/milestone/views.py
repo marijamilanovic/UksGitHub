@@ -2,6 +2,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from .models import Milestone
 from repository.models import Repository
 from issue.models import Issue
+from datetime import date
 
 def newMilestone(request, id):
     repository = get_object_or_404(Repository, id=id)
@@ -14,8 +15,9 @@ def milestones(request,id):
         if(m.repository.id == id):
             repositoryMilestones.append(m)
     repository = get_object_or_404(Repository, id=id)
-    # to do : dodati deo ako je due date prosao vec
-    # to do : procenat zavrsenosti milestone-a naci
+    for milestone in repositoryMilestones:
+        if(date.today() >= milestone.due_date):
+           print(milestone.due_date)
     return render(request, 'milestones.html', {"milestones":repositoryMilestones, "repository":repository})
 
 def allMilestones(request):
@@ -75,24 +77,6 @@ def updateMilestone(request, id):
 def seeMilestone(request, id):
     milestone = get_object_or_404(Milestone, id = id)
     repository = get_object_or_404(Repository, id = milestone.repository.id)
-    #dobavi i issue od tog milestona
     issues = Issue.objects.all().filter(milestone=milestone.id)
-    # to do : naci procenat zavrsenosti milestone-a
-    closed_issues_count = 0
-    opened_issues_count = 0
-    for issue in issues:
-        #naci broj zatvorenih issuea
-        if (issue.state == 'Close'):
-            closed_issues_count += 1
-        else:
-            opened_issues_count += 1
-    issues_count = len(issues)
-    #proveri sta je ako nema issuea uopste => delilo bi se sa 0
-    if (len(issues) != 0):
-        percentage = (closed_issues_count * 100) / issues_count
-    else:
-        percentage = 0
-    print(percentage)
 
-    return render(request, "milestone.html", {"milestone": milestone, "repository": repository, "issues":issues,
-     "percentage":percentage, "opened_issues_count":opened_issues_count, "closed_issues_count":closed_issues_count })
+    return render(request, "milestone.html", {"milestone": milestone, "repository": repository, "issues":issues })

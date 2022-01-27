@@ -29,18 +29,25 @@
         {% if milestone %}
         <h3>{{milestone.title}}</h3>
         <div class="progress" style="width: 350px; margin-top: 10px;">
-            <div class="progress-bar bg-success" role="progressbar" style="width: {{percentage}}%" aria-valuenow="{{percentage}}" aria-valuemin="0" aria-valuemax="100"></div>
+            <div class="progress-bar bg-success" role="progressbar" style="width: {{milestone.get_completed_percentage}}%" aria-valuenow="{{milestone.get_completed_percentage}}" aria-valuemin="0" aria-valuemax="100"></div>
         </div>
+        {% if milestone.due_date_passed %}
+        <p style="margin-top: 10px;" class="card-text">{% bs_icon 'exclamation-triangle' size='1em' %} Passed due: {{milestone.passed_days_count}} days ago 
+            <span style="margin-left: 20px;"></span>
+            <b>{{milestone.get_completed_percentage}}%</b> complete
+        </p>
+        {% else %}
         <p style="margin-top: 10px;" class="card-text">{% bs_icon 'calendar-check' size='1em' %} Due by: {{milestone.due_date}} 
             <span style="margin-left: 20px;"></span>
-            {{percentage}}% complete
+            <b>{{milestone.get_completed_percentage}}%</b> complete
         </p>
+        {% endif %}
 
         <div class="card" style="width: 870px;">
             <div class="card-header" style="background-color: #d7f0db;">
-                {% bs_icon 'record-circle' size='1em' %} <a style="color: darkgray" href="#" id="open" > {{opened_issues_count}} Open </a>
+                {% bs_icon 'record-circle' size='1em' %} <a style="color: darkgray" href="#" id="open" > {{milestone.get_opened_issues_number}} Open </a>
                 <span style="margin-left: 15px;"></span>
-                {% bs_icon 'check-circle' size='1em' %}<a style="color:darkgray;" href="#" id="close" >{{closed_issues_count}} Closed </a>
+                {% bs_icon 'check-circle' size='1em' %}<a style="color:darkgray;" href="#" id="close" >{{milestone.get_closed_issues_number}} Closed </a>
             </div>
 
             {% if issues %}

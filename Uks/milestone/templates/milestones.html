@@ -42,8 +42,20 @@
             {% endif %}
             <div class="card-body">
             <a  style="color: black; font-size: x-large;" href="{% url 'seeMilestone' id=m.id %}" class="card-title">{{m.title}}</a>
-            <p class="card-text">{{m.description}}</p>
+            <div class="progress" style="width: 600px; margin-top: -20px; margin-left: 350px;">
+              <div class="progress-bar bg-success" role="progressbar" style="width: {{m.get_completed_percentage}}%" aria-valuenow="{{m.get_completed_percentage}}" aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
+            <div style="margin-left: 350px; margin-top: 10px;" class="row">
+            <p> <b>{{m.get_completed_percentage}}%</b>  complete</p>
+            <a href="#" style="margin-left: 20px; color: black;" > <b>{{m.get_opened_issues_number}}</b> open</a>
+            <a href="#" style="margin-left: 20px; color: black;"> <b>{{m.get_closed_issues_number}}</b> closed </a>
+            </div>
+            <p class="card-text" style="margin-top: -40px;">{{m.description}}</p>
+            {% if m.due_date_passed %}
+            <p class="card-text">{% bs_icon 'exclamation-triangle' size='1em' %} Passed due: {{m.passed_days_count}} days ago</p>
+            {% else %}
             <p class="card-text">{% bs_icon 'calendar-check' size='1em' %} Due by: {{m.due_date}}</p>
+            {% endif %}
             <a href="{% url 'getMilestoneById' id=m.id %}" class="link-primary">Edit</a>
             <a href="{% url 'deleteMilestone' id=m.id %}" class="link-primary" style="margin-left: 10px;">Delete</a>
             </div>
