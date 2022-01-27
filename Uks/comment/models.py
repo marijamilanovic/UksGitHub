@@ -22,11 +22,13 @@ EMOJI_PICKER = [
 
 class Emoji(models.Model):
     name = models.CharField(max_length=20, choices=EMOJI_PICKER, default=HEART)
+    reaction_creator =  models.ForeignKey(to=User, null=True, on_delete=models.CASCADE)
+
 
 class Comment(models.Model):
     author = models.ForeignKey(to=User, null=True, on_delete=models.CASCADE)
     content = models.TextField(default='', blank= True)
     created_date = models.DateField(null=True, blank=True) 
-    emoji = models.ManyToManyField(Emoji)
+    emojis = models.ManyToManyField(Emoji)
 
 

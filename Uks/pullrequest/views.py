@@ -1,6 +1,7 @@
 from xml.etree.ElementTree import Comment
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import Pullrequest, Repository, Branch
+from comment.models import EMOJI_PICKER
 from datetime import date
 
 def pullrequests(request, id):

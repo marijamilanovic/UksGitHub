@@ -8,7 +8,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" type="text/css" href="{% static 'style.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'home/style.css' %}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
 </head>
 
@@ -19,7 +19,7 @@
     <h2 style="margin-top: -20px;">{{pullrequest.name}}</h2>
     {% if pullrequest.status == 'Opened' %}
         <div class="card-header" style="background-color: #d7f0db;">
-            {% bs_icon 'bezier2' size='1em' color='green' %}<span style="padding-left:20px; color: green;"> {{pr.status}}</span> <span style="padding-left:15px">merging commits into {{pullrequest.target.name}} from {{pullrequest.source.name}}</span>  
+            <span style="padding-left:20px; color: green;"> {{pr.status}}</span> <span style="padding-left:15px">merging commits into {{pullrequest.target.name}} from {{pullrequest.source.name}}</span>  
     </div>
     {% elif pullrequest.status == 'Merged' %}
         <div class="card-header" style="background-color: #e9d7f0;">
@@ -47,16 +47,49 @@
             <div class="tab-pane container active" id="conversation"> 
                 {% for c in comments %}
                 <div class="card border-secondary mb-3" style="margin-top: 15px;  max-width: 1000px;">
-                    <h7>{{request.user.get_username}} commented {{c.created_date}}</h7>
-                    <div class="card-header" style="background-color: #d7f0db;">
-                        {{c.content}}
-                    </div>
+                    <p style="margin-top: 10px; margin-left: 10px;">  {% bs_icon 'person-circle' size='1.5em'%} <b>{{c.author.username}}</b> commented {{c.created_date}}</p>
+                        {% if pullrequest.creator.username == c.author.username %}
+                            <span style="margin-top: -42px; margin-left: 780px;"><p style="border:1px; border-style:solid; border-color:#cfe2e2; width: 90px; height: 30px; border-radius: 10px; text-align: center;">Author</p></span>
+                        {% endif %}
+                        <div class="popover__wrapper">
+                        <a href="#" style="width: 40px; margin-left: 880px; background-color: transparent; border-color: transparent;">
+                             {% bs_icon 'emoji-smile' size='1.5em' color='gray' %} 
+                        </a>
+                        <div class="popover__content">
+                            <form method="POST" action="{% url 'addEmoji' id=c.id pr_id=pullrequest.id %}">
+                            {% csrf_token %}
+                            <p style="text-align: center;">Pick your reaction</p>
+                            <hr>
+                            <table>
+                                <tr class="emoji_table">
+                                    <th class="emoji_table"><button name="emoji" value="129505" href="{% url 'addEmoji' id=c.id pr_id=pullrequest.id%}" style="color: white;" class="emoji_style">&#129505;</button></th>
+                                    <th class="emoji_table"><button name="emoji" value="128640" href="{% url 'addEmoji' id=c.id pr_id=pullrequest.id%}" style="color: white;" class="emoji_style">&#128640;</button></th>
+                                    <th class="emoji_table"><button name="emoji" value="128577" href="{% url 'addEmoji' id=c.id pr_id=pullrequest.id%}" style="color: white;" class="emoji_style">&#128577;</button></th>
+                                    <th class="emoji_table"><button name="emoji" value="128512" href="{% url 'addEmoji' id=c.id pr_id=pullrequest.id%}" style="color: white;" class="emoji_style">&#128512;</button></th>
+                                </tr>
+                                <tr>
+                                    <th class="emoji_table"><button name="emoji" value="128077" href="{% url 'addEmoji' id=c.id pr_id=pullrequest.id%}" style="color: white;" class="emoji_style">&#128077;</button></th>
+                                    <th class="emoji_table"><button name="emoji" value="128064" href="{% url 'addEmoji' id=c.id pr_id=pullrequest.id%}" style="color: white;" class="emoji_style">&#128064;</button></th>
+                                    <th class="emoji_table"><button name="emoji" value="127881" href="{% url 'addEmoji' id=c.id pr_id=pullrequest.id%}" style="color: white;" class="emoji_style">&#127881;</button></th>
+                                    <th class="emoji_table"><button name="emoji" value="128078" href="{% url 'addEmoji' id=c.id pr_id=pullrequest.id%}" style="color: white;" class="emoji_style">&#128078;</button></th>
+                                </tr>
+                              </table>
+                        </form>
+                        </div>
+                        </div>
+                        <div class="card-header" style="background-color: #d7f0db; margin-top: 5px;">
+                            {{c.content}}
+                            <hr style="border-color: white;">
+                            {% for e in c.emojis.all %}
+                            <tr><a type="button" href="#" style="color: white;" class="emoji_style">&#{{e.name}};</a></th></tr>
+                             {% endfor %}
+                        </div>
                 </div>
                 {% endfor %}
             </div>
             <div class="tab-pane container fade" id="commits">Commits history.</div>
         </div>
-    </div>   
+    </div>
         <form style="margin-top: 20px; margin-left: -12px;" method="POST" action="{% url 'addComment' id=pullrequest.id %}"> 
             {% csrf_token %}
             <hr>
@@ -71,39 +104,40 @@
                     <span style="padding-left:35px;">You are all set—the <b style="background-color: rgb(219, 216, 216);">{{pullrequest.source.name}} </b> branch can be safely deleted.</span><a href="#" style="margin-left: 20px; margin-top: 10px; width: 150px; margin-bottom: 10px;" type="button" class="btn btn-secondary">Delete branch</a>
                 </div>
             {% else %}
-                <div class="card-header" style="border-color: red;">
+                <div class="card-header" style="margin-left: 13px; border-color: red; width: 1100px;">
                     {% bs_icon 'pause' size='1em' color='red' %} <span style="padding-left:15px;">Closed with unmerged commits</span>
                     <br>
                     <span style="padding-left:35px;">This pull request is closed, but the <b style="background-color: rgb(219, 216, 216);">{{pullrequest.source.name}} </b> branch has unmerged commits.</span><a href="#" style="margin-left: 20px; margin-top: 10px; width: 150px; margin-bottom: 10px;" type="button" class="btn btn-secondary">Delete branch</a>
                 </div>
             {% endif %}
             <hr>
-            <div class="container">
+            <div class="container" style="margin-left: 9px;">
 
                 <!-- Nav tabs -->
                 <ul class="nav nav-tabs">
-                <li class="nav-item">
-                  <a class="nav-link active" data-toggle="tab" href="#write">Write</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" data-toggle="tab" href="#preview">Preview</a>
-                </li>
+                    <li class="nav-item">
+                    <a class="nav-link active" data-toggle="tab" href="#write">Write</a>
+                    </li>
+                    <li class="nav-item">
+                    <a class="nav-link" data-toggle="tab" href="#preview">Preview</a>
+                    </li>
                 </ul>
             
                 <!-- Tab panes -->
                 <div class="tab-content">
                     <div class="tab-pane container active" id="write"> 
-                        <textarea class="form-control col-md-12" id="comment" rows="4" name="comment" placeholder="Leave a comment"></textarea>
+                        <textarea class="form-control col-md-12" id="comment" rows="4" name="comment" placeholder="Leave a comment" style="background-color: #E5E8E8;"></textarea>
                     </div>
                     <div class="tab-pane container fade" id="preview">Comments preview.</div>
                 </div>
+            
+                <input type="submit" style="margin-left: 980px; margin-top: 15px; margin-bottom: 20px;"  class="btn btn-success" value="Comment">
+                {% if pullrequest.status == 'Closed' %}
+                    <a href="{% url 'changeStatusPullrequest' id=pullrequest.id %}" type="button" class="btn btn-outline-secondary" style="margin-left: 800px; margin-top: -58px; margin-bottom: 20px;">Reopen pull request </a>
+                {% elif pullrequest.status == 'Opened' %}
+                    <a href="{% url 'changeStatusPullrequest' id=pullrequest.id %}" type="button" class="btn btn-outline-secondary" style="margin-left: 800px; margin-top: -58px; margin-bottom: 20px;">Close pull request </a>
+                {% endif %}
             </div> 
-            <input type="submit" style="margin-left: 1000px; margin-top: 15px; margin-bottom: 20px;"  class="btn btn-success" value="Comment">
-            {% if pullrequest.status == 'Closed' %}
-                <a href="{% url 'changeStatusPullrequest' id=pullrequest.id %}" type="button" class="btn btn-outline-secondary" style="margin-left: 820px; margin-top: -58px; margin-bottom: 20px;">Reopen pull request </a>
-            {% elif pullrequest.status == 'Opened' %}
-                <a href="{% url 'changeStatusPullrequest' id=pullrequest.id %}" type="button" class="btn btn-outline-secondary" style="margin-left: 820px; margin-top: -58px; margin-bottom: 20px;">Close pull request </a>
-            {% endif %}
         </form>
     {% else %}
     <p>There are no milestone with that id.</p>
