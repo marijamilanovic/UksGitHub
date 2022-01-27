@@ -13,6 +13,17 @@
 </head>
 
 <body>
+    {% block navCode %}
+      <li class="nav-item">
+        <a class="nav-link active" href="{% url 'repository' id=repository.id %}" style=" color: black;" id="code" aria-current="page">{% bs_icon 'code' size='1em' %} Code</a>
+      </li>
+    {% endblock %}
+
+    {% block navLabels %}
+      <li class="nav-item">
+        <a class="nav-link" id="labels" style="border-bottom:3px solid darkviolet;color: black;" href="{% url 'labels' id=repository.id  %}"> {% bs_icon 'tag' size='1.3em' %} Labels</a>
+      </li>
+    {% endblock %}
 
     {% block page_content %}
         <form  method="POST" action="{% url 'addLabel' %}">
