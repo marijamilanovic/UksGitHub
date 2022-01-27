@@ -15,9 +15,7 @@ def milestones(request,id):
         if(m.repository.id == id):
             repositoryMilestones.append(m)
     repository = get_object_or_404(Repository, id=id)
-    for milestone in repositoryMilestones:
-        if(date.today() >= milestone.due_date):
-           print(milestone.due_date)
+    
     return render(request, 'milestones.html', {"milestones":repositoryMilestones, "repository":repository})
 
 def allMilestones(request):
