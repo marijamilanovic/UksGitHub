@@ -62,17 +62,16 @@
                             <div class="popover__content">
                                 <form method="POST" action="{% url 'addEmoji' id=c.id pr_id=pullrequest.id %}">
                                 {% csrf_token %}
-                                <p style="text-align: center;">Pick your reaction</p>
-                                <hr>
-                                <table>
-                                    <tr class="emoji_table">
-                                        {% for e in emojis %}
-                                            <th class="emoji_table"><button name="emoji" value={{e}} href="{% url 'addEmoji' id=c.id pr_id=pullrequest.id%}" style="color: white;" class="emoji_style">&#{{e}};</button></th>
-                                        {% endfor %}
-                                    </tr>
-                                </table>
-                            
-                    </form>
+                                    <p style="text-align: center;">Pick your reaction</p>
+                                    <hr>
+                                    <table>
+                                        <tr class="emoji_table">
+                                            {% for e in emojis %}
+                                                <th class="emoji_table"><button name="emoji" value={{e}} href="{% url 'addEmoji' id=c.id pr_id=pullrequest.id %}" style="color: white;" class="emoji_style">&#{{e}};</button></th>
+                                            {% endfor %}
+                                        </tr>
+                                    </table>
+                                </form>
                             </div>
                         </div>
                         <div class="popover__wrapper2" style="width: 20px; margin-left: 5px; margin-top:-25px; background-color: transparent; border-color: transparent;">
@@ -80,30 +79,26 @@
                                 {% bs_icon 'three-dots' size='1.5em' color='gray' %} 
                             </a>
                             <div class="popover__content2" style="width: 180px; ">
-                                 <button style="text-align: left; border: transparent; background-color: transparent;
-                                 width: auto;" value="{{c.content}}" onclick="quote_comment(this.value);" >Quote replay</button>
+                                 <button class="functionalities_button" value="{{c.content}}" onclick="quote_comment(this.value);" >Quote replay</button>
                                 <hr>
                                 <table>
                                     <tr>
-                                        <th><button href="#" style="text-align: left; border: transparent; background-color: transparent;
-                                            width: 180px;">Edit</button></th>
-                                    </tr>
+                                        <th><button class="functionalities_button" onclick="enable_textarea();">Edit</button></th>
+                                        </tr>
                                     <tr>
-                                        <th><button href="#" style="text-align: left; border: transparent; background-color: transparent;
-                                            width: 180px;">Hide</button></th>
-                                    </tr>
-                                    <tr>
-                                        <th><button href="#" style="text-align: left; border: transparent; background-color: transparent;
-                                            width: 180px; text-decoration-color: red;">Delete</button></th>
-                                    </tr>
+                                        <th><a type="button" href="{% url 'deleteComment' id=c.id pr_id=pullrequest.id %}" class="delete_button">Delete</a></th>
+                                        </tr>
                                 </table>
                             
                             </div>
                         </div>
                         <div class="card-header" style="background-color: white; margin-top: 5px;">
-                            {{c.content}}
-                            <hr style="border-color: #ffffff;">
-                            
+                            <form method="POST" action="{% url 'updateComment' id=c.id pr_id=pullrequest.id %}">
+                                {% csrf_token %}
+                                <textarea id="comment_content_edit" name="comment_content_edit" aria-disabled="true"  style=" width:600px;resize: none; border-color: transparent; background-color: transparent;" disabled=true style="border-color: white;">{{c.content}}</textarea>
+                                <button id="update_comment" hidden="true" style="margin-top: -28px;" class="btn btn-outline-success">Update comment</button>
+                                <hr style="border-color: #ffffff;">
+                            </form>
                             {% for e in c.emojis.all%}
                                 <th style="width: 40px;"><button name="emoji" value={{e.name}} href="{% url 'addEmoji' id=c.id pr_id=pullrequest.id%}" 
                                 style="border:1px; 
@@ -175,6 +170,9 @@
 
                 <div class="tab-content">
                     <div class="tab-pane container active" id="write"> 
+                        {% if error%}
+                            <h6 style="color: red;">{{error}}</h6>
+                        {%endif%}
                         <textarea class="form-control col-md-12" id="comment" rows="4" name="comment" placeholder="Leave a comment" style="background-color: #E5E8E8;"></textarea>
                         <hr style="border-color: white;">
                     </div>
@@ -191,6 +189,7 @@
                     <a href="{% url 'changeStatusPullrequest' id=pullrequest.id %}" type="button" class="btn btn-outline-secondary" style="margin-left: 800px; margin-top: -58px; margin-bottom: 20px;">Close pull request </a>
                 {% endif %}
             </div> 
+            
         </form>
     {% else %}
     <p>There are no milestone with that id.</p>
@@ -206,13 +205,21 @@
     var typed_text = ""
     function quote_comment(c) {
         this.typed_text = document.getElementById("comment").value.concat("\n");
-        this.quoted_comments = typed_text.concat(c + "\n")
+        this.quoted_comments = typed_text.concat(c)
 
         document.getElementById("comment").value = quoted_comments;
     }
+
     function preview_comment() {
         this.typed_text = document.getElementById("comment").value;
         document.getElementById("preview_comment").innerHTML = typed_text;
+    }
+
+    function enable_textarea(){
+        console.log("cdscscds")
+        document.getElementById("comment_content_edit").disabled=false;
+        document.getElementById("comment_content_edit").style.backgroundColor = "#E5E8E8";
+        document.getElementById("update_comment").hidden=false;
     }
 </script>
 {% endblock %}

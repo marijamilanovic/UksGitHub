@@ -8,19 +8,26 @@ from django.contrib.auth.models import User
 from datetime import date
 
 def addComment(request, id):
-    if request.method == 'POST':
-        pullrequest = get_object_or_404(Pullrequest, id=id)
-        user = request.user
+    content = request.POST.get('comment')
+    pullrequest = get_object_or_404(Pullrequest, id=id)
+    errorTitle = "You must enter comment content."
+    emojis = list()
+    for e in EMOJI_PICKER:
+        emojis.append(e[0])
+    if len(content) == 0:
+        return render(request, "updatePullrequest.html", {"pullrequest": pullrequest, "repository": pullrequest.prRepository, "comments":pullrequest.comments.all(), "emojis":emojis, "error":errorTitle})
+    else:     
+        if request.method == 'POST':
+            user = request.user
 
-        content = request.POST.get('comment')
-        created_date = date.today()
-        comment = Comment(author = user, content = content, created_date = created_date)
-        comment.save()
+            created_date = date.today()
+            comment = Comment(author = user, content = content, created_date = created_date)
+            comment.save()
 
-        pullrequest.comments.add(comment)
-        pullrequest.save()
+            pullrequest.comments.add(comment)
+            pullrequest.save()
 
-        return redirect('/pullrequest/updatePullrequestPage/'+ str(pullrequest.id))
+            return redirect('/pullrequest/updatePullrequestPage/'+ str(pullrequest.id))
 
 def addEmoji(request, id, pr_id):
     if request.method == 'POST':
@@ -61,4 +68,27 @@ def add_reaction_creator(request, comment, emoji):
                 comment.save()
         else:
             emoji.reaction_creators.add(request.user)
-       
+
+
+def updateComment(request, id, pr_id):
+    if request.method == 'POST':
+        comment = get_object_or_404(Comment, id=id)
+        content = request.POST.get('comment_content_edit')
+        comment.content = content
+        comment.save()
+
+        return redirect('/pullrequest/updatePullrequestPage/'+ str(pr_id))
+
+def deleteComment(request, id, pr_id):
+    comment = get_object_or_404(Comment, id=id)
+    pullrequest = get_object_or_404(Pullrequest, id=pr_id)
+
+    pullrequest.comments.remove(comment.id)
+    pullrequest.save()
+    emojis = comment.emojis.all()
+    for e in emojis:
+        emoji = get_object_or_404(Emoji, id=e.id)
+        emoji.delete()
+    comment.delete()
+
+    return redirect('/pullrequest/updatePullrequestPage/'+ str(pr_id))

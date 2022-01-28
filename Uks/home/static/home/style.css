@@ -183,4 +183,28 @@ nav .navbar-nav li a{
     width: auto;
   }
 
+  .delete_button{
+    text-align: left; 
+    border: transparent; 
+    background-color: transparent;
+    width: 140px;
+    font-size: larger;
+  }
   
+  .delete_button:hover{
+    background: rgb(236, 91, 91);
+    box-shadow: 0 6px 12px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
+  }
+
+  .functionalities_button{
+    text-align: left; 
+    border: transparent; 
+    background-color: transparent;
+    width: 140px;
+    font-size: larger;
+  }
+  
+  .functionalities_button:hover{
+    background: rgb(207, 207, 207);
+    box-shadow: 0 6px 12px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
+  }

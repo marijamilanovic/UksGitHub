@@ -15,5 +15,7 @@ urlpatterns = [
      path('changeStatusPullrequest/<int:id>', views.changeStatusPullrequest, name='changeStatusPullrequest'),
      path('addComment/<int:id>', comment.views.addComment, name='addComment'),
      path('addEmoji/<int:id>/<int:pr_id>', comment.views.addEmoji, name='addEmoji'),
+     path('updateComment/<int:id>/<int:pr_id>', comment.views.updateComment, name='updateComment'),
+     path('deleteComment/<int:id>/<int:pr_id>', comment.views.deleteComment, name='deleteComment'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
