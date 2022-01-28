@@ -46,44 +46,88 @@
         <div class="tab-content">
             <div class="tab-pane container active" id="conversation"> 
                 {% for c in comments %}
-                <div class="card border-secondary mb-3" style="margin-top: 15px;  max-width: 1000px;">
+                <div class="card border-secondary mb-3" style="margin-top: 15px;  max-width: 1000px; background-color: #cde9e9;">
                     <p style="margin-top: 10px; margin-left: 10px;">  {% bs_icon 'person-circle' size='1.5em'%} <b>{{c.author.username}}</b> commented {{c.created_date}}</p>
                         {% if pullrequest.creator.username == c.author.username %}
-                            <span style="margin-top: -42px; margin-left: 780px;"><p style="border:1px; border-style:solid; border-color:#cfe2e2; width: 90px; height: 30px; border-radius: 10px; text-align: center;">Author</p></span>
+                            <span style="margin-top: -42px; margin-left: 780px;">
+                            <p style="border:1px; 
+                                border-style:solid; 
+                                border-color:#53adad; 
+                                width: 90px; height: 30px; 
+                                border-radius: 10px;
+                                 text-align: center; color: gray;">Author</p></span>
                         {% endif %}
                         <div class="popover__wrapper">
-                        <a href="#" style="width: 40px; margin-left: 880px; background-color: transparent; border-color: transparent;">
-                             {% bs_icon 'emoji-smile' size='1.5em' color='gray' %} 
-                        </a>
-                        <div class="popover__content">
-                            <form method="POST" action="{% url 'addEmoji' id=c.id pr_id=pullrequest.id %}">
-                            {% csrf_token %}
-                            <p style="text-align: center;">Pick your reaction</p>
-                            <hr>
-                            <table>
-                                <tr class="emoji_table">
-                                    <th class="emoji_table"><button name="emoji" value="129505" href="{% url 'addEmoji' id=c.id pr_id=pullrequest.id%}" style="color: white;" class="emoji_style">&#129505;</button></th>
-                                    <th class="emoji_table"><button name="emoji" value="128640" href="{% url 'addEmoji' id=c.id pr_id=pullrequest.id%}" style="color: white;" class="emoji_style">&#128640;</button></th>
-                                    <th class="emoji_table"><button name="emoji" value="128577" href="{% url 'addEmoji' id=c.id pr_id=pullrequest.id%}" style="color: white;" class="emoji_style">&#128577;</button></th>
-                                    <th class="emoji_table"><button name="emoji" value="128512" href="{% url 'addEmoji' id=c.id pr_id=pullrequest.id%}" style="color: white;" class="emoji_style">&#128512;</button></th>
-                                </tr>
-                                <tr>
-                                    <th class="emoji_table"><button name="emoji" value="128077" href="{% url 'addEmoji' id=c.id pr_id=pullrequest.id%}" style="color: white;" class="emoji_style">&#128077;</button></th>
-                                    <th class="emoji_table"><button name="emoji" value="128064" href="{% url 'addEmoji' id=c.id pr_id=pullrequest.id%}" style="color: white;" class="emoji_style">&#128064;</button></th>
-                                    <th class="emoji_table"><button name="emoji" value="127881" href="{% url 'addEmoji' id=c.id pr_id=pullrequest.id%}" style="color: white;" class="emoji_style">&#127881;</button></th>
-                                    <th class="emoji_table"><button name="emoji" value="128078" href="{% url 'addEmoji' id=c.id pr_id=pullrequest.id%}" style="color: white;" class="emoji_style">&#128078;</button></th>
-                                </tr>
-                              </table>
-                        </form>
+                            <a href="#" style="width: 40px; margin-left: 880px; background-color: transparent; border-color: transparent;">
+                                {% bs_icon 'emoji-smile' size='1.5em' color='gray' %} 
+                            </a>
+                            <div class="popover__content">
+                                <form method="POST" action="{% url 'addEmoji' id=c.id pr_id=pullrequest.id %}">
+                                {% csrf_token %}
+                                <p style="text-align: center;">Pick your reaction</p>
+                                <hr>
+                                <table>
+                                    <tr class="emoji_table">
+                                        {% for e in emojis %}
+                                        <th class="emoji_table"><button name="emoji" value={{e}} href="{% url 'addEmoji' id=c.id pr_id=pullrequest.id%}" style="color: white;" class="emoji_style">&#{{e}};</button></th>
+                                        {% endfor %}
+                                    </tr>
+                                </table>
+                            
+                            </div>
                         </div>
+                        <div class="popover__wrapper" style="width: 20px; margin-left: 5px; margin-top:-25px; background-color: transparent; border-color: transparent;">
+                            <a href="#" style="width: 20px; margin-left: 920px; background-color: transparent; border-color: transparent;">
+                                {% bs_icon 'three-dots' size='1.5em' color='gray' %} 
+                            </a>
+                            <div class="popover__content">
+                                 <p style="text-align: center;">Pick your reaction</p>
+                                <hr>
+                                <table>
+                                    <tr class="emoji_table">
+                                        {% for e in emojis %}
+                                        <th class="emoji_table"><button name="emoji" value={{e}} href="{% url 'addEmoji' id=c.id pr_id=pullrequest.id%}" style="color: white;" class="emoji_style">&#{{e}};</button></th>
+                                        {% endfor %}
+                                    </tr>
+                                </table>
+                            
+                            </div>
                         </div>
-                        <div class="card-header" style="background-color: #d7f0db; margin-top: 5px;">
+                        <div class="card-header" style="background-color: white; margin-top: 5px;">
                             {{c.content}}
-                            <hr style="border-color: white;">
-                            {% for e in c.emojis.all %}
-                            <tr><a type="button" href="#" style="color: white;" class="emoji_style">&#{{e.name}};</a></th></tr>
-                             {% endfor %}
+                            <hr style="border-color: #ffffff;">
+                            
+                            {% for e in c.emojis.all%}
+                                <th style="width: 40px;"><button name="emoji" value={{e.name}} href="{% url 'addEmoji' id=c.id pr_id=pullrequest.id%}" 
+                                style="border:1px; 
+                                    border-style:solid; 
+                                    border-color:#53adad; 
+                                    width: 70px; height: 30px; 
+                                    border-radius: 10px;
+                                    background-color: #cde9e9;
+                                    text-align: center;">&#{{e.name}}; 
+                                    <span style="margin-left: 10px;">
+                                        {% if e.name == '129505' %}
+                                            {{c.get_emoji_heart}}
+                                        {% elif e.name == '128640' %}
+                                            {{c.get_emoji_rocket}}
+                                        {% elif e.name == '128577' %}
+                                            {{c.get_emoji_sad}}
+                                        {% elif e.name == '128512' %}
+                                            {{c.get_emoji_happy}}
+                                        {% elif e.name == '128077' %}
+                                            {{c.get_emoji_like}}
+                                        {% elif e.name == '128077' %}
+                                            {{c.get_emoji_dislike}}
+                                        {% elif e.name == '128064' %}
+                                            {{c.get_emoji_eyes}}
+                                        {% else %}
+                                            {{c.get_emoji_party}}
+                                        {% endif %}
+                                        </span></button></th>
+                            {% endfor %}
                         </div>
+                    </form>
                 </div>
                 {% endfor %}
             </div>

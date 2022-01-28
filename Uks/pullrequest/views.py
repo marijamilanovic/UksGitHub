@@ -1,3 +1,4 @@
+from random import choices
 from xml.etree.ElementTree import Comment
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import Pullrequest, Repository, Branch
@@ -31,7 +32,10 @@ def updatePullrequestPage(request, id):
     pullrequest = get_object_or_404(Pullrequest, id = id)
     repository = get_object_or_404(Repository, id = pullrequest.prRepository.id)
     comments = pullrequest.comments.all()
-    return render(request, "updatePullrequest.html", {"pullrequest": pullrequest, "repository": repository, "comments":comments})
+    emojis = list()
+    for e in EMOJI_PICKER:
+        emojis.append(e[0])
+    return render(request, "updatePullrequest.html", {"pullrequest": pullrequest, "repository": repository, "comments":comments, "emojis":emojis})
 
 
 def changeStatusPullrequest(request, id):
