@@ -28,6 +28,9 @@
     <span class="badge badge-pill badge-success d-inline-flex align-items-center justify-content-center"
     style="font-size: 0.8em; margin-left: 10px; height: 22px;" >{{repository.status}}
     </span>
+    <button type="button" class="btn btn-outline-secondary btn-sm" style="width: 100px; margin-left: 920px; color: black;"><span style="margin-left: -4px;  ">{% bs_icon 'eye' size='1.1em' %}</span> Watch <span class="badge badge-success">0</span></button>
+    <button type="button" class="btn btn-outline-secondary btn-sm" style="width: 100px; margin-left: 10px; color: black;"><span style="margin-left: -4px; ">{% bs_icon 'diagram-2' size='1.1em' %} </span> Fork <span class="badge badge-success">0</span></button>
+    <button type="button" class="btn btn-outline-secondary btn-sm" style="width: 100px;margin-left: 10px;color: black;"><span style="margin-left: -4px; color: grey;">{% bs_icon 'star-fill' size='1.1em' %} </span>  Star <span class="badge badge-success">0</span></button>
     </div>
 
     <ul class="nav" style="background-color: rgb(243, 243, 243);">
@@ -62,41 +65,58 @@
       {% endblock %}
     </ul>
 
-   
-
-
-
     {% block page_content %}
-    <div class="code">
+    <div class="container">
+      <div class="row">
+        <div class="col">
+        <!--Left part of the page-->  
+          <div class="code">
+            <div class="code-item1" style="margin-left: -48px;">
+              <span class="iconify" data-icon="fa-solid:code-branch"></span>
+              <select class="selectpicker" data-live-search="true" data-size="5" onchange="location = this.value">
+                {% for branch in branch_list.all  %}
+                  <option value="{% url 'repo_branch' id=repository.id branch_id=branch.id %}" {% if branch.id == selected_branch.id %} selected {% endif %}>
+                  {{branch.name}} 
+                  </option>
+                </a>
+                {% endfor %}
+              </select>
+              <span style="margin-left: 3%;"><a style="color: black;" href="{% url 'branch:repoBranchList' id=repository.id  %}"><span class="iconify" data-icon="fa-solid:code-branch" style="margin-right: 1%;"></span>{{branch_list|length}} branches</a></span> 
+            </div>
+            
+          </div>
 
-      <div class="code-item1">
-        <span class="iconify" data-icon="fa-solid:code-branch"></span>
-        <select class="selectpicker" data-live-search="true" data-size="5" onchange="location = this.value">
-          {% for branch in branch_list.all  %}
-            <option value="{% url 'repo_branch' id=repository.id branch_id=branch.id %}" {% if branch.id == selected_branch.id %} selected {% endif %}>
-            {{branch.name}} 
-            </option>
-          </a>
-          {% endfor %}
+          <div class="card" style="height: 400px;">
+            <div class="card-header">
+              Bice nesto
+              <a style="color: black;" href="{% url 'commit:commitList' id=selected_branch.id  %}">
+              <span style="margin-left: 500px;" class="iconify" data-icon="si-glyph:time-reload" data-width="22" data-height="20"></span>
+              <span>{{commit_list|length}} commits</span> </a>
+            </div>
+            <div class="card-body">
+              
+            </div>
+          </div>
 
-        </select>
-
-        <span style="margin-left: 3%;"><a style="color: black;" href="{% url 'branch:repoBranchList' id=repository.id  %}"><span class="iconify" data-icon="fa-solid:code-branch" style="margin-right: 1%;"></span>{{branch_list|length}} branches</a></span>
-        
+        </div>
+      <!--Right part of the page-->   
+        <div class="col-lg-4">
+          <h5 style="margin-top: 20px;">About</h5>
+          <div class="col">
+          <a href="#"  style="margin-left: -15px; color:black;">{% bs_icon 'star' size='1.1em' %} 0 stars</a> 
+          </div>
+          <div class="col" style="margin-top: 5px;">
+            <a href="#" style="margin-left: -15px;color:black;">{% bs_icon 'eye' size='1.1em' %} 0 watching</a> 
+          </div>
+          <div class="col" style="margin-top: 5px;">
+            <a href="#" style="margin-left: -15px;color: black; ">{% bs_icon 'diagram-2' size='1.1em' %}  0 forks </a>
+          </div>
+          <hr style="margin-top: 20px;">
+          <h5 style="margin-top: 20px;">Contributors</h5>
       </div>
 
-
-      <div class="code-item2">
-        <a style="color: black;" href="{% url 'commit:commitList' id=selected_branch.id  %}">
-        <span class="iconify" data-icon="si-glyph:time-reload" data-width="22" data-height="20"></span>
-        <span>{{commit_list|length}} commits</span>
-      </a>
       </div>
-
     </div>
     {%endblock%}  
-    {%endblock%}
-
-    
+    {%endblock%}   
 </body>
-
