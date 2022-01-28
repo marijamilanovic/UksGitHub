@@ -85,51 +85,102 @@ nav .navbar-nav li a{
     display: inline-block;
   }
 
-.popover__content {
-  opacity: 0;
-  visibility: hidden;
-  position: absolute;
-  left: -50px;
-  margin-left: 850px ;
-  margin-top: 25px;
-  transform: translate(0, 10px);
-  background-color: #ffffff;
-  padding: 1.5rem;
-  box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.26);
-  width: auto;
-}
-.popover__content:before {
-  position: absolute;
-  z-index: -1;
-  content: "";
-  right: calc(50% - 10px);
-  top: -8px;
-  border-style: solid;
-  border-width: 0 10px 10px 10px;
-  border-color: transparent transparent #ffffff transparent;
-  transition-duration: 0.3s;
-  transition-property: transform;
-}
-.popover__wrapper:hover .popover__content {
-  z-index: 10;
-  opacity: 1;
-  visibility: visible;
-  transform: translate(0, -20px);
-  transition: all 0.5s cubic-bezier(0.75, -0.02, 0.2, 0.97);
-}
-.popover__message {
-  text-align: center;
-}
+  .popover__content {
+    opacity: 0;
+    visibility: hidden;
+    position: absolute;
+    left: -50px;
+    margin-left: 750px ;
+    margin-top: 25px;
+    transform: translate(0, 10px);
+    background-color: #ffffff;
+    padding: 1.5rem;
+    box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.26);
+    width: auto;
+  }
+  .popover__content:before {
+    position: absolute;
+    z-index: -1;
+    content: "";
+    right: calc(50% - 10px);
+    top: -8px;
+    border-style: solid;
+    border-width: 0 10px 10px 10px;
+    border-color: transparent transparent #ffffff transparent;
+    transition-duration: 0.3s;
+    transition-property: transform;
+  }
+  .popover__wrapper:hover .popover__content {
+    z-index: 10;
+    opacity: 1;
+    visibility: visible;
+    transform: translate(0, -20px);
+    transition: all 0.5s cubic-bezier(0.75, -0.02, 0.2, 0.97);
+  }
+  .popover__message {
+    text-align: center;
+  }
 
-.emoji_style{
-  border-color: transparent;
-  background-color: transparent;
-  height: 40px;
-  width: 40px;
-  font-size:20px;
-  color: #ffffff;
-}
+  .emoji_style{
+    border-color: transparent;
+    background-color: transparent;
+    height: 40px;
+    width: 40px;
+    font-size:20px;
+    color: #ffffff;
+  }
 
-.emoji_table{
-  margin-bottom: 100px;
-}
+  .emoji_table{
+    margin-bottom: 100px;
+  }
+
+  .popover__wrapper2 {
+    position: relative;
+    margin-top: -2.6rem;
+    display: inline-block;
+  }
+
+  .popover__content2 {
+    opacity: 0;
+    visibility: hidden;
+    position: absolute;
+    left: -50px;
+    margin-left: 890px ;
+    margin-top: 25px;
+    transform: translate(0, 10px);
+    background-color: #ffffff;
+    padding: 1.5rem;
+    box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.26);
+    width: auto;
+  }
+  .popover__content2:before {
+    position: absolute;
+    z-index: -1;
+    content: "";
+    right: calc(50% - 10px);
+    top: -8px;
+    border-style: solid;
+    border-width: 0 10px 10px 10px;
+    border-color: transparent transparent #ffffff transparent;
+    transition-duration: 0.3s;
+    transition-property: transform;
+  }
+  .popover__wrapper2:hover .popover__content2 {
+    z-index: 10;
+    opacity: 1;
+    visibility: visible;
+    transform: translate(0, -20px);
+    transition: all 0.5s cubic-bezier(0.75, -0.02, 0.2, 0.97);
+  }
+  .popover__message2 {
+    text-align: center;
+  }
+
+  .more_tools{
+    text-align: center; 
+    border: transparent; 
+    background-color: transparent;
+    width: auto;
+  }
+
+  

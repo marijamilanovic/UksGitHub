@@ -9,6 +9,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="{% static 'home/style.css' %}">
+
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
 </head>
 
@@ -32,7 +33,6 @@
     {% endif %}
     <div class="container">
 
-        <!-- Nav tabs -->
         <ul class="nav nav-tabs">
         <li class="nav-item">
           <a class="nav-link active" data-toggle="tab" href="#conversation"> {% bs_icon 'chat-right' size='1em'%} Conversation</a>
@@ -41,8 +41,6 @@
           <a class="nav-link" data-toggle="tab" href="#commits">Commits</a>
         </li>
         </ul>
-    
-        <!-- Tab panes -->
         <div class="tab-content">
             <div class="tab-pane container active" id="conversation"> 
                 {% for c in comments %}
@@ -69,25 +67,34 @@
                                 <table>
                                     <tr class="emoji_table">
                                         {% for e in emojis %}
-                                        <th class="emoji_table"><button name="emoji" value={{e}} href="{% url 'addEmoji' id=c.id pr_id=pullrequest.id%}" style="color: white;" class="emoji_style">&#{{e}};</button></th>
+                                            <th class="emoji_table"><button name="emoji" value={{e}} href="{% url 'addEmoji' id=c.id pr_id=pullrequest.id%}" style="color: white;" class="emoji_style">&#{{e}};</button></th>
                                         {% endfor %}
                                     </tr>
                                 </table>
                             
+                    </form>
                             </div>
                         </div>
-                        <div class="popover__wrapper" style="width: 20px; margin-left: 5px; margin-top:-25px; background-color: transparent; border-color: transparent;">
+                        <div class="popover__wrapper2" style="width: 20px; margin-left: 5px; margin-top:-25px; background-color: transparent; border-color: transparent;">
                             <a href="#" style="width: 20px; margin-left: 920px; background-color: transparent; border-color: transparent;">
                                 {% bs_icon 'three-dots' size='1.5em' color='gray' %} 
                             </a>
-                            <div class="popover__content">
-                                 <p style="text-align: center;">Pick your reaction</p>
+                            <div class="popover__content2" style="width: 180px; ">
+                                 <button style="text-align: left; border: transparent; background-color: transparent;
+                                 width: auto;" value="{{c.content}}" onclick="quote_comment(this.value);" >Quote replay</button>
                                 <hr>
                                 <table>
-                                    <tr class="emoji_table">
-                                        {% for e in emojis %}
-                                        <th class="emoji_table"><button name="emoji" value={{e}} href="{% url 'addEmoji' id=c.id pr_id=pullrequest.id%}" style="color: white;" class="emoji_style">&#{{e}};</button></th>
-                                        {% endfor %}
+                                    <tr>
+                                        <th><button href="#" style="text-align: left; border: transparent; background-color: transparent;
+                                            width: 180px;">Edit</button></th>
+                                    </tr>
+                                    <tr>
+                                        <th><button href="#" style="text-align: left; border: transparent; background-color: transparent;
+                                            width: 180px;">Hide</button></th>
+                                    </tr>
+                                    <tr>
+                                        <th><button href="#" style="text-align: left; border: transparent; background-color: transparent;
+                                            width: 180px; text-decoration-color: red;">Delete</button></th>
                                     </tr>
                                 </table>
                             
@@ -127,7 +134,6 @@
                                         </span></button></th>
                             {% endfor %}
                         </div>
-                    </form>
                 </div>
                 {% endfor %}
             </div>
@@ -163,19 +169,22 @@
                     <a class="nav-link active" data-toggle="tab" href="#write">Write</a>
                     </li>
                     <li class="nav-item">
-                    <a class="nav-link" data-toggle="tab" href="#preview">Preview</a>
+                    <a class="nav-link" data-toggle="tab" onclick="preview_comment()" href="#preview">Preview</a>
                     </li>
                 </ul>
-            
-                <!-- Tab panes -->
+
                 <div class="tab-content">
                     <div class="tab-pane container active" id="write"> 
                         <textarea class="form-control col-md-12" id="comment" rows="4" name="comment" placeholder="Leave a comment" style="background-color: #E5E8E8;"></textarea>
+                        <hr style="border-color: white;">
                     </div>
-                    <div class="tab-pane container fade" id="preview">Comments preview.</div>
+                    <div class="tab-pane container fade" id="preview">
+                        <textarea disabled = true; class="form-control col-md-12" id="preview_comment" rows="4" name="comment" style="background-color: #ffffff;"></textarea>
+                        <hr>
+                    </div>
                 </div>
-            
-                <input type="submit" style="margin-left: 980px; margin-top: 15px; margin-bottom: 20px;"  class="btn btn-success" value="Comment">
+
+                <input type="submit" style=" margin-left: 980px; margin-top: 15px; margin-bottom: 20px;"  class="btn btn-success" value="Comment">
                 {% if pullrequest.status == 'Closed' %}
                     <a href="{% url 'changeStatusPullrequest' id=pullrequest.id %}" type="button" class="btn btn-outline-secondary" style="margin-left: 800px; margin-top: -58px; margin-bottom: 20px;">Reopen pull request </a>
                 {% elif pullrequest.status == 'Opened' %}
@@ -190,3 +199,20 @@
     {% endblock %}
     </body>
 </html>
+
+{% block javascript %}
+<script>
+    var quoted_comments = ""
+    var typed_text = ""
+    function quote_comment(c) {
+        this.typed_text = document.getElementById("comment").value.concat("\n");
+        this.quoted_comments = typed_text.concat(c + "\n")
+
+        document.getElementById("comment").value = quoted_comments;
+    }
+    function preview_comment() {
+        this.typed_text = document.getElementById("comment").value;
+        document.getElementById("preview_comment").innerHTML = typed_text;
+    }
+</script>
+{% endblock %}

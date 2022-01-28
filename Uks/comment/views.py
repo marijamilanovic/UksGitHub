@@ -1,3 +1,4 @@
+from pickle import FALSE, TRUE
 from queue import Empty
 from django.shortcuts import render, get_object_or_404, redirect
 from pullrequest.models import Pullrequest
@@ -22,21 +23,42 @@ def addComment(request, id):
         return redirect('/pullrequest/updatePullrequestPage/'+ str(pullrequest.id))
 
 def addEmoji(request, id, pr_id):
-    errorTitle = None
     if request.method == 'POST':
-        comment = get_object_or_404(Comment, id=id)
+        have_emoji = FALSE
         emoji = Emoji()
-        emoji.name = request.POST.get('emoji')
-        emoji.reaction_creator = request.user
-        emoji_exists = Emoji.objects.filter(name=emoji.name, reaction_creator = emoji.reaction_creator)
+        comment = get_object_or_404(Comment, id=id)
+        emojis = comment.emojis.all()
         
-        if len(emoji_exists) is 0:
-            emoji.save()
-            comment.emojis.add(emoji)
-            comment.save()
+        for e in emojis:
+            if e.name == request.POST.get('emoji'):
+                have_emoji = TRUE
+                emoji = e
+                
+        if have_emoji == TRUE:
+            add_reaction_creator(request, comment, emoji)
         else:
-            comment.emojis.remove(emoji_exists[0].id)
-            comment.save()
-            emoji_exists[0].delete()
+            create_new_emoji(request, comment)
+      
         return redirect('/pullrequest/updatePullrequestPage/'+ str(pr_id))
+
+def create_new_emoji(request, comment):
+    emoji = Emoji()
+    emoji.name = request.POST.get('emoji')
+    emoji.save()
+    user = request.user
+    emoji.reaction_creators.add(user)
+    emoji.save()
+    comment.emojis.add(emoji)
+    comment.save()
+
+def add_reaction_creator(request, comment, emoji):
+    reaction_creators = emoji.reaction_creators.all()
+    for r in reaction_creators:
+        if r.id == request.user.id:
+            emoji.reaction_creators.remove(request.user.id)
+            if len( emoji.reaction_creators.all()) == 0:
+                comment.emojis.remove(emoji.id)
+                comment.save()
+        else:
+            emoji.reaction_creators.add(request.user)
        

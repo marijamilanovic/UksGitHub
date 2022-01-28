@@ -10,7 +10,7 @@ ROCKET = "128640"
 SAD = "128577"
 HAPPY = "128512"
 LIKE = "128077"
-DISLIKE = "128077"
+DISLIKE = "128078"
 EYES = "128064"
 PARTY = "127881"
 
@@ -20,7 +20,7 @@ EMOJI_PICKER = [
     (SAD, "128577"),
     (HAPPY, "128512"),
     (LIKE, "128077"),
-    (DISLIKE, "128077"),
+    (DISLIKE, "128078"),
     (EYES, "128064"),
     (PARTY, "127881")
 ]
@@ -28,7 +28,7 @@ EMOJI_PICKER = [
 
 class Emoji(models.Model):
     name = models.CharField(max_length=20, choices=EMOJI_PICKER, default=HEART)
-    reaction_creator =  models.ForeignKey(to=User, null=True, on_delete=models.CASCADE)
+    reaction_creators =  models.ManyToManyField(User)
 
 
 class Comment(models.Model):
@@ -38,28 +38,36 @@ class Comment(models.Model):
     emojis = models.ManyToManyField(Emoji)
 
     def get_emoji_heart(self):
-        return self.emojis.filter(name='129505').count()
+        emoji = self.emojis.filter(name='129505')
+        return len(emoji[0].reaction_creators.all())
     
     def get_emoji_rocket(self):
-        return self.emojis.filter(name='128640').count()
+        emoji = self.emojis.filter(name='128640')
+        return len(emoji[0].reaction_creators.all())
 
     def get_emoji_sad(self):
-        return self.emojis.filter(name='128577').count()
+        emoji = self.emojis.filter(name='128577')
+        return len(emoji[0].reaction_creators.all())
     
     def get_emoji_happy(self):
-        return self.emojis.filter(name='128512').count()
+        emoji =  self.emojis.filter(name='128512')
+        return len(emoji[0].reaction_creators.all())
 
     def get_emoji_like(self):
-        return self.emojis.filter(name='128077').count()
+        emoji =  self.emojis.filter(name='128077')
+        return len(emoji[0].reaction_creators.all())
     
     def get_emoji_dislike(self):
-        return self.emojis.filter(name='128077').count()
+        emoji =  self.emojis.filter(name='128078')
+        return len(emoji[0].reaction_creators.all())
 
     def get_emoji_eyes(self):
-        return self.emojis.filter(name='128064').count()
+        emoji =  self.emojis.filter(name='128064')
+        return len(emoji[0].reaction_creators.all())
     
     def get_emoji_party(self):
-        return self.emojis.filter(name='127881').count()
+        emoji =  self.emojis.filter(name='127881')
+        return len(emoji[0].reaction_creators.all())
     
 
 
