@@ -37,7 +37,12 @@
                             <td>
                                 <a  class="nav-link" href="{% url 'view_issue' id=issue.id %}">{{issue.issue_title}}</a>
                                 <small style="margin-left: 15px;color: gray;">
-                                    opened by <b>{{issue.opened_by}}</b> and assignee to <b>{{issue.assignee}}</b>
+                                    opened by <b>{{issue.opened_by}}</b>
+                                    {% if issue.assignee %}
+                                        <span>
+                                            and assignee to <b>{{issue.assignee}}</b>
+                                        </span>
+                                    {% endif %}
                                 </small>
                             </td>
                             <td>

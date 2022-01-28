@@ -1,14 +1,17 @@
 from imp import reload
+import nntplib
 from django.shortcuts import render, get_object_or_404, redirect
+from django.http import JsonResponse
+from django.core import serializers
 
 from .models import Issue
 from repository.models import Repository
 from user.models import User
+from milestone.models import Milestone
 
 def issues(request, id):
     repository = get_object_or_404(Repository, id=id)
     issues = Issue.objects.filter(repository=repository)
-    print(issues)
     return render(request, 'issues.html', {"issues":issues, "repository":repository})
 
 def all_issues(request):
@@ -40,13 +43,19 @@ def add_issue(request):
 def view_issue(request, id):
     issue = get_object_or_404(Issue, id = id)
     repository = get_object_or_404(Repository, id = issue.repository.id)
-    return render(request, 'viewIssue.html', {'repository': repository, 'issue':issue})
+    milestones = get_milestones_by_repo(request, id)
+    get_users_by_repo(request, id)
+    return render(request, 'viewIssue.html',{'repository': repository, 'issue':issue, 'milestones': milestones})
 
 def update_issue(request, id):
     if request.method == 'POST':
         issue = get_object_or_404(Issue, id = id)
         issue.issue_title = request.POST['title']
         issue.description = request.POST['description']
+        if request.POST['milestone_id'] != 'empty':
+            issue.milestone = Milestone.objects.get(id = request.POST['milestone_id'])
+        elif issue.milestone != None:
+            issue.milestone = None
         all_repos = Repository.objects.all()
         for r in all_repos:
             if(r.id == issue.repository.id):
@@ -68,3 +77,22 @@ def view_found_issue(request, id):
     issue = get_object_or_404(Issue, id = id)
     repository = get_object_or_404(Repository, id = issue.repository.id)
     return render(request, 'viewFoundIssue.html', {'repository': repository, 'issue':issue})
+
+def get_users_by_repo(request, id):
+    issue = get_object_or_404(Issue, id = id)
+    repository = get_object_or_404(Repository, id = issue.repository.id)
+    #developers = users.filter(id=repository.creator_id)
+    #print(developers)
+    print(repository.developers)
+    #print(vars(users))
+    #return render(request, "issues.html", {})
+
+def get_milestones_by_repo(request, id):
+    issue = get_object_or_404(Issue, id = id)
+    repository = get_object_or_404(Repository, id = issue.repository.id)
+    milestones = Milestone.objects.all().filter(repository=repository)
+    return milestones
+
+
+
+
