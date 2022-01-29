@@ -171,7 +171,12 @@ def add_collaborator(request, id, developer_id):
     for developer in developers:
         if developer not in collaborators:
             not_added_developers.append(developer)
-    selected_developer = get_object_or_404(User, id = developer_id)
+    if len(not_added_developers)>0 :
+        selected_developer = not_added_developers[0]
+    else:
+        selected_developer = User.objects.first()
+    print('id narednog posle dodavanja je ')
+    print(selected_developer)
     return render(request,"repository/collaborators.html",{
          'repository':repository,
          'selected_developer': selected_developer,
@@ -183,6 +188,7 @@ def add_collaborator_on_repository(repository, developer):
     return collaborators
 
 def remove_collaborator(request, id, developer_id):
+    print(developer_id)
     repository = Repository.objects.get(id = id)
     collaborators = User.objects.all().filter(user_developers = repository)
     developer = User.objects.get(id = developer_id)
