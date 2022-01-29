@@ -64,6 +64,7 @@ def search(request):
 def checkRepositories(words):
     repositories = []
     all_repositories = Repository.objects.all()
+    
     for repository in all_repositories:
         for word in words:
             if (word.lower() in repository.name.lower()):
@@ -71,7 +72,7 @@ def checkRepositories(words):
                     repositories.append(repository)
                 else:
                     for r in repositories:
-                        if (r.id != repository.id):
+                        if (r.id != repository.id): 
                             repositories.append(repository)
     return repositories
 

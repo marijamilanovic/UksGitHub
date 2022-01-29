@@ -22,15 +22,17 @@
 
     <div style="background-color:  rgb(243, 243, 243); height: 60px;">
     <span style="margin-left: 20px;">{% bs_icon 'pc-display-horizontal' size='1em' %}</span>
-    <a href="#" style="font-size: large; margin-left: 5px; margin-top: 15px; display:inline-block;"> {{repository.creator}} </a>
+    <a href="{% url 'profile' %}" style="font-size: large; margin-left: 5px; margin-top: 15px; display:inline-block;"> {{repository.creator}} </a>
     <span style="font-size: large;">/</span>
     <a href="#" style="font-size: large; margin-left: 0px; margin-top: 15px; display:inline-block;"> {{repository.name}} </a>
     <span class="badge badge-pill badge-success d-inline-flex align-items-center justify-content-center"
     style="font-size: 0.8em; margin-left: 10px; height: 22px;" >{{repository.status}}
     </span>
-    <button type="button" class="btn btn-outline-secondary btn-sm" style="width: 100px; margin-left: 920px; color: black;"><span style="margin-left: -4px;  ">{% bs_icon 'eye' size='1.1em' %}</span> Watch <span class="badge badge-success">0</span></button>
-    <button type="button" class="btn btn-outline-secondary btn-sm" style="width: 100px; margin-left: 10px; color: black;"><span style="margin-left: -4px; ">{% bs_icon 'diagram-2' size='1.1em' %} </span> Fork <span class="badge badge-success">0</span></button>
-    <button type="button" class="btn btn-outline-secondary btn-sm" style="width: 100px;margin-left: 10px;color: black;"><span style="margin-left: -4px; color: grey;">{% bs_icon 'star-fill' size='1.1em' %} </span>  Star <span class="badge badge-success">0</span></button>
+    <div style="margin-left: 1150px; margin-top: -20px;">
+    <a href="{% url 'watchRepository' id=repository.id  %}" class="btn btn-outline-secondary btn-sm" style="width: 100px;  color: black;"><span style="margin-left: -4px;  ">{% bs_icon 'eye' size='1.1em' %}</span> Watch <span class="badge badge-success">{{watchers|length}}</span></a>
+    <a href="#"  class="btn btn-outline-secondary btn-sm" style="width: 100px; margin-left: 10px; color: black;"><span style="margin-left: -4px; ">{% bs_icon 'diagram-2' size='1.1em' %} </span> Fork <span class="badge badge-success">0</span></a>
+    <a href="#"  class="btn btn-outline-secondary btn-sm" style="width: 100px;margin-left: 10px;color: black;"><span style="margin-left: -4px; color: grey;">{% bs_icon 'star-fill' size='1.1em' %} </span>  Star <span class="badge badge-success">0</span></a>
+    </div>
     </div>
 
     <ul class="nav" style="background-color: rgb(243, 243, 243);">
@@ -106,7 +108,7 @@
           <a href="#"  style="margin-left: -15px; color:black;">{% bs_icon 'star' size='1.1em' %} 0 stars</a> 
           </div>
           <div class="col" style="margin-top: 5px;">
-            <a href="#" style="margin-left: -15px;color:black;">{% bs_icon 'eye' size='1.1em' %} 0 watching</a> 
+            <a href="{% url 'watchers' id=repository.id  %}" style="margin-left: -15px;color:black;">{% bs_icon 'eye' size='1.1em' %} {{watchers|length}} watching</a> 
           </div>
           <div class="col" style="margin-top: 5px;">
             <a href="#" style="margin-left: -15px;color: black; ">{% bs_icon 'diagram-2' size='1.1em' %}  0 forks </a>

@@ -15,5 +15,7 @@ urlpatterns = [
     path('transferToEditRepository/<int:id>', views.transferToEditRepository, name='transferToEditRepository'),
     path('deleteRepository/<int:id>', views.deleteRepository, name='deleteRepository'),
     path('<int:id>/<int:branch_id>', views.repo_branch, name='repo_branch'),
+    path('watchRepository/<int:id>', views.watchRepository, name = 'watchRepository'),
+    path('watchers/<int:id>', views.watchers, name='watchers')
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 

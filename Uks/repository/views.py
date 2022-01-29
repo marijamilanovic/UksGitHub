@@ -14,6 +14,7 @@ from milestone.models import Milestone
 from issue.models import Issue
 from branch.models import Branch
 from commit.models import Commit
+from django.contrib import messages
 
 
 @login_required(login_url="login")
@@ -26,7 +27,9 @@ def index(request, id):
     branch_list = Branch.objects.all().filter(repository = id)
     default_branch = Branch.objects.all().filter(is_default = True, repository = repository)[0]
     commit_list = Commit.objects.all().filter(branch = default_branch)
-    print(commit_list)
+    watchers = User.objects.all().filter(user_watchers = repository)
+    #to do trebalo bi dodati kreiranje nekih labela 
+    
     return render(request, "repository/index.html", {
         'repository':repository,
         'milestones': my_milestones,
@@ -34,7 +37,8 @@ def index(request, id):
         'issues': issues,
         'branch_list': branch_list,
         'commit_list': commit_list,
-        'selected_branch': default_branch,})
+        'selected_branch': default_branch,
+        'watchers':watchers})
 
 def get_my_milestones(request, id):
     milestones = Milestone.objects.all()
@@ -70,6 +74,7 @@ def addRepository(request):
             newRepository = Repository(name = name, status = status, creator = creator)
             newRepository.save()
             newRepository.developers.add(creator)
+            newRepository.watchers.add(creator)
             branch = Branch.objects.create(
                 name = 'master',
                 is_default = True,
@@ -132,3 +137,27 @@ def repo_branch(request, id, branch_id):
         'branch_list': branch_list,
         'commit_list': commit_list,
         'selected_branch': branch,})
+
+def watchRepository(request,id):
+    repository = Repository.objects.get(id=id)
+    print('************************')
+    message = None
+    watchers = User.objects.all().filter(user_watchers = repository)
+    # ako user vec nije u toj listi dodaj ga
+    print(request.user)
+    user = User.objects.get(id=request.user.id)
+    print(user)
+    if request.user not in watchers:
+        repository.watchers.add(user)
+    else:
+        #message = 'You are already watching! Do you want to unwatch this repository'
+        repository.watchers.remove(user)
+    return redirect('/repository/'+ str(repository.id))
+
+def watchers(request,id):
+    repository = Repository.objects.get(id=id)
+    watchers = User.objects.all().filter(user_watchers = repository)
+    return render(request, 'repository/watchers.html',{
+        "repository": repository,
+        "watchers":watchers
+    })
