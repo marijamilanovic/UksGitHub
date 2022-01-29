@@ -47,7 +47,7 @@
                 <div class="card border-secondary mb-3" style="margin-top: 15px;  max-width: 1000px; background-color: #cde9e9;">
                     <p style="margin-top: 10px; margin-left: 10px;">  {% bs_icon 'person-circle' size='1.5em'%} <b>{{c.author.username}}</b> commented {{c.created_date}}</p>
                         {% if pullrequest.creator.username == c.author.username %}
-                            <span style="margin-top: -42px; margin-left: 780px;">
+                            <span style="margin-top: -42px; margin-left: 650px;">
                             <p style="border:1px; 
                                 border-style:solid; 
                                 border-color:#53adad; 
@@ -60,14 +60,14 @@
                                 {% bs_icon 'emoji-smile' size='1.5em' color='gray' %} 
                             </a>
                             <div class="popover__content">
-                                <form method="POST" action="{% url 'addEmoji' id=c.id pr_id=pullrequest.id %}">
+                                <form method="POST" action="{% url 'add_emoji' id=c.id pr_id=pullrequest.id %}">
                                 {% csrf_token %}
                                     <p style="text-align: center;">Pick your reaction</p>
                                     <hr>
                                     <table>
                                         <tr class="emoji_table">
                                             {% for e in emojis %}
-                                                <th class="emoji_table"><button name="emoji" value={{e}} href="{% url 'addEmoji' id=c.id pr_id=pullrequest.id %}" style="color: white;" class="emoji_style">&#{{e}};</button></th>
+                                                <th class="emoji_table"><button name="emoji" value={{e}} href="{% url 'add_emoji' id=c.id pr_id=pullrequest.id %}" style="color: white;" class="emoji_style">&#{{e}};</button></th>
                                             {% endfor %}
                                         </tr>
                                     </table>
@@ -86,21 +86,27 @@
                                         <th><button class="functionalities_button" onclick="enable_textarea();">Edit</button></th>
                                         </tr>
                                     <tr>
-                                        <th><a type="button" href="{% url 'deleteComment' id=c.id pr_id=pullrequest.id %}" class="delete_button">Delete</a></th>
+                                        <th><a type="button" href="{% url 'delete_comment' id=c.id pr_id=pullrequest.id %}" class="delete_button" style="text-align: left; 
+                                            border: transparent; 
+                                            background-color: transparent;
+                                            margin-left: 5px;
+                                            color: red;
+                                            width: 140px;
+                                            font-size: large;">Delete</a></th>
                                         </tr>
                                 </table>
                             
                             </div>
                         </div>
                         <div class="card-header" style="background-color: white; margin-top: 5px;">
-                            <form method="POST" action="{% url 'updateComment' id=c.id pr_id=pullrequest.id %}">
+                            <form method="POST" action="{% url 'update_comment' id=c.id pr_id=pullrequest.id %}">
                                 {% csrf_token %}
                                 <textarea id="comment_content_edit" name="comment_content_edit" aria-disabled="true"  style=" width:600px;resize: none; border-color: transparent; background-color: transparent;" disabled=true style="border-color: white;">{{c.content}}</textarea>
                                 <button id="update_comment" hidden="true" style="margin-top: -28px;" class="btn btn-outline-success">Update comment</button>
                                 <hr style="border-color: #ffffff;">
                             </form>
                             {% for e in c.emojis.all%}
-                                <th style="width: 40px;"><button name="emoji" value={{e.name}} href="{% url 'addEmoji' id=c.id pr_id=pullrequest.id%}" 
+                                <th style="width: 40px;"><button name="emoji" value={{e.name}} href="{% url 'add_emoji' id=c.id pr_id=pullrequest.id%}" 
                                 style="border:1px; 
                                     border-style:solid; 
                                     border-color:#53adad; 
@@ -135,7 +141,7 @@
             <div class="tab-pane container fade" id="commits">Commits history.</div>
         </div>
     </div>
-        <form style="margin-top: 20px; margin-left: -12px;" method="POST" action="{% url 'addComment' id=pullrequest.id %}"> 
+        <form style="margin-top: 20px; margin-left: -12px;" method="POST" action="{% url 'add_comment' id=pullrequest.id %}"> 
             {% csrf_token %}
             <hr>
             {% if pullrequest.status == 'Opened' %}

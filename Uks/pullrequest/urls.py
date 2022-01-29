@@ -13,9 +13,9 @@ urlpatterns = [
      path('addPullrequest/', views.addPullrequest, name='addPullrequest'),
      path('updatePullrequestPage/<int:id>', views.updatePullrequestPage, name='updatePullrequestPage'),
      path('changeStatusPullrequest/<int:id>', views.changeStatusPullrequest, name='changeStatusPullrequest'),
-     path('addComment/<int:id>', comment.views.addComment, name='addComment'),
-     path('addEmoji/<int:id>/<int:pr_id>', comment.views.addEmoji, name='addEmoji'),
-     path('updateComment/<int:id>/<int:pr_id>', comment.views.updateComment, name='updateComment'),
-     path('deleteComment/<int:id>/<int:pr_id>', comment.views.deleteComment, name='deleteComment'),
+     path('add_comment/<int:id>', comment.views.add_comment, name='add_comment'),
+     path('add_emoji/<int:id>/<int:pr_id>', comment.views.add_emoji, name='add_emoji'),
+     path('update_comment/<int:id>/<int:pr_id>', comment.views.update_comment, name='update_comment'),
+     path('delete_comment/<int:id>/<int:pr_id>', comment.views.delete_comment, name='delete_comment'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 

@@ -7,21 +7,20 @@ from repository.models import Repository
 from django.contrib.auth.models import User
 from datetime import date
 
-def addComment(request, id):
+def add_comment(request, id):
     content = request.POST.get('comment')
     pullrequest = get_object_or_404(Pullrequest, id=id)
-    errorTitle = "You must enter comment content."
+    errorTitle = None
     emojis = list()
     for e in EMOJI_PICKER:
         emojis.append(e[0])
-    if len(content) == 0:
+    if content is None:
+        errorTitle = "You must enter comment content."
         return render(request, "updatePullrequest.html", {"pullrequest": pullrequest, "repository": pullrequest.prRepository, "comments":pullrequest.comments.all(), "emojis":emojis, "error":errorTitle})
     else:     
         if request.method == 'POST':
-            user = request.user
-
             created_date = date.today()
-            comment = Comment(author = user, content = content, created_date = created_date)
+            comment = Comment(author = request.user, content = content, created_date = created_date)
             comment.save()
 
             pullrequest.comments.add(comment)
@@ -29,7 +28,7 @@ def addComment(request, id):
 
             return redirect('/pullrequest/updatePullrequestPage/'+ str(pullrequest.id))
 
-def addEmoji(request, id, pr_id):
+def add_emoji(request, id, pr_id):
     if request.method == 'POST':
         have_emoji = FALSE
         emoji = Emoji()
@@ -70,7 +69,7 @@ def add_reaction_creator(request, comment, emoji):
             emoji.reaction_creators.add(request.user)
 
 
-def updateComment(request, id, pr_id):
+def update_comment(request, id, pr_id):
     if request.method == 'POST':
         comment = get_object_or_404(Comment, id=id)
         content = request.POST.get('comment_content_edit')
@@ -79,7 +78,7 @@ def updateComment(request, id, pr_id):
 
         return redirect('/pullrequest/updatePullrequestPage/'+ str(pr_id))
 
-def deleteComment(request, id, pr_id):
+def delete_comment(request, id, pr_id):
     comment = get_object_or_404(Comment, id=id)
     pullrequest = get_object_or_404(Pullrequest, id=pr_id)
 

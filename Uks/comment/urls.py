@@ -5,8 +5,8 @@ from django.conf.urls.static import static
 from . import views
 
 urlpatterns = [
-     path('addComment/<int:id>', views.addComment, name='addComment'),
-     path('addEmoji/<int:id>/<int:pr_id>', views.addEmoji, name='addEmoji'),
-     path('updateComment/<int:id>/<int:pr_id>', views.updateComment, name='updateComment'),
-     path('deleteComment/<int:id>/<int:pr_id>', views.deleteComment, name='deleteComment'),
+     path('add_comment/<int:id>', views.add_comment, name='add_comment'),
+     path('add_emoji/<int:id>/<int:pr_id>', views.add_emoji, name='add_emoji'),
+     path('update_comment/<int:id>/<int:pr_id>', views.update_comment, name='update_comment'),
+     path('delete_comment/<int:id>/<int:pr_id>', views.delete_comment, name='delete_comment'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

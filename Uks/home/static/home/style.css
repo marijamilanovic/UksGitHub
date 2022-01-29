@@ -186,13 +186,13 @@ nav .navbar-nav li a{
   .delete_button{
     text-align: left; 
     border: transparent; 
-    background-color: transparent;
+    color: white;
     width: 140px;
-    font-size: larger;
+    font-size: medium;
   }
   
   .delete_button:hover{
-    background: rgb(236, 91, 91);
+    background: rgb(207, 207, 207);
     box-shadow: 0 6px 12px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
   }
 
