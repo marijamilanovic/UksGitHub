@@ -223,7 +223,7 @@
     var typed_text = ""
     function quote_comment(c) {
         this.typed_text = document.getElementById("comment").value.concat("\n");
-        this.quoted_comments = typed_text.concat(c)
+        this.quoted_comments = typed_text.concat(c + "\n")
 
         document.getElementById("comment").value = quoted_comments;
     }
