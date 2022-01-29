@@ -4,6 +4,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from .models import Issue
 from repository.models import Repository
 from user.models import User
+from project.models import Project
 from milestone.models import Milestone
 
 def issues(request, id):
@@ -35,7 +36,9 @@ def new_issue(request, repo_id):
     return render(request, 'newIssue.html', {
         'repository':repository,
         'users':users, 
-        'milestones': get_milestones_by_repo(repo_id)
+        'milestones': get_milestones_by_repo(repo_id),
+        'projects': get_projects_by_repo(repository),
+        'developers':users
         })
 
 def add_issue(request):
@@ -45,22 +48,31 @@ def add_issue(request):
             milestone = Milestone.objects.get(id = request.POST['milestone_id'])
         else:
             milestone = None
+        usernames = request.POST.getlist('developers')
         opened_by = request.user.username
         new_issue = Issue(
             issue_title = request.POST['title'], 
             description = request.POST['description'], 
             repository = repository, 
-            opened_by = opened_by)
+            opened_by = opened_by,
+            )
         new_issue.save()
+        if usernames:
+            for username in usernames:
+                user = get_object_or_404(User, username = username)
+                print(username)
+                new_issue.assignees.add(user)
     return redirect('issues/' + str(repository.id))
 
 def view_issue(request, id):
     issue = get_issue_by_id(id)
+    repository = get_current_repository(issue.repository.id)
     return render(request, 'viewIssue.html',{
-        'repository': get_current_repository(issue.repository.id), 
+        'repository': repository, 
         'issue': issue, 
         'milestones': get_milestones_by_issue_repo(id), 
-        'developers':get_users_by_repo(id)
+        'developers':get_users_by_repo(id),
+        'projects': get_projects_by_repo(repository)
         })
 
 def update_issue(request, id):
@@ -73,11 +85,17 @@ def update_issue(request, id):
             issue.milestone = Milestone.objects.get(id = request.POST['milestone_id'])
         elif issue.milestone != None:
             issue.milestone = None
+        usernames = request.POST.getlist('developers')
         all_repos = Repository.objects.all()
         for r in all_repos:
             if(r.id == issue.repository.id):
                 repository = r
         issue.save()
+        issue.assignees.clear()
+        if usernames:
+            for username in usernames:
+                user = get_object_or_404(User, username = username)
+                issue.assignees.add(user)
         return issues(request, repository.id)
 
 def delete_issue(request, id):
@@ -100,6 +118,7 @@ def view_found_issue(request, id):
         'issue':issue
         })
 
+# assignee methods
 def get_users_by_repo(id):
     issue = get_issue_by_id(id)
     repository = get_current_repository(issue.repository.id)
@@ -120,6 +139,11 @@ def get_current_repository(repo_id):
 # issue methods
 def get_issue_by_id(id):
     return get_object_or_404(Issue, id = id)
+
+# project methods
+def get_projects_by_repo(repository):
+    projects = Project.objects.filter(repository = repository)
+    return projects
 
 
 
