@@ -28,7 +28,7 @@
 
     {% block page_content %}
         <div class="tab-pane container active" id="milestones">
-            <a href="{% url 'new_issue' id=repository.id %}" style="margin-left: 763px; margin-top: -25px;" type="button" class="btn btn-success" >New issue</a>
+            <a href="{% url 'new_issue' repo_id=repository.id %}" style="margin-left: 763px; margin-top: -25px;" type="button" class="btn btn-success" >New issue</a>
         {% if issues %}
             <table class="table">
                 <tbody>

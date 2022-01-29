@@ -8,7 +8,7 @@ from . import views
 
 urlpatterns = [
     path('issues/<int:id>', views.issues, name='issues'),
-    path('new-issue/<int:id>', views.new_issue, name='new_issue'),
+    path('new-issue/<int:repo_id>', views.new_issue, name='new_issue'),
     path('add-issue', views.add_issue, name='add_issue'),
     path('view-issue/<int:id>', views.view_issue, name='view_issue'),
     path('update-issue/<int:id>', views.update_issue, name='update_issue'),

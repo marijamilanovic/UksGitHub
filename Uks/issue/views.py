@@ -1,8 +1,5 @@
 from imp import reload
-import nntplib
 from django.shortcuts import render, get_object_or_404, redirect
-from django.http import JsonResponse
-from django.core import serializers
 
 from .models import Issue
 from repository.models import Repository
@@ -10,48 +7,63 @@ from user.models import User
 from milestone.models import Milestone
 
 def issues(request, id):
-    repository = get_object_or_404(Repository, id=id)
-    issues = Issue.objects.filter(repository=repository)
-    return render(request, 'issues.html', {"issues":issues, "repository":repository})
+    repository = get_current_repository(id)
+    issues = Issue.objects.filter(repository = repository)
+    return render(request, 'issues.html', {
+        "issues":issues, 
+        "repository":repository
+        })
 
 def all_issues(request):
-    my_issues = get_my_issues(request)
-    return render(request,"all_issues.html",{'my_issues':my_issues})
+    return render(request,"all_issues.html",{
+        'my_issues': get_my_issues(request)
+        })
 
 def get_my_issues(request):
     issues = Issue.objects.filter(opened_by=request.user.username)
-    issues = issues.union(Issue.objects.filter(assignee=request.user.username))
-    return issues
+    return issues.union(Issue.objects.filter(assignee=request.user.username))
 
-def new_issue(request, id):
-    repository = get_object_or_404(Repository, id=id)
+def new_issue(request, repo_id):
+    repository = get_current_repository(repo_id)
+    #modify users
     users = User.objects.all()
     return render(request, 'newIssue.html', {
         'repository':repository,
-        'users':users})
+        'users':users, 
+        'milestones': get_milestones_by_repo(repo_id)
+        })
 
 def add_issue(request):
     if request.method == 'POST':
-        title = request.POST['title']
-        description = request.POST['description']
         repository = get_object_or_404(Repository, id = request.POST['repository'] )
+        if request.POST['milestone_id'] != 'empty':
+            milestone = Milestone.objects.get(id = request.POST['milestone_id'])
+        else:
+            milestone = None
         opened_by = request.user.username
-        new_issue = Issue(issue_title = title, description = description, repository = repository, opened_by = opened_by)
+        new_issue = Issue(
+            issue_title = request.POST['title'], 
+            description = request.POST['description'], 
+            repository = repository, 
+            opened_by = opened_by)
         new_issue.save()
     return redirect('issues/' + str(repository.id))
 
 def view_issue(request, id):
-    issue = get_object_or_404(Issue, id = id)
-    repository = get_object_or_404(Repository, id = issue.repository.id)
-    milestones = get_milestones_by_repo(request, id)
-    get_users_by_repo(request, id)
-    return render(request, 'viewIssue.html',{'repository': repository, 'issue':issue, 'milestones': milestones})
+    issue = get_issue_by_id(id)
+    return render(request, 'viewIssue.html',{
+        'repository': get_current_repository(issue.repository.id), 
+        'issue': issue, 
+        'milestones': get_milestones_by_issue_repo(id), 
+        'developers':get_users_by_repo(id)
+        })
 
 def update_issue(request, id):
     if request.method == 'POST':
-        issue = get_object_or_404(Issue, id = id)
+        issue = get_issue_by_id(id)
         issue.issue_title = request.POST['title']
         issue.description = request.POST['description']
+        #print(request.POST.getlist('developers'))
         if request.POST['milestone_id'] != 'empty':
             issue.milestone = Milestone.objects.get(id = request.POST['milestone_id'])
         elif issue.milestone != None:
@@ -71,28 +83,38 @@ def delete_issue(request, id):
             repository = r
     issue.delete()
     issue_update = Issue.objects.filter(repository=issue.repository)
-    return render(request, "issues.html", {"issues":issue_update, "repository":repository})
+    return render(request, "issues.html", {
+        "issues":issue_update, 
+        "repository":repository
+        })
 
 def view_found_issue(request, id):
-    issue = get_object_or_404(Issue, id = id)
-    repository = get_object_or_404(Repository, id = issue.repository.id)
-    return render(request, 'viewFoundIssue.html', {'repository': repository, 'issue':issue})
+    issue = get_issue_by_id(id)
+    return render(request, 'viewFoundIssue.html', {
+        'repository': get_current_repository(issue.repository.id), 
+        'issue':issue
+        })
 
-def get_users_by_repo(request, id):
-    issue = get_object_or_404(Issue, id = id)
-    repository = get_object_or_404(Repository, id = issue.repository.id)
-    #developers = users.filter(id=repository.creator_id)
-    #print(developers)
-    print(repository.developers)
-    #print(vars(users))
-    #return render(request, "issues.html", {})
+def get_users_by_repo(id):
+    issue = get_issue_by_id(id)
+    repository = get_current_repository(issue.repository.id)
+    return User.objects.filter(user_developers = repository)
 
-def get_milestones_by_repo(request, id):
-    issue = get_object_or_404(Issue, id = id)
+def get_milestones_by_issue_repo(id):
+    issue = get_issue_by_id(id)
     repository = get_object_or_404(Repository, id = issue.repository.id)
-    milestones = Milestone.objects.all().filter(repository=repository)
-    return milestones
+    return Milestone.objects.all().filter(repository=repository)
 
+# repo methods
+def get_milestones_by_repo(repo_id):
+    return Milestone.objects.all().filter(repository=get_current_repository(repo_id))
+
+def get_current_repository(repo_id):
+    return get_object_or_404(Repository, id = repo_id)
+
+# issue methods
+def get_issue_by_id(id):
+    return get_object_or_404(Issue, id = id)
 
 
 

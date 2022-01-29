@@ -25,7 +25,7 @@
     {% endblock %}
     {%block page_content%}
         <div class="tab-pane container active" id="milestones" style="margin-right: 60px;">
-            <a href="{% url 'new_issue' id=repository.id %}" style="margin-left: 763px; margin-top: -25px;" type="button" class="btn btn-success" >New issue</a>
+            <a href="{% url 'new_issue' repo_id=repository.id %}" style="margin-left: 763px; margin-top: -25px;" type="button" class="btn btn-success" >New issue</a>
         {% if milestone %}
         <h3>{{milestone.title}}</h3>
         <div class="progress" style="width: 350px; margin-top: 10px;">
