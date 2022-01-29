@@ -2,6 +2,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from .models import Milestone
 from repository.models import Repository
 from issue.models import Issue
+from datetime import date
 
 def newMilestone(request, id):
     repository = get_object_or_404(Repository, id=id)
@@ -14,6 +15,7 @@ def milestones(request,id):
         if(m.repository.id == id):
             repositoryMilestones.append(m)
     repository = get_object_or_404(Repository, id=id)
+    
     return render(request, 'milestones.html', {"milestones":repositoryMilestones, "repository":repository})
 
 def allMilestones(request):
@@ -73,7 +75,6 @@ def updateMilestone(request, id):
 def seeMilestone(request, id):
     milestone = get_object_or_404(Milestone, id = id)
     repository = get_object_or_404(Repository, id = milestone.repository.id)
-    #dobavi i issue od tog milestona
     issues = Issue.objects.all().filter(milestone=milestone.id)
 
-    return render(request, "milestone.html", {"milestone": milestone, "repository": repository, "issues":issues})
+    return render(request, "milestone.html", {"milestone": milestone, "repository": repository, "issues":issues })
