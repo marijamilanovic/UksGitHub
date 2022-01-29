@@ -6,6 +6,7 @@ from task.models import Task
 from branch.models import Branch
 from comment.models import Comment
 from repository.models import Repository
+from django.contrib.auth.models import User
 
 OPENED = "Opened"
 CLOSED = "Closed"
@@ -25,6 +26,7 @@ class Pullrequest(models.Model):
     source = models.ForeignKey(to=Branch, related_name='source_branch', null=True, on_delete=models.CASCADE)
     target = models.ForeignKey(to=Branch, related_name='target_branch', null=True, on_delete=models.CASCADE)
     comments = models.ManyToManyField(Comment)
+    creator = models.ForeignKey(to=User, null=True, on_delete=models.CASCADE)
 
 
     def __str__(self):
