@@ -9,6 +9,7 @@ from milestone.models import Milestone
 def issues(request, id):
     repository = get_current_repository(id)
     issues = Issue.objects.filter(repository = repository)
+    #issues by current repository
     return render(request, 'issues.html', {
         "issues":issues, 
         "repository":repository
@@ -21,7 +22,11 @@ def all_issues(request):
 
 def get_my_issues(request):
     issues = Issue.objects.filter(opened_by=request.user.username)
-    return issues.union(Issue.objects.filter(assignee=request.user.username))
+    assignee_issues = Issue.objects.filter(assignees = request.user.id)
+    if not assignee_issues:
+        return issues
+    else:
+        return assignee_issues.union(issues)
 
 def new_issue(request, repo_id):
     repository = get_current_repository(repo_id)

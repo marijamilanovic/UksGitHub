@@ -33,7 +33,7 @@
             <div style="margin-left: 600px;position: absolute;">
                 Assignees:
                 <br>
-                <select name="developers" style="min-width:100px;border-radius: 6px;border: 2px solid #AAA;box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.1);" multiple>
+                <select name="developers" style="min-width:100px;border-radius: 6px;border: 2px solid #AAA;box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.1);" multiple class="chosen-select">
                     <option value="empty"></option>
                     {% for dev in developers %}
                         {% if dev.username == issue.assignee %}
@@ -96,7 +96,9 @@
 
     {% block javascript %}
     <script>
-        
+        $(".chosen-select").chosen({
+            no_results_text: "Oops, nothing found!"
+        })
     </script>
     {% endblock %}
 </body>
