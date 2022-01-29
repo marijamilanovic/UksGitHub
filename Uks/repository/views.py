@@ -12,6 +12,8 @@ from django.contrib.auth.models import User
 from pullrequest.models import Pullrequest
 from milestone.models import Milestone
 from issue.models import Issue
+from branch.models import Branch
+from commit.models import Commit
 
 
 @login_required(login_url="login")
@@ -21,11 +23,18 @@ def index(request, id):
     my_milestones = get_my_milestones(request,id)
     my_pullrequests = get_my_pullrequests(request, id)
     issues = get_issues_by_repo(request, id)
+    branch_list = Branch.objects.all().filter(repository = id)
+    default_branch = Branch.objects.all().filter(is_default = True, repository = repository)[0]
+    commit_list = Commit.objects.all().filter(branch = default_branch)
+    print(commit_list)
     return render(request, "repository/index.html", {
         'repository':repository,
         'milestones': my_milestones,
         'pullrequests': my_pullrequests,
-        'issues': issues})
+        'issues': issues,
+        'branch_list': branch_list,
+        'commit_list': commit_list,
+        'selected_branch': default_branch,})
 
 def get_my_milestones(request, id):
     milestones = Milestone.objects.all()
@@ -61,6 +70,11 @@ def addRepository(request):
             newRepository = Repository(name = name, status = status, creator = creator)
             newRepository.save()
             newRepository.developers.add(creator)
+            branch = Branch.objects.create(
+                name = 'master',
+                is_default = True,
+                repository = Repository.objects.get(pk = newRepository.id)
+            )  
     return redirect("all_repositories")
 
 def transferToEditRepository(request,id):
@@ -98,3 +112,23 @@ def all_repositories(request):
     #treba obratiti paznju i na one gde je on developer
     all_repositories = Repository.objects.all().filter(creator = request.user)
     return render(request, 'repository/all_repositories.html',{'all_repositories':all_repositories})
+
+
+def repo_branch(request, id, branch_id):
+    template = loader.get_template('repository/index.html')
+    repository = Repository.objects.get(id=id)
+    my_milestones = get_my_milestones(request,id)
+    my_pullrequests = get_my_pullrequests(request, id)
+    issues = get_issues_by_repo(request, id)
+    branch_list = Branch.objects.all().filter(repository = id)
+    branch = get_object_or_404(Branch, id = branch_id)
+    commit_list = Commit.objects.all().filter(branch = branch)
+    print(commit_list)
+    return render(request, "repository/index.html", {
+        'repository':repository,
+        'milestones': my_milestones,
+        'pullrequests': my_pullrequests,
+        'issues': issues,
+        'branch_list': branch_list,
+        'commit_list': commit_list,
+        'selected_branch': branch,})

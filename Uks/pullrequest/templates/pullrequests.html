@@ -12,6 +12,18 @@
 </head>
 
 <body>
+    {% block navCode %}
+      <li class="nav-item">
+        <a class="nav-link active" href="{% url 'repository' id=repository.id %}" style=" color: black;" id="code" aria-current="page">{% bs_icon 'code' size='1em' %} Code</a>
+      </li>
+    {% endblock %}
+
+    {% block navPullRequests %}
+      <li class="nav-item">
+        <a class="nav-link" id="pullRequests" style="border-bottom:3px solid darkviolet;color: black;" href="{% url 'pullrequests' id=repository.id  %}">{% bs_icon 'shuffle' size='1.3em' %} Pull requests</a>
+      </li>
+    {% endblock %}
+
     {% block page_content %}
         <div class="tab-pane container active" id="milestones">
             <a href="{% url 'newPullrequest' id=repository.id %}" style="margin-left: 850px; margin-top: -25px;" type="button" class="btn btn-success" >New pull request</a>
