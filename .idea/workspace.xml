@@ -2,9 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="6ef7a644-5e88-4c75-bcac-6a090d4d8f32" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/Uks/home/templates/home/profile.html" beforeDir="false" afterPath="$PROJECT_DIR$/Uks/home/templates/home/profile.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Uks/home/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/Uks/home/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Uks/pullrequest/templates/pullrequests.html" beforeDir="false" afterPath="$PROJECT_DIR$/Uks/pullrequest/templates/pullrequests.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Uks/repository/tests.py" beforeDir="false" afterPath="$PROJECT_DIR$/Uks/repository/tests.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Uks/repository/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/Uks/repository/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -19,14 +17,15 @@
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
-    <option name="showExcludedFiles" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="SvnConfiguration">
     <configuration />
   </component>
