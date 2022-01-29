@@ -29,7 +29,16 @@ def index(request, id):
     commit_list = Commit.objects.all().filter(branch = default_branch)
     watchers = User.objects.all().filter(user_watchers = repository)
     stargazers = User.objects.all().filter(user_stargazers = repository)
+    forks = User.objects.all().filter(user_forks = repository)
     #to do trebalo bi dodati kreiranje nekih labela 
+    
+    repositories_with_same_name = Repository.objects.all().filter(name = repository.name)
+    forked_from_user = None
+    for r in repositories_with_same_name:
+        if (r.creator.id != repository.creator.id):
+            forked_from_user = get_object_or_404(User, id=r.creator.id)
+    print(forked_from_user)
+    
     
     return render(request, "repository/index.html", {
         'repository':repository,
@@ -40,7 +49,9 @@ def index(request, id):
         'commit_list': commit_list,
         'selected_branch': default_branch,
         'watchers':watchers,
-        'stargazers': stargazers})
+        'stargazers': stargazers,
+        'forks':forks,
+        'forked_from': forked_from_user})
 
 def get_my_milestones(request, id):
     milestones = Milestone.objects.all()
@@ -155,10 +166,12 @@ def watchers(request,id):
     repository = Repository.objects.get(id=id)
     watchers = User.objects.all().filter(user_watchers = repository)
     stargazers = User.objects.all().filter(user_stargazers = repository)
+    forkers = User.objects.all().filter(user_forks = repository)
     return render(request, 'repository/watchers.html',{
         "repository": repository,
         "watchers":watchers,
         "stargazers":stargazers,
+        "forkers":forkers
     })
 
 def starRepository(request,id):
@@ -175,9 +188,80 @@ def stargazers(request,id):
     repository = Repository.objects.get(id=id)
     stargazers = User.objects.all().filter(user_stargazers = repository)
     watchers = User.objects.all().filter(user_watchers = repository)
+    forkers = User.objects.all().filter(user_forks = repository)
     return render(request, 'repository/stargazers.html',{
         "repository": repository,
         "stargazers":stargazers,
-        "watchers": watchers
+        "watchers": watchers,
+        "forkers": forkers
+    })
+
+def forkRepository(request,id):
+    repository = Repository.objects.get(id=id)
+    repositories = Repository.objects.all().filter(creator=request.user)
+    newRepository = Repository(name = repository.name, status = repository.status, creator = request.user)
+    newRepository.save()
+    newRepository.developers.add(repository.creator)
+    branch = Branch.objects.create(
+                name = 'master',
+                is_default = True,
+                repository = Repository.objects.get(pk = newRepository.id)
+            )  
+    forks = User.objects.all().filter(user_forks = newRepository)
+    user = User.objects.get(id=request.user.id)
+    if request.user not in forks:
+        repository.forks.add(user)
+        newRepository.forks.add(user)
+    else:
+        repository.forks.remove(user)
+        newRepository.forks.add(user)
+
+    return redirect('/repository/'+ str(newRepository.id))
+
+def forkers(request,id):
+    repository = Repository.objects.get(id=id)
+    watchers = User.objects.all().filter(user_watchers = repository)
+    stargazers = User.objects.all().filter(user_stargazers = repository)
+    forkers = User.objects.all().filter(user_forks = repository)
+    forked_from = None
+    forked_repo = None
+    proba = None
+    for f in forkers:
+        if (f.id == repository.creator.id):  
+            repo = Repository.objects.get(id=repository.id)  
+            repos_with_same_name = Repository.objects.all().filter(name = repo)
+            for r in repos_with_same_name:
+                if (r.creator.id != repo.creator.id):
+                    forked_from = get_object_or_404(User, id=r.creator.id)
+                    forked_repo = r
+                    repo_copy = repo
+                    break
+                else:
+                    forked_from = get_object_or_404(User, id=r.creator.id)
+            
+        else:
+            repo = Repository.objects.get(id = repository.id)  
+            repos_with_same_name = Repository.objects.all().filter(name = repo)
+            if (f.id != repo.creator.id):
+                repos = Repository.objects.all().filter(creator = f, name = repo.name) 
+                repo_copy = repos[0]
+            
+            for r in repos_with_same_name:
+                if (r.creator.id != repo.creator.id): 
+                    forked_from = get_object_or_404(User, id=r.creator.id)
+                    forked_repo = r  
+                else:
+                    forked_from = get_object_or_404(User, id=repo.creator.id)
+                    forked_repo = repo
+                    break
+    
+    return render(request, 'repository/forkers.html',{
+        "repository": repository,
+        "watchers":watchers,
+        "stargazers":stargazers,
+        "forks": forkers,
+        "forked_from":forked_from,
+        "forked_repo":forked_repo,
+        "repo_copy":repo_copy
     })
 

@@ -21,6 +21,20 @@
     </head>
 
     <div style="background-color:  rgb(243, 243, 243); height: 60px;">
+
+    {% if forked_from %}
+    <span style="margin-left: 20px;">{% bs_icon 'diagram-2' size='1.4em' %}</span>
+    <a href="{% url 'profile' %}" style="font-size: large; margin-left: 5px; margin-top: 15px; display:inline-block;"> {{repository.creator}} </a>
+    <span style="font-size: large;">/</span>
+    <a href="#" style="font-size: large; margin-left: 0px; margin-top: 15px; display:inline-block;"> {{repository.name}} </a>
+    <span class="badge badge-pill badge-success d-inline-flex align-items-center justify-content-center"
+    style="font-size: 0.8em; margin-left: 10px; height: 22px;" >{{repository.status}}
+    </span>
+    <div style=" margin-left: 50px;">
+    <small >forked from {{forked_from}}/{{repository.name}}</small>
+    </div>
+
+    {% else %}
     <span style="margin-left: 20px;">{% bs_icon 'pc-display-horizontal' size='1em' %}</span>
     <a href="{% url 'profile' %}" style="font-size: large; margin-left: 5px; margin-top: 15px; display:inline-block;"> {{repository.creator}} </a>
     <span style="font-size: large;">/</span>
@@ -28,9 +42,11 @@
     <span class="badge badge-pill badge-success d-inline-flex align-items-center justify-content-center"
     style="font-size: 0.8em; margin-left: 10px; height: 22px;" >{{repository.status}}
     </span>
-    <div style="margin-left: 1150px; margin-top: -20px;">
+    {% endif %}
+
+    <div style="margin-left: 1150px; margin-top: -40px;">
     <a href="{% url 'watchRepository' id=repository.id  %}" class="btn btn-outline-secondary btn-sm" style="width: 100px;  color: black;"><span style="margin-left: -4px;  ">{% bs_icon 'eye' size='1.1em' %}</span> Watch <span class="badge badge-success">{{watchers|length}}</span></a>
-    <a href="#"  class="btn btn-outline-secondary btn-sm" style="width: 100px; margin-left: 10px; color: black;"><span style="margin-left: -4px; ">{% bs_icon 'diagram-2' size='1.1em' %} </span> Fork <span class="badge badge-success">0</span></a>
+    <a href="#"  onclick="showModal()" class="btn btn-outline-secondary btn-sm" style="width: 100px; margin-left: 10px; color: black;"><span style="margin-left: -4px; ">{% bs_icon 'diagram-2' size='1.1em' %} </span> Fork <span class="badge badge-success">{{forks|length}}</span></a>
     {% if stargazers %}
     <a href="{% url 'starRepository' id=repository.id  %}"  class="btn btn-outline-secondary btn-sm" style="width: 100px;margin-left: 10px;color: black;"><span style="margin-left: -4px; color:orange">{% bs_icon 'star-fill' size='1.1em' %} </span>  Star <span class="badge badge-success">{{stargazers|length}}</span></a>
     {% else %}
@@ -115,7 +131,7 @@
             <a href="{% url 'watchers' id=repository.id  %}" style="margin-left: -15px;color:black;">{% bs_icon 'eye' size='1.1em' %} {{watchers|length}} watching</a> 
           </div>
           <div class="col" style="margin-top: 5px;">
-            <a href="#" style="margin-left: -15px;color: black; ">{% bs_icon 'diagram-2' size='1.1em' %}  0 forks </a>
+            <a href="{% url 'forkers' id=repository.id  %}" style="margin-left: -15px;color: black; ">{% bs_icon 'diagram-2' size='1.1em' %}  {{forks|length}} forks </a>
           </div>
           <hr style="margin-top: 20px;">
           <h5 style="margin-top: 20px;">Contributors</h5>
@@ -123,6 +139,32 @@
 
       </div>
     </div>
+<!--Modal-->
+    <div class="modal" id="myModal" tabindex="-1" role="dialog">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Fork {{repository.name}}</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <p>Where should we fork {{repository.name}} ?</p>
+            <a class="tooltip-test" title="Will be created as {{request.user}}/{{repository.name}}" href="{% url 'forkRepository' id=repository.id  %}"  style="font-size: large;"> {% bs_icon 'person-circle' size='1.2em' %} {{request.user}}</a>
+          </div>
+        </div>
+      </div>
+    </div>
     {%endblock%}  
     {%endblock%}   
+
+    {% block javascript %}
+    <script> 
+      function showModal() {
+        $('#myModal').modal('show')
+      }
+    </script>
+
+    {% endblock %}
 </body>

@@ -19,5 +19,7 @@ urlpatterns = [
     path('watchers/<int:id>', views.watchers, name='watchers'),
     path('starRepository/<int:id>', views.starRepository, name = 'starRepository'),
     path('stargazers/<int:id>', views.stargazers, name='stargazers'),
+    path('forkRepository/<int:id>', views.forkRepository, name = 'forkRepository'),
+    path('forkers/<int:id>', views.forkers, name='forkers'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
