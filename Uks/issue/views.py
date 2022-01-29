@@ -39,7 +39,7 @@ def new_issue(request, repo_id):
         'users':users, 
         'milestones': get_milestones_by_repo(repo_id),
         'projects': get_projects_by_repo(repository),
-        'developers':users,
+        'developers': get_users_by_repo(repository),
         'pullrequests': get_pullrequests_by_repo(repository)
         })
 
@@ -65,7 +65,7 @@ def view_issue(request, id):
         'repository': repository, 
         'issue': issue, 
         'milestones': get_milestones_by_issue_repo(id), 
-        'developers':get_users_by_repo(id),
+        'developers':get_users_by_repo(repository),
         'projects': get_projects_by_repo(repository),
         'pullrequests': get_pullrequests_by_repo(repository)
         })
@@ -106,9 +106,7 @@ def view_found_issue(request, id):
         })
 
 # assignee methods
-def get_users_by_repo(id):
-    issue = get_issue_by_id(id)
-    repository = get_current_repository(issue.repository.id)
+def get_users_by_repo(repository):
     return User.objects.filter(user_developers = repository)
 
 def add_assignees_in_issue(request, issue):
