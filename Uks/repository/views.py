@@ -132,3 +132,64 @@ def repo_branch(request, id, branch_id):
         'branch_list': branch_list,
         'commit_list': commit_list,
         'selected_branch': branch,})
+
+def collaborators(request, id):
+    repository = Repository.objects.get(id = id)
+    collaborators = User.objects.all().filter(user_developers = repository)
+    developers = User.objects.all()
+    not_added_developers = []
+    for developer in developers:
+        if developer not in collaborators:
+            not_added_developers.append(developer)
+    selected_developer = User.objects.first()
+    return render(request, "repository/collaborators.html",{'repository':repository, 'collaborators':collaborators,'selected_developer': selected_developer, 'developers':not_added_developers})
+
+def repo_developer(request, id, developer_id):
+    print("repo developer")
+    print(developer_id)
+    template = loader.get_template('repository/collaborators.html')
+    repository = Repository.objects.get(id=id)
+    developers = User.objects.all()
+    collaborators = User.objects.all().filter(user_developers = repository)
+    not_added_developers = []
+    for developer in developers:
+        if developer not in collaborators:
+            not_added_developers.append(developer)
+    selected_developer = get_object_or_404(User, id = developer_id)
+    return render(request, "repository/collaborators.html", {
+        'repository':repository,
+        'selected_developer': selected_developer,
+        'collaborators':collaborators, 'developers':not_added_developers})
+
+def add_collaborator(request, id, developer_id):
+    print(developer_id)
+    repository = Repository.objects.get(id = id)
+    developer = User.objects.get(id = developer_id)
+    developers = User.objects.all()
+    repository.developers.add(developer)
+    collaborators = User.objects.all().filter(user_developers = repository)
+    not_added_developers = []
+    for developer in developers:
+        if developer not in collaborators:
+            not_added_developers.append(developer)
+    selected_developer = get_object_or_404(User, id = developer_id)
+    return render(request,"repository/collaborators.html",{
+         'repository':repository,
+         'selected_developer': selected_developer,
+         'collaborators': collaborators, 'developers':not_added_developers})
+
+def remove_collaborator(request, id, developer_id):
+    repository = Repository.objects.get(id = id)
+    collaborators = User.objects.all().filter(user_developers = repository)
+    developer = User.objects.get(id = developer_id)
+    repository.developers.remove(developer)
+    not_added_developers = []
+    developers = User.objects.all()
+    for developer in developers:
+        if developer not in collaborators:
+            not_added_developers.append(developer)
+    selected_developer = get_object_or_404(User, id = developer_id)
+    return render(request, "repository/collaborators.html", { 'repository':repository,
+         'selected_developer': selected_developer,
+         'collaborators': collaborators, 'developers':not_added_developers})
+
