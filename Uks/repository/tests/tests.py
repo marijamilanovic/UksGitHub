@@ -1,9 +1,9 @@
+from pyexpat import model
 from django.test import TestCase, Client
 from django.contrib.auth.models import User
 from home.views import repository
-
 from repository.views import add_collaborator_on_repository, remove_collaborato_from_repository
-from .models import Repository as Repo
+from ..models import Repository as Repo
 # Create your tests here.
 class Repository(TestCase):
     def setUp(self):
