@@ -78,3 +78,22 @@ nav .navbar-nav li a{
   .greska{
     color: red;
   }
+
+  .code{
+    display: grid;
+    grid-template-columns: repeat(10, auto);
+    padding: 2%;
+}
+
+
+.code-item1{
+    color: brown;
+    grid-column-start: 2;
+
+}
+
+
+.code-item2{
+    grid-column-start: 4;
+    margin-top: 3%;
+}

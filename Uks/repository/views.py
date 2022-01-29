@@ -28,6 +28,7 @@ def index(request, id):
     default_branch = Branch.objects.all().filter(is_default = True, repository = repository)[0]
     commit_list = Commit.objects.all().filter(branch = default_branch)
     watchers = User.objects.all().filter(user_watchers = repository)
+    stargazers = User.objects.all().filter(user_stargazers = repository)
     #to do trebalo bi dodati kreiranje nekih labela 
     
     return render(request, "repository/index.html", {
@@ -38,7 +39,8 @@ def index(request, id):
         'branch_list': branch_list,
         'commit_list': commit_list,
         'selected_branch': default_branch,
-        'watchers':watchers})
+        'watchers':watchers,
+        'stargazers': stargazers})
 
 def get_my_milestones(request, id):
     milestones = Milestone.objects.all()
@@ -140,24 +142,42 @@ def repo_branch(request, id, branch_id):
 
 def watchRepository(request,id):
     repository = Repository.objects.get(id=id)
-    print('************************')
-    message = None
     watchers = User.objects.all().filter(user_watchers = repository)
-    # ako user vec nije u toj listi dodaj ga
-    print(request.user)
     user = User.objects.get(id=request.user.id)
-    print(user)
     if request.user not in watchers:
         repository.watchers.add(user)
     else:
-        #message = 'You are already watching! Do you want to unwatch this repository'
         repository.watchers.remove(user)
+    
     return redirect('/repository/'+ str(repository.id))
 
 def watchers(request,id):
     repository = Repository.objects.get(id=id)
     watchers = User.objects.all().filter(user_watchers = repository)
+    stargazers = User.objects.all().filter(user_stargazers = repository)
     return render(request, 'repository/watchers.html',{
         "repository": repository,
-        "watchers":watchers
+        "watchers":watchers,
+        "stargazers":stargazers,
     })
+
+def starRepository(request,id):
+    repository = Repository.objects.get(id=id)
+    stargazers = User.objects.all().filter(user_stargazers = repository)
+    user = User.objects.get(id=request.user.id)
+    if (user not in stargazers):
+        repository.stargazers.add(user)
+    else:  
+        repository.stargazers.remove(user)
+    return redirect('/repository/'+ str(repository.id))
+
+def stargazers(request,id):
+    repository = Repository.objects.get(id=id)
+    stargazers = User.objects.all().filter(user_stargazers = repository)
+    watchers = User.objects.all().filter(user_watchers = repository)
+    return render(request, 'repository/stargazers.html',{
+        "repository": repository,
+        "stargazers":stargazers,
+        "watchers": watchers
+    })
+

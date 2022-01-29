@@ -16,13 +16,13 @@
     {% block page_content %}
             <div class="card" style="width: 800px; margin-left: 360px; margin-top: 60px;">
                 <div class="card-header">
-                    <h4><span style="margin-left: 2px;  color: steelblue;">{% bs_icon 'eye-fill' size='0.9em' %} </span> Watchers</h4> 
+                  <h4><span style="margin-left: 2px;  color:orange">{% bs_icon 'star-fill' size='0.9em' %} </span> Stargazers</h4> 
                 </div>
                 <ul class="list-group list-group-flush">
-                  {% for watcher in watchers %}
+                  {% for stargazer in stargazers %}
                   <li class="list-group-item">
-                  <a href="{% url 'profile' %}" style="display:inline-block;font-size: large;"> <span style="color: black;"> {% bs_icon 'person-circle' size='2.7em' %}</span>  {{watcher}}</a>
-                  <div style="color: black; margin-left: 490px; margin-top: -20px;"> {% bs_icon 'clock' size='1.0em' %} Joined on:  {{watcher.date_joined}}</div>
+                  <a href="{% url 'profile' %}" style="display:inline-block;font-size: large;"> <span style="color: black;"> {% bs_icon 'person-circle' size='2.7em' %}</span>  {{stargazer}}</a>
+                  <div style="color: black; margin-left: 490px; margin-top: -20px;"> {% bs_icon 'clock' size='1.0em' %} Joined on:  {{stargazer.date_joined}}</div>
                 </li>
                   {% endfor %}
                 </ul>
