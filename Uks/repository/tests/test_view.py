@@ -40,8 +40,6 @@ class RepositoryViewsTest(TestCase):
     def setUpTestData(cls):
         fill_test_db()
 
-  
-
     def test_add_collaborator_on_repository(self):
         author = User.objects.get(username='username1')
         developer = User.objects.get(username='username1')
