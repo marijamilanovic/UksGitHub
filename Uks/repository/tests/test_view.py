@@ -35,7 +35,7 @@ def fill_test_db():
 
 
 
-class CommentViewsTest(TestCase):
+class RepositoryViewsTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         fill_test_db()
