@@ -46,21 +46,6 @@
                               <div class="row">
                                 <h5 class="card-title">{{collaborator.username}}</h5>
                                 <a class="btn btn-primary btn-sm" href="{% url 'remove_collaborator' id=repository.id developer_id=collaborator.id %}" onclick="return confirm('Are you sure you want to remove this collaborator?');" style="margin-left: 65%; border: 0ch; background-color: #A5A4A4 ;" >Remove</a>
-                                <script type='text/javascript'>
-                                  function foo(id) {
-                                    let isExecuted = confirm("Are you sure to execute this action?");
-                                      // var user_choice = window.confirm('If you proceed you will remove the collaborator.');                                  
-                                      
-                                      // if(user_choice==true) {
-                                      //    console.log(id)
-                                      //     var MY_URL = "{% url 'remove_collaborator' id=repository.id developer_id=collaborator.id %}" 
-                                      //     window.global_choice = true;
-                                      //     //window.location.href=MY_URL; 
-                                      // } else {
-                                      //   window.global_choice = false;
-                                      //     return false;
-                                      // }
-                                  }
                                   </script>
                               </div>
                             </div>
