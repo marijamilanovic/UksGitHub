@@ -166,8 +166,7 @@ def add_collaborator(request, id, developer_id):
     repository = Repository.objects.get(id = id)
     developer = User.objects.get(id = developer_id)
     developers = User.objects.all()
-    repository.developers.add(developer)
-    collaborators = User.objects.all().filter(user_developers = repository)
+    collaborators =add_collaborator_on_repository(repository, developer)    
     not_added_developers = []
     for developer in developers:
         if developer not in collaborators:
@@ -178,11 +177,16 @@ def add_collaborator(request, id, developer_id):
          'selected_developer': selected_developer,
          'collaborators': collaborators, 'developers':not_added_developers})
 
+def add_collaborator_on_repository(repository, developer):
+    repository.developers.add(developer)
+    collaborators = User.objects.all().filter(user_developers = repository)
+    return collaborators
+
 def remove_collaborator(request, id, developer_id):
     repository = Repository.objects.get(id = id)
     collaborators = User.objects.all().filter(user_developers = repository)
     developer = User.objects.get(id = developer_id)
-    repository.developers.remove(developer)
+    remove_collaborato_from_repository(repository, developer)
     not_added_developers = []
     developers = User.objects.all()
     for developer in developers:
@@ -193,3 +197,7 @@ def remove_collaborator(request, id, developer_id):
          'selected_developer': selected_developer,
          'collaborators': collaborators, 'developers':not_added_developers})
 
+def remove_collaborato_from_repository(repository, developer):
+    repository.developers.remove(developer)
+    collaborators = User.objects.all().filter(user_developers = repository)
+    return collaborators
