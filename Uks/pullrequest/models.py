@@ -27,7 +27,7 @@ class Pullrequest(models.Model):
     target = models.ForeignKey(to=Branch, related_name='target_branch', null=True, on_delete=models.CASCADE)
     comments = models.ManyToManyField(Comment)
     creator = models.ForeignKey(to=User, null=True, on_delete=models.CASCADE)
-
+    reviewers = models.ManyToManyField(User,related_name='pullrequest_reviewers')
 
     def __str__(self):
         return self.name
