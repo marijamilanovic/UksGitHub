@@ -1,0 +1,43 @@
+{% extends 'repository/index.html' %}
+{% load static %}
+{% load bootstrap_icons %}
+
+
+{% block navCode %}
+    <li class="nav-item">
+      <a class="nav-link active" style=" color: black;" id="code" href="{% url 'repository' id=repository.id %}" aria-current="page">{% bs_icon 'code' size='1em' %} Code</a>
+    </li>
+{% endblock %}
+
+{% block navInsights %}
+      <li class="nav-item">
+        <a class="nav-link" id="insights" style="border-bottom:3px solid darkviolet;color: black;" href="{% url 'insights:pulse' id=repository.id  %}">{% bs_icon 'graph-up' size='1em' %} Insights</a>
+      </li>
+{% endblock %}
+
+{% block page_content %}
+
+{% block sidebar %}
+
+<div class="insights-tab">
+
+    <div class="sidebar">
+        <a class="active" href="#home">Pulse</a>
+        <a href="#news">Contributors</a>
+        <a href="#contact">Community</a>
+        <a href="#about">Community Standards</a>
+        <a href="#about">Traffic</a>
+        <a href="#about">Commits</a>
+        <a href="#about">Code frequency</a>
+        <a href="#about">Dependency graph</a>
+        <a href="#about">Network</a>
+        <a href="#about">Forks</a>
+        
+      </div>
+
+</div>
+
+{% endblock %}
+
+
+{% endblock %}

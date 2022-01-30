@@ -78,3 +78,34 @@ nav .navbar-nav li a{
   .greska{
     color: red;
   }
+
+.insights-tab{
+  display: grid;
+  grid-template-columns: 30%, 70%;
+}
+
+.sidebar {
+  grid-column: 1;
+  margin-top: 3%;
+  margin-left: 15%;
+  padding: 0;
+  width: 200px;
+  position: fixed;
+  height: auto;
+  background-color: #f1f1f1;
+  
+}
+
+.sidebar a{
+  display: block;
+  color: black;
+  padding: 16px;
+  text-decoration: none;
+}
+
+
+
+
+
+
+

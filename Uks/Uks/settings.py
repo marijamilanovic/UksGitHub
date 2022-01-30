@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'commit.apps.CommitConfig',
     'user.apps.UserConfig',
     'pullrequest.apps.PullrequestConfig',
+    'insights.apps.InsightsConfig',
     'comment.apps.CommentConfig',
     'django.contrib.admin',
     'django.contrib.auth',
