@@ -22,9 +22,23 @@
                 {% for issue in my_issues %}
                     <tr>
                         <td>
-                            <a  class="nav-link" href="{% url 'view_issue' id=issue.id %}">{{issue.issue_title}}</a>
+                            <a  class="nav-link" href="{% url 'view_issue' id=issue.id %}">{{issue.issue_title}}
+                                <small style="color: gray;">
+                                    / {{issue.repository.name}}
+                                </small>
+                            </a>
                             <small style="margin-left: 15px;color: gray;">
-                                opened by <b>{{issue.opened_by}}</b> and assignee to <b>{{issue.assignee}}</b>
+                                opened by <b>{{issue.opened_by}}</b>
+                                {% if issue.assignees.all %}
+                                    <span>
+                                        and assigned to:
+                                        <b>
+                                            {% for tag in issue.assignees.all %} 
+                                                {{ tag.username }}, 
+                                            {% endfor %}
+                                        </b>
+                                    </span>
+                                {% endif %}
                             </small>
                         </td>
                     </tr>

@@ -28,7 +28,7 @@
 
     {% block page_content %}
         <div class="tab-pane container active" id="milestones">
-            <a href="{% url 'new_issue' id=repository.id %}" style="margin-left: 763px; margin-top: -25px;" type="button" class="btn btn-success" >New issue</a>
+            <a href="{% url 'new_issue' repo_id=repository.id %}" style="margin-left: 763px; margin-top: -25px;" type="button" class="btn btn-success" >New issue</a>
         {% if issues %}
             <table class="table">
                 <tbody>
@@ -37,7 +37,17 @@
                             <td>
                                 <a  class="nav-link" href="{% url 'view_issue' id=issue.id %}">{{issue.issue_title}}</a>
                                 <small style="margin-left: 15px;color: gray;">
-                                    opened by <b>{{issue.opened_by}}</b> and assignee to <b>{{issue.assignee}}</b>
+                                    opened by <b>{{issue.opened_by}}</b>
+                                    {% if issue.assignees.all %}
+                                        <span>
+                                            and assigned to:
+                                            <b>
+                                                {% for tag in issue.assignees.all %} 
+                                                    {{ tag.username }}, 
+                                                {% endfor %}
+                                            </b>
+                                        </span>
+                                    {% endif %}
                                 </small>
                             </td>
                             <td>
