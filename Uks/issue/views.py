@@ -30,7 +30,6 @@ def get_my_issues(request):
     else:
         return assignee_issues.union(issues)
 
-# TODO: developers from current repo
 def new_issue(request, repo_id):
     repository = get_current_repository(repo_id)
     users = User.objects.all()
