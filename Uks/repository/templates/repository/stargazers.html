@@ -1,0 +1,34 @@
+{% extends 'repository/index.html' %}
+{% load static %}
+{% load bootstrap_icons %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{% static 'home/style.css' %}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+</head>
+
+<body>
+    {% block page_content %}
+            <div class="card" style="width: 800px; margin-left: 360px; margin-top: 60px;">
+                <div class="card-header">
+                  <h4><span style="margin-left: 2px;  color:orange">{% bs_icon 'star-fill' size='0.9em' %} </span> Stargazers</h4> 
+                </div>
+                <ul class="list-group list-group-flush">
+                  {% for stargazer in stargazers %}
+                  <li class="list-group-item">
+                  <a href="{% url 'profile' %}" style="display:inline-block;font-size: large;"> <span style="color: black;"> {% bs_icon 'person-circle' size='2.7em' %}</span>  {{stargazer}}</a>
+                  <div style="color: black; margin-left: 490px; margin-top: -20px;"> {% bs_icon 'clock' size='1.0em' %} Joined on:  {{stargazer.date_joined}}</div>
+                </li>
+                  {% endfor %}
+                </ul>
+              </div>
+        
+    {% endblock %}
+
+</body>
+</html>

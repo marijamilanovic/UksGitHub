@@ -74,6 +74,7 @@ def update_issue(request, id):
         issue = get_issue_by_id(id)
         issue.issue_title = request.POST['title']
         issue.description = request.POST['description']
+        issue.state = request.POST['state']
         issue = add_milestone_in_issue(request, issue)
         issue.save()
         issue.projects.clear()
