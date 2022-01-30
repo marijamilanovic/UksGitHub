@@ -100,7 +100,23 @@
                 <h5 for="description">Description</h5>
                 <textarea class="form-control col-md-12" id="description" rows="4" name="description">{{issue.description}}</textarea>
             </div>
-
+            <div class="form-check form-check-inline">
+                {% if issue.state == 'Opened' %}
+                    <input class="form-check-input" type="radio" name="state" id="inlineRadio1" value="Opened" checked>
+                {% else %}
+                    <input class="form-check-input" type="radio" name="state" id="inlineRadio1" value="Opened">
+                {% endif %}
+                <label class="form-check-label" for="inlineRadio1" checked>Open</label>
+            </div>
+            <div class="form-check form-check-inline">
+                {% if issue.state == 'Close' %}
+                    <input class="form-check-input" type="radio" name="state" id="inlineRadio2" value="Close" checked>
+                {% else %}
+                    <input class="form-check-input" type="radio" name="state" id="inlineRadio2" value="Close">
+                {% endif %}
+                <label class="form-check-label" for="inlineRadio2">Closed</label>
+            </div>
+            <br><br>
             <input type="submit" style="margin-left: 12px; margin-top: 5px;"  class="btn btn-success" value="Update">
         </form>
     </div>  
