@@ -46,7 +46,7 @@ def get_repo_infos(request,id):
     my_pullrequests = get_my_pullrequests(request, id)
     issues = get_issues_by_repo(request, id)
     branch_list = Branch.objects.all().filter(repository = id)
-    default_branch = Branch.objects.all().filter(is_default = True, repository = repository)[0]
+    default_branch = Branch.objects.all().filter(is_default = True, repository = repository)[0]  
     commit_list = Commit.objects.all().filter(branch = default_branch)
     watchers = User.objects.all().filter(user_watchers = repository)
     stargazers = User.objects.all().filter(user_stargazers = repository)
@@ -208,7 +208,6 @@ def forkRepository(request,id):
 
     newRepository = None
     if request.user not in forks:
-        print('kreiram novi repo')
         newRepository = Repository(name = repository.name, status = repository.status, creator = request.user)
         newRepository.save()
         newRepository.developers.add(repository.creator)
@@ -247,7 +246,7 @@ def find_forkers_info(request,id,repository):
     proba = None
     repo_copy = None
     for f in forkers:
-        if (f.id == repository.creator.id):  
+        if (f.id == repository.creator.id): 
             repo = Repository.objects.get(id=repository.id)  
             repos_with_same_name = Repository.objects.all().filter(name = repo)
             for r in repos_with_same_name:
@@ -264,7 +263,6 @@ def find_forkers_info(request,id,repository):
             if (f.id != repo.creator.id):
                 repos = Repository.objects.all().filter(creator = f, name = repo.name) 
                 repo_copy = repos[0]
-            
             for r in repos_with_same_name:
                 if (r.creator.id != repo.creator.id): 
                     forked_from = get_object_or_404(User, id=r.creator.id)
@@ -273,8 +271,9 @@ def find_forkers_info(request,id,repository):
                     forked_from = get_object_or_404(User, id=repo.creator.id)
                     forked_repo = repo
                     break
-
+    
     return forkers, forked_from, forked_repo, repo_copy
+
 def collaborators(request, id):
     repository = Repository.objects.get(id = id)
     collaborators = User.objects.all().filter(user_developers = repository)
