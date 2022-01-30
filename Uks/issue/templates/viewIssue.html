@@ -29,25 +29,70 @@
     <div class="tab-pane container active" id="issues">
     <h2 style="margin-top: -20px;">Issue</h2>
         <form style="margin-top: 20px; margin-left: -12px;" method="POST" action="{% url 'update_issue' id=issue.id %}"> 
-            {% csrf_token %} 
+            {% csrf_token %}
+            <div style="margin-left: 600px;position: absolute;">
+                Assignees:
+                <br>
+                <select name="developers" style="min-width:100px;border-radius: 6px;border: 2px solid #AAA;box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.1);" multiple class="chosen-select">
+                    {% for dev in developers.all %}
+                        {% if dev in  issue.assignees.all %} 
+                            <option value="{{ dev.username }}" selected>{{ dev.username }}</option>
+                        {% else %}      
+                            <option value="{{ dev.username }}">{{ dev.username }}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+                <hr color='gray' style=" box-shadow: 0 0 2px 0.5px gray;">
+                Labels:
+                <br>
+                <select name="cars" id="cars">
+                    <option value="masha"> todo</option>
+                </select>
+                <hr color='gray' style=" box-shadow: 0 0 2px 0.5px gray;">
+                Projects:
+                <br>
+                <select name="projects_ids" style="min-width:100px;border-radius: 6px;border: 2px solid #AAA;box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.1);" multiple class="chosen-select">
+                    {% for p in projects.all %}
+                        {% if p in  issue.projects.all %} 
+                            <option value="{{ p.id }}" selected>{{ p.name }}</option>
+                        {% else %}      
+                            <option value="{{ p.id }}">{{ p.name }}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+                <hr color='gray' style=" box-shadow: 0 0 2px 0.5px gray;">
+                Milestone:
+                <br>
+                <select name="milestone_id"  style="min-width:100px;border-radius: 6px;border: 2px solid #AAA;box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.1);">
+                    <option value="empty"></option>
+                    {% for m in milestones %}
+                        {% if m.id == issue.milestone.id %}
+                            <option value="{{ m.id }}" selected>{{ m.title }} (Due by: {{m.due_date}})</option>
+                        {% else %}
+                            <option value="{{ m.id }}">{{ m.title }} (Due by: {{m.due_date}})</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+                <hr color='gray' style=" box-shadow: 0 0 2px 0.5px gray;">
+                Linked pull request:
+                <br>
+                <select name="pullrequests_ids" style="min-width:100px;border-radius: 6px;border: 2px solid #AAA;box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.1);" multiple>
+                    {% for pr in pullrequests.all %}
+                        {% if pr in  issue.pullrequests.all %} 
+                            <option value="{{ pr.id }}" selected>{{ pr.name }}</option>
+                        {% else %}      
+                            <option value="{{ pr.id }}">{{ pr.name }}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+                <br><br><br>   
+            </div>
+            <br>
             <div class="form-group col-md-6">
                 <h5>Title</h5> 
                 <input type="text" class="form-control" id="title" name="title" value="{{ issue.issue_title }}">
             </div>
-            <div style="margin-left: 600px;position: absolute;">
-                State:
-                <br>
-                <select name="state" id="state">
-                    <option value="OPENED"> OPENED</option>
-                    <option value="CLOSE"> CLOSE</option>
-                </select>
-                <br><br>
-                Assignees:
-                <br>
-                <select name="cars" id="cars">
-                    <option value="masha"> masha</option>
-                </select>
-            </div>
+            
             {% if errorTitle %}
             <div style="color: red; margin-left: 14px;" >{{errorTitle}}</div>
             {% endif %}
@@ -55,10 +100,31 @@
                 <h5 for="description">Description</h5>
                 <textarea class="form-control col-md-12" id="description" rows="4" name="description">{{issue.description}}</textarea>
             </div>
-
+            <div class="form-check form-check-inline">
+                {% if issue.state == 'Opened' %}
+                    <input class="form-check-input" type="radio" name="state" id="inlineRadio1" value="Opened" checked>
+                {% else %}
+                    <input class="form-check-input" type="radio" name="state" id="inlineRadio1" value="Opened">
+                {% endif %}
+                <label class="form-check-label" for="inlineRadio1" checked>Open</label>
+            </div>
+            <div class="form-check form-check-inline">
+                {% if issue.state == 'Close' %}
+                    <input class="form-check-input" type="radio" name="state" id="inlineRadio2" value="Close" checked>
+                {% else %}
+                    <input class="form-check-input" type="radio" name="state" id="inlineRadio2" value="Close">
+                {% endif %}
+                <label class="form-check-label" for="inlineRadio2">Closed</label>
+            </div>
+            <br><br>
             <input type="submit" style="margin-left: 12px; margin-top: 5px;"  class="btn btn-success" value="Update">
         </form>
     </div>  
+    {% endblock %}
+
+    {% block javascript %}
+    <script>
+    </script>
     {% endblock %}
 </body>
 </html>

@@ -110,6 +110,12 @@
         <a class="nav-link" id="pullRequests" style="color: black;" href="{% url 'pullrequests' id=repository.id  %}">{% bs_icon 'shuffle' size='1.3em' %} Pull requests</a>
       </li>
       {% endblock %}
+
+      {% block navCollaborator %}
+      <li class="nav-item">
+        <a class="nav-link" id="collaborators" style="color: black;" href="{% url 'collaborators' id=repository.id  %}">{% bs_icon 'gear' size='1.3em' %} Collaborators</a>
+      </li>
+      {% endblock %}
     </ul>
 
     {% block page_content %}

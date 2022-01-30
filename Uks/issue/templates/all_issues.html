@@ -19,16 +19,84 @@
     <table class="table">
         <tbody>
             {% if my_issues %}
-                {% for issue in my_issues %}
-                    <tr>
-                        <td>
-                            <a  class="nav-link" href="{% url 'view_issue' id=issue.id %}">{{issue.issue_title}}</a>
-                            <small style="margin-left: 15px;color: gray;">
-                                opened by <b>{{issue.opened_by}}</b> and assignee to <b>{{issue.assignee}}</b>
-                            </small>
-                        </td>
-                    </tr>
-                {% endfor %}
+                <div class="accordion" id="accordionExample">
+                    <div class="card">
+                      <div class="card-header" id="headingOne">
+                        <h2 class="mb-0">
+                          <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                            Open issues
+                          </button>
+                        </h2>
+                      </div>
+                      <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
+                        <div class="card-body">
+                            {% for issue in my_issues %}
+                                {% if issue.state == 'Opened' %}
+                                    <a  class="nav-link" href="{% url 'view_issue' id=issue.id %}">
+                                            <img src="https://img.icons8.com/external-vitaliy-gorbachev-flat-vitaly-gorbachev/58/000000/external-open-sales-vitaliy-gorbachev-flat-vitaly-gorbachev.png" style="width: 30px;height: 30px;"/>
+                                        &nbsp;&nbsp;&nbsp;{{issue.issue_title}}
+                                        <small style="color: gray;">
+                                            / {{issue.repository.name}}
+                                        </small>
+                                    </a>
+                                    <small style="margin-left: 60px;color: gray;">
+                                        opened by <b>{{issue.opened_by}}</b>
+                                        {% if issue.assignees.all %}
+                                            <span>
+                                                and assigned to:
+                                                <b>
+                                                    {% for tag in issue.assignees.all %} 
+                                                        {{ tag.username }}, 
+                                                    {% endfor %}
+                                                </b>
+                                            </span>
+                                        {% endif %}
+                                    </small>
+                                    <hr>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                      </div>
+                    </div>
+                    <div class="card">
+                      <div class="card-header" id="headingTwo">
+                        <h2 class="mb-0">
+                          <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                            Closed issues
+                          </button>
+                        </h2>
+                      </div>
+                      <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
+                        <div class="card-body">
+                            {% for issue in my_issues %}
+                                {% if issue.state == 'Close' %}
+                                    <a  class="nav-link" href="{% url 'view_issue' id=issue.id %}">
+                                        <img src="https://img.icons8.com/color/48/000000/checkmark--v1.png" style="width: 30px;height: 30px;"/>
+                                        &nbsp;&nbsp;&nbsp;{{issue.issue_title}}
+                                        <small style="color: gray;">
+                                            / {{issue.repository.name}}
+                                        </small>
+                                    </a>
+                                    <small style="margin-left: 60px;color: gray;">
+                                        opened by <b>{{issue.opened_by}}</b>
+                                        {% if issue.assignees.all %}
+                                            <span>
+                                                and assigned to:
+                                                <b>
+                                                    {% for tag in issue.assignees.all %} 
+                                                        {{ tag.username }}, 
+                                                    {% endfor %}
+                                                </b>
+                                            </span>
+                                        {% endif %}
+                                    </small>
+                                    <hr>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
             {% else %}
                 <p>There are no issues yet.</p>
             {% endif %}
