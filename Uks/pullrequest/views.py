@@ -8,13 +8,13 @@ from datetime import date
 def pullrequests(request, id):
     repository = get_object_or_404(Repository, id=id)
     pullrequests = Pullrequest.objects.all().filter(prRepository=repository)
-    return render(request, 'pullrequests.html', {"pullrequests":pullrequests, "repository":repository})
+    return render(request, 'pullrequests.html', {"pullrequests":pullrequests, "repository":repository, "logged_user_id":request.user.id})
 
 
 def newPullrequest(request, id):
     repository = get_object_or_404(Repository, id=id)
     branches = Branch.objects.all().filter(repository=repository)
-    return render(request, 'newPullrequest.html', {"branches":branches, "repository":repository})
+    return render(request, 'newPullrequest.html', {"branches":branches, "repository":repository, "logged_user_id": request.user.id})
 
 def addPullrequest(request):
     if request.method == 'POST':

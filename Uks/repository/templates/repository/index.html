@@ -61,11 +61,13 @@
       </li>
       {% endblock %}
 
-      {% block navCollaborator %}
-      <li class="nav-item">
-        <a class="nav-link" id="collaborators" style="color: black;" href="{% url 'collaborators' id=repository.id  %}">{% bs_icon 'gear' size='1.3em' %} Collaborators</a>
-      </li>
-      {% endblock %}
+      {% if logged_user_id == repository.creator_id %}
+        {% block navCollaborator %}
+        <li class="nav-item">
+          <a class="nav-link" id="collaborators" style="color: black;" href="{% url 'collaborators' id=repository.id  %}">{% bs_icon 'gear' size='1.3em' %} Collaborators</a>
+        </li>
+        {% endblock %}
+      {% endif %}
     </ul>
 
    

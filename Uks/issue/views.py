@@ -14,7 +14,8 @@ def issues(request, id):
     issues = Issue.objects.filter(repository = repository)
     return render(request, 'issues.html', {
         "issues":issues, 
-        "repository":repository
+        "repository":repository,
+        "logged_user_id": request.user.id
         })
 
 def all_issues(request):
@@ -39,7 +40,8 @@ def new_issue(request, repo_id):
         'milestones': get_milestones_by_repo(repo_id),
         'projects': get_projects_by_repo(repository),
         'developers': get_users_by_repo(repository),
-        'pullrequests': get_pullrequests_by_repo(repository)
+        'pullrequests': get_pullrequests_by_repo(repository),
+        'logged_user_id': request.user.id
         })
 
 def add_issue(request):

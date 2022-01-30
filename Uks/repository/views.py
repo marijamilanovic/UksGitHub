@@ -34,7 +34,8 @@ def index(request, id):
         'issues': issues,
         'branch_list': branch_list,
         'commit_list': commit_list,
-        'selected_branch': default_branch,})
+        'selected_branch': default_branch,
+        'logged_user_id': request.user.id})
 
 def get_my_milestones(request, id):
     milestones = Milestone.objects.all()
@@ -146,7 +147,7 @@ def collaborators(request, id):
         if developer not in collaborators and developer.id != repository.creator.id:
             not_added_developers.append(developer)
     selected_developer = User.objects.first()
-    return render(request, "repository/collaborators.html",{'repository':repository, 'collaborators':only_collaborators,'selected_developer': selected_developer, 'developers':not_added_developers})
+    return render(request, "repository/collaborators.html",{'repository':repository, 'collaborators':only_collaborators,'selected_developer': selected_developer, 'developers':not_added_developers, 'logged_user_id': request.user.id})
 
 def repo_developer(request, id, developer_id):
     print("repo developer")

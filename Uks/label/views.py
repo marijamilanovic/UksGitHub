@@ -5,7 +5,7 @@ from .models import Label
 def labels(request,id):
     repository = get_object_or_404(Repository, id=id)
     labels = Label.objects.all().filter(repository = repository)
-    return render(request,'labels.html', {"labels": labels, "repository":repository})
+    return render(request,'labels.html', {"labels": labels, "repository":repository, "logged_user_id": request.user.id})
 
 def newLabel(request,id):
     repository = repository = get_object_or_404(Repository, id=id)
