@@ -21,6 +21,30 @@ from django.contrib import messages
 def index(request, id):
     template = loader.get_template('repository/index.html')
     repository = Repository.objects.get(id=id)
+    my_milestones, my_pullrequests, issues,branch_list,default_branch,commit_list,watchers,stargazers,forks = get_repo_infos(request,id)
+    forked_from_user = forkers(request,id)
+    show = ''
+    if (forked_from_user != request.user):  # ako je miki
+        print('**********************')
+        show = 'Forked repo'
+        print(request.user)
+
+    return render(request, "repository/index.html", {
+        'repository':repository,
+        'milestones': my_milestones,
+        'pullrequests': my_pullrequests,
+        'issues': issues,
+        'branch_list': branch_list,
+        'commit_list': commit_list,
+        'selected_branch': default_branch,
+        'watchers':watchers,
+        'stargazers': stargazers,
+        'forks':forks,
+        'forked_from': forked_from_user,
+        'show':show})
+
+def get_repo_infos(request,id):
+    repository = Repository.objects.get(id=id)
     my_milestones = get_my_milestones(request,id)
     my_pullrequests = get_my_pullrequests(request, id)
     issues = get_issues_by_repo(request, id)
@@ -33,25 +57,13 @@ def index(request, id):
     #to do trebalo bi dodati kreiranje nekih labela 
     
     repositories_with_same_name = Repository.objects.all().filter(name = repository.name)
-    forked_from_user = None
-    for r in repositories_with_same_name:
-        if (r.creator.id != repository.creator.id):
-            forked_from_user = get_object_or_404(User, id=r.creator.id)
-    print(forked_from_user)
-    
-    
-    return render(request, "repository/index.html", {
-        'repository':repository,
-        'milestones': my_milestones,
-        'pullrequests': my_pullrequests,
-        'issues': issues,
-        'branch_list': branch_list,
-        'commit_list': commit_list,
-        'selected_branch': default_branch,
-        'watchers':watchers,
-        'stargazers': stargazers,
-        'forks':forks,
-        'forked_from': forked_from_user})
+    #forked_from_user = None
+    #for r in repositories_with_same_name:
+        #if (r.creator.id != repository.creator.id):
+            #forked_from_user = get_object_or_404(User, id=r.creator.id)
+    #print(forked_from_user)
+
+    return my_milestones, my_pullrequests,issues,branch_list,default_branch,commit_list,watchers,stargazers,forks
 
 def get_my_milestones(request, id):
     milestones = Milestone.objects.all()
@@ -167,12 +179,8 @@ def watchers(request,id):
     watchers = User.objects.all().filter(user_watchers = repository)
     stargazers = User.objects.all().filter(user_stargazers = repository)
     forkers = User.objects.all().filter(user_forks = repository)
-    return render(request, 'repository/watchers.html',{
-        "repository": repository,
-        "watchers":watchers,
-        "stargazers":stargazers,
-        "forkers":forkers
-    })
+    return render(request, 'repository/watchers.html',{"repository": repository,"watchers":watchers,"stargazers":stargazers,
+        "forkers":forkers})
 
 def starRepository(request,id):
     repository = Repository.objects.get(id=id)
@@ -189,32 +197,40 @@ def stargazers(request,id):
     stargazers = User.objects.all().filter(user_stargazers = repository)
     watchers = User.objects.all().filter(user_watchers = repository)
     forkers = User.objects.all().filter(user_forks = repository)
-    return render(request, 'repository/stargazers.html',{
-        "repository": repository,
-        "stargazers":stargazers,
-        "watchers": watchers,
-        "forkers": forkers
-    })
+    return render(request, 'repository/stargazers.html',{"repository": repository,"stargazers":stargazers,"watchers": watchers,
+        "forkers": forkers})
 
 def forkRepository(request,id):
     repository = Repository.objects.get(id=id)
     repositories = Repository.objects.all().filter(creator=request.user)
-    newRepository = Repository(name = repository.name, status = repository.status, creator = request.user)
-    newRepository.save()
-    newRepository.developers.add(repository.creator)
-    branch = Branch.objects.create(
+    forks = User.objects.all().filter(user_forks = repository)
+    user = User.objects.get(id=request.user.id) 
+    if (repository.creator == user):
+        message = 'You can not fork your own repository!'
+        my_milestones, my_pullrequests, issues,branch_list,default_branch,commit_list,watchers,stargazers,forks,forked_from_user = get_repo_infos(request,id)
+        return render(request, "repository/index.html", {'repository':repository,'milestones': my_milestones,'pullrequests': my_pullrequests,
+        'issues': issues,'branch_list': branch_list,'commit_list': commit_list,'selected_branch': default_branch,'watchers':watchers,
+        'stargazers': stargazers,'forks':forks,'forked_from': forked_from_user,'message':message})
+
+    newRepository = None
+    if request.user not in forks:
+        print('kreiram novi repo')
+        newRepository = Repository(name = repository.name, status = repository.status, creator = request.user)
+        newRepository.save()
+        newRepository.developers.add(repository.creator)
+        branch = Branch.objects.create(
                 name = 'master',
                 is_default = True,
                 repository = Repository.objects.get(pk = newRepository.id)
             )  
-    forks = User.objects.all().filter(user_forks = newRepository)
-    user = User.objects.get(id=request.user.id)
-    if request.user not in forks:
         repository.forks.add(user)
         newRepository.forks.add(user)
     else:
-        repository.forks.remove(user)
-        newRepository.forks.add(user)
+        message = 'You have already forked this repo'
+        my_milestones, my_pullrequests, issues,branch_list,default_branch,commit_list,watchers,stargazers,forks,forked_from_user = get_repo_infos(request,id)
+        return render(request, "repository/index.html", {'repository':repository,'milestones': my_milestones,'pullrequests': my_pullrequests,
+        'issues': issues,'branch_list': branch_list,'commit_list': commit_list,'selected_branch': default_branch,'watchers':watchers,
+        'stargazers': stargazers,'forks':forks,'forked_from': forked_from_user,'message':message})
 
     return redirect('/repository/'+ str(newRepository.id))
 
@@ -254,14 +270,8 @@ def forkers(request,id):
                     forked_from = get_object_or_404(User, id=repo.creator.id)
                     forked_repo = repo
                     break
+    return forked_from
     
-    return render(request, 'repository/forkers.html',{
-        "repository": repository,
-        "watchers":watchers,
-        "stargazers":stargazers,
-        "forks": forkers,
-        "forked_from":forked_from,
-        "forked_repo":forked_repo,
-        "repo_copy":repo_copy
-    })
+    #return render(request, 'repository/forkers.html',{"repository": repository,"watchers":watchers,"stargazers":stargazers,"forks": forkers,
+        #"forked_from":forked_from,"forked_repo":forked_repo,"repo_copy":repo_copy})
 
