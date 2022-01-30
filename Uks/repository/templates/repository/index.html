@@ -23,7 +23,7 @@
     <div style="background-color:  rgb(243, 243, 243); height: 65px;">
 
     <!--Style if forked repo-->
-    {% if forked_from %}
+    {% if forked_from  and show %}
     <span style="margin-left: 20px;">{% bs_icon 'diagram-2' size='1.4em' %}</span>
     <a href="{% url 'profile' %}" style="font-size: large; margin-left: 5px; margin-top: 15px; display:inline-block;"> {{repository.creator}} </a>
     <span style="font-size: large;">/</span>
@@ -177,22 +177,6 @@
           <div class="modal-body">
             <p>Where should we fork {{repository.name}} ?</p>
             <a class="tooltip-test" title="Will be created as {{request.user}}/{{repository.name}}" href="{% url 'forkRepository' id=repository.id  %}"  style="font-size: large;"> {% bs_icon 'person-circle' size='1.2em' %} {{request.user}}</a>
-          </div>
-        </div>
-      </div>
-    </div>
-    <!--Modal2-->
-    <div class="modal" id="myModal2" tabindex="-1" role="dialog">
-      <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title">Fork {{repository.name}}</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <div class="modal-body">
-            <p>You have already forked {{repository.name}}!</p>
           </div>
         </div>
       </div>
