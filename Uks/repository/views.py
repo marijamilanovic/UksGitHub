@@ -15,6 +15,7 @@ from issue.models import Issue
 from branch.models import Branch
 from commit.models import Commit
 from django.contrib import messages
+from label.models import Label
 
 
 @login_required(login_url="login")
@@ -91,12 +92,30 @@ def addRepository(request):
             newRepository.save()
             newRepository.developers.add(creator)
             newRepository.watchers.add(creator)
+            add_initial_labels(newRepository)
             branch = Branch.objects.create(
                 name = 'master',
                 is_default = True,
                 repository = Repository.objects.get(pk = newRepository.id)
             )  
     return redirect("all_repositories")
+
+def add_initial_labels(newRepository):
+    bug_label = Label(name = 'bug', description = "Something isn't working", color = '#ff2e1f', repository = newRepository)
+    bug_label.save() 
+    documentation_label = Label(name = 'documentation', description = "Improvements or additions to documentation", color = '#0073ff', repository = newRepository)
+    documentation_label.save() 
+    enhancment_label = Label(name = 'enhancment', description = "New feature or request", color = '#30feff', repository = newRepository)
+    enhancment_label.save() 
+    first_issue_label = Label(name = 'good first issue', description = "Good first issue", color = '#8974c5', repository = newRepository)
+    first_issue_label.save() 
+    help_wanted_label = Label(name = 'help wanted', description = "Extra attention is needed", color = '#ffee00', repository = newRepository)
+    help_wanted_label.save() 
+    question_label = Label(name = 'question', description = "Further information is requested", color = '#e816ff', repository = newRepository)
+    question_label.save()
+    invalid_label = Label(name = 'invalid', description = "This doesn't seem right", color = '#7efa19', repository = newRepository)
+    invalid_label.save()  
+
 
 def transferToEditRepository(request,id):
     repo = Repository.objects.get(id = id)

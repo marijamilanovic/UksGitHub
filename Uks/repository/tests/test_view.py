@@ -9,7 +9,7 @@ from comment.models import Comment
 from datetime import datetime, timezone, date, timedelta
 from django.urls import reverse
 
-from repository.views import add_collaborator_on_repository, remove_collaborato_from_repository,find_forkers_info
+from repository.views import add_collaborator_on_repository, remove_collaborato_from_repository
 def fill_test_db():
         # Create users
         test_user = User.objects.create_user(username='username', password='password')
