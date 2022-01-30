@@ -28,35 +28,85 @@
 
     {% block page_content %}
         <div class="tab-pane container active" id="milestones">
-            <a href="{% url 'new_issue' repo_id=repository.id %}" style="margin-left: 763px; margin-top: -25px;" type="button" class="btn btn-success" >New issue</a>
+            <a href="{% url 'new_issue' repo_id=repository.id %}" style="margin-left: 900px; margin-top: -25px;" type="button" class="btn btn-success" >New issue</a>
         {% if issues %}
-            <table class="table">
-                <tbody>
+        <div class="accordion" id="accordionExample">
+            <div class="card">
+              <div class="card-header" id="headingOne">
+                <h2 class="mb-0">
+                  <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                    Open issues
+                  </button>
+                </h2>
+              </div>
+              <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
+                <div class="card-body">
                     {% for issue in issues %}
-                        <tr>
-                            <td>
-                                <a  class="nav-link" href="{% url 'view_issue' id=issue.id %}">{{issue.issue_title}}</a>
-                                <small style="margin-left: 15px;color: gray;">
-                                    opened by <b>{{issue.opened_by}}</b>
-                                    {% if issue.assignees.all %}
-                                        <span>
-                                            and assigned to:
-                                            <b>
-                                                {% for tag in issue.assignees.all %} 
-                                                    {{ tag.username }}, 
-                                                {% endfor %}
-                                            </b>
-                                        </span>
-                                    {% endif %}
-                                </small>
-                            </td>
-                            <td>
-                                <a href="{% url 'delete_issue' id=issue.id %}" class="link-primary" style="margin-left: 10px;">❌</a>
-                            </td>
-                        </tr>
+                        {% if issue.state == 'Opened' %}
+                            <a href="{% url 'delete_issue' id=issue.id %}" class="link-primary" style="position:absolute; margin-left: 900px;">❌</a>
+                            <a  class="nav-link" href="{% url 'view_issue' id=issue.id %}">
+                                    <img src="https://img.icons8.com/external-vitaliy-gorbachev-flat-vitaly-gorbachev/58/000000/external-open-sales-vitaliy-gorbachev-flat-vitaly-gorbachev.png" style="width: 30px;height: 30px;"/>
+                                &nbsp;&nbsp;&nbsp;{{issue.issue_title}}
+                            </a>
+                            <small style="margin-left: 60px;color: gray;">
+                                opened by <b>{{issue.opened_by}}</b>
+                                {% if issue.assignees.all %}
+                                    <span>
+                                        and assigned to:
+                                        <b>
+                                            {% for tag in issue.assignees.all %} 
+                                                {{ tag.username }}, 
+                                            {% endfor %}
+                                        </b>
+                                    </span>
+                                {% endif %}
+                            </small>
+                            <hr>
+                        {% endif %}
                     {% endfor %}
-                </tbody>
-            </table>
+                </div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-header" id="headingTwo">
+                <h2 class="mb-0">
+                  <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                    Closed issues
+                  </button>
+                </h2>
+              </div>
+              <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
+                <div class="card-body">
+                    {% for issue in issues %}
+                        {% if issue.state == 'Close' %}
+                            <a href="{% url 'delete_issue' id=issue.id %}" class="link-primary" style="position:absolute; margin-left: 900px;">❌</a>
+                            <a  class="nav-link" href="{% url 'view_issue' id=issue.id %}">
+                                <img src="https://img.icons8.com/color/48/000000/checkmark--v1.png" style="width: 30px;height: 30px;"/>
+                                &nbsp;&nbsp;&nbsp;{{issue.issue_title}}
+                                <small style="color: gray;">
+                                    / {{issue.repository.name}}
+                                </small>
+                            </a>
+                            <small style="margin-left: 60px;color: gray;">
+                                opened by <b>{{issue.opened_by}}</b>
+                                {% if issue.assignees.all %}
+                                    <span>
+                                        and assigned to:
+                                        <b>
+                                            {% for tag in issue.assignees.all %} 
+                                                {{ tag.username }}, 
+                                            {% endfor %}
+                                        </b>
+                                    </span>
+                                {% endif %}
+                            </small>
+                            <hr>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+              </div>
+            </div>
+        </div>
         {% else %}
         <p>There are no issues yet.</p>
         {% endif %}

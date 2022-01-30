@@ -107,6 +107,7 @@ class Issue(TestCase):
         data = {
             'title': issue.issue_title, 
             'description': issue.description,
+            'state': 'Close',
             'milestone_id': 1,
             'developers': assignees,
             'projects_ids': projects_ids,
