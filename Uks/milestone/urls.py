@@ -14,6 +14,6 @@ urlpatterns = [
     path('addMilestone/', views.addMilestone, name='addMilestone'),
     path('getMilestoneById/<int:id>', views.getMilestoneById, name='getMilestoneById'),
     path('updateMilestone/<int:id>', views.updateMilestone, name='updateMilestone'),
-     path('seeMilestone/<int:id>', views.seeMilestone, name='seeMilestone'),
+    path('seeMilestone/<int:id>', views.seeMilestone, name='seeMilestone'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 

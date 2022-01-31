@@ -1,0 +1,42 @@
+{% extends 'repository/index.html' %}
+{% load static %}
+{% load bootstrap_icons %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{% static 'home/style.css' %}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+</head>
+
+<body>
+    {% block page_content %}
+            <div class="card" style="width: 800px; margin-left: 360px; margin-top: 60px;">
+                <div class="card-header">
+                    <h4><span style="margin-left: 2px;">{% bs_icon 'diagram-2' size='1.0em' %} </span> Forkers</h4> 
+                </div>
+                <ul class="list-group list-group-flush">
+                  {% for forker in forks %}
+                  <li class="list-group-item">
+                    <div >
+                    <a href="#" data-toggle="tooltip" title="Owns this repository" style="font-size: large;"> <span style="color: black;"> {% bs_icon 'person-circle' size='1.7em' %}</span>  {{forked_from}} </a> 
+                    <a href="{% url 'repository' id=forked_repo.id  %}" style="font-size: large;">/{{forked_repo.name}}</a>
+                    </div>
+                    <div  style="margin-top: 20px; margin-left: 20px;">
+                        {% bs_icon 'arrow-return-right' size='1.7em' %}
+                    <a href="{% url 'profile' %}" data-toggle="tooltip" title="Forker" style="font-size: large;"> <span style="color: black;"> {% bs_icon 'person-circle' size='1.7em' %}</span>  {{forker}}</a>
+                    <a href="{% url 'repository' id=repo_copy.id  %}" style="font-size: large;">/{{repo_copy.name}}</a>
+                    </div>
+                </div>
+                </li>
+                  {% endfor %}
+                </ul>
+              </div>
+        
+    {% endblock %}
+
+</body>
+</html>

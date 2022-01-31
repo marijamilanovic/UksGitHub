@@ -1,0 +1,81 @@
+{% extends 'repository/index.html' %}
+{% load static %}
+{% load bootstrap_icons %}
+
+<script>
+  let global_choice = true;
+ </script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    {% block navCode %}
+      <li class="nav-item">
+        <a class="nav-link active" href="{% url 'repository' id=repository.id %}" style=" color: black;" id="code" aria-current="page">{% bs_icon 'code' size='1em' %} Code</a>
+      </li>
+    {% endblock %}
+
+    {% block navCollaborator %}
+      <li class="nav-item">
+        <a class="nav-link" id="collaborators" style="border-bottom:3px solid darkviolet;color: black;" href="{% url 'collaborators' id=repository.id  %}">{% bs_icon 'gear' size='1.3em' %} Collaborators</a>
+      </li>
+    {% endblock %}
+  
+    {% block page_content  %}
+    <body >
+      
+      <div class="row" id="repositories">
+        <div style="margin-left: auto; margin-right: auto; margin-top: 30;">
+          <p style="font-size: 20;">Collaborators</p>
+          <div class="code-item1">
+            <span class="iconify"></span>
+                </div>
+                {% if collaborators %}
+                    {% for collaborator in collaborators %}
+                        <div style="width: 400;" class="card border-secondary mb-3" >
+                            <div class="card-header">
+                                {{collaborator.name}}
+                            </div>
+                            <div class="card-body">
+                              <div class="row">
+                                <h5 class="card-title">{{collaborator.username}}</h5>
+                                <a class="btn btn-primary btn-sm" href="{% url 'remove_collaborator' id=repository.id developer_id=collaborator.id %}" onclick="return confirm('Are you sure you want to remove this collaborator?');" style="margin-left: 65%; border: 0ch; background-color: #A5A4A4 ;" >Remove</a>
+                                  </script>
+                              </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {%else %}
+                    <p style="font-size: 20;">No collaborators</p>
+                {% endif %}
+          </div>
+          <div style="margin-right: 300; margin-top: 30;">
+            <p style="font-size: 20;"> Add collaborator </p>
+            <div class="row">
+              <select class="selectpicker"  data-live-search="true" data-size="10" onchange="location = this.value">
+                {% for developer in developers  %}
+                  <option value="{% url 'repo_developer' id=repository.id developer_id=developer.id %}" {% if developer.id == selected_developer.id %} selected {% endif %}>
+                  {{developer.username}} 
+                  </option>
+                {% endfor %}
+              </select>
+              {% if selected_developer.id == "" %}
+              {% else %}
+                <a href="{% url 'add_collaborator' id=repository.id developer_id=selected_developer.id %}"  style="margin-left: 50;" type="button" class="btn btn-success" >Add</a> 
+              
+              {% endif %}
+
+            </div>
+          </div>
+      </div>
+    </body>
+       
+    {%endblock%}
+</body>
+</html>
