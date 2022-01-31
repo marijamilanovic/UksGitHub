@@ -5,6 +5,7 @@ from django.contrib import messages
 from repository.models import Repository
 from issue.models import Issue
 from commit.models import Commit
+from branch.models import Branch
 
 # Create your views here.
 def welcome(request):
@@ -64,44 +65,46 @@ def search(request):
 def checkRepositories(words):
     repositories = []
     all_repositories = Repository.objects.all()
-    
-    for repository in all_repositories:
+    all_public_repositories = Repository.objects.all().filter(status = 'public')
+    for repository in all_public_repositories:
         for word in words:
             if (word.lower() in repository.name.lower()):
                 if (len(repositories) == 0):
                     repositories.append(repository)
-                else:
-                    for r in repositories:
-                        if (r.id != repository.id): 
-                            repositories.append(repository)
+                elif(repository not in repositories):
+                    repositories.append(repository)
     return repositories
 
 def checkIssues(words):
     issues = []
     all_issues = Issue.objects.all()
-    for issue in all_issues:
-        for word in words:
-            if (word.lower() in issue.issue_title.lower()):
-                if (len(issues) == 0):
-                    issues.append(issue)
-                else:
-                    for i in issues:
-                        if (i.id != issue.id):
+    all_public_repositories = Repository.objects.all().filter(status = 'public')
+    for r in all_public_repositories:
+        for issue in all_issues:
+            if (r.id == issue.repository.id):
+                for word in words:
+                    if (word.lower() in issue.issue_title.lower()):
+                        if (len(issues) == 0):
+                            issues.append(issue)
+                        elif(issue not in issues):
                             issues.append(issue)
     return issues
     
 def checkCommits(words):
     commits = [] 
     all_commits = Commit.objects.all()
-    for commit in all_commits:
-        for word in words:
-            if (word.lower() in commit.message.lower()):
-                if (len(commits) == 0):
-                    commits.append(commit)
-                else:
-                    for c in commits:
-                        if (c.id != commit.id):
-                            commits.append(commit)
+    all_public_repositories = Repository.objects.all().filter(status = 'public')
+    for r in all_public_repositories:
+        branch_list = Branch.objects.all().filter(repository = r)
+        for branch in branch_list:
+            for commit in all_commits:
+                if (branch.id == commit.branch.id):
+                    for word in words:
+                        if (word.lower() in commit.message.lower()):
+                            if (len(commits) == 0):
+                                commits.append(commit)
+                            elif(commit not in commits):
+                                commits.append(commit)
     return commits
 
 def searchedRepositories(request):
