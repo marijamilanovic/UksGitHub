@@ -48,6 +48,7 @@
             <input class="form-control mr-sm-2" hidden  aria-label="Search" name="foundIssues" value="{{foundIssues}}" >
             <input class="form-control mr-sm-2" hidden  aria-label="Search" name="foundCommits" value="{{foundCommits}}" >
             <input class="form-control mr-sm-2" hidden  aria-label="Search" name="foundRepositories" value="{{foundRepositories}}" >
+            <input class="form-control mr-sm-2" hidden  aria-label="Search" name="foundUsers" value="{{foundUsers}}" >
             <input class="form-control mr-sm-2" hidden  name="searchedWords" value="{{searchedWords}}" >
           <a class="nav-link" onclick="submitForm()">Issues<span class="badge badge-success" style="margin-left: 64px;">{{issues|length}}</span></a>
           </form>
@@ -60,15 +61,29 @@
             <input class="form-control mr-sm-2" hidden aria-label="Search" name="foundCommits" value="{{foundCommits}}" >
             <input class="form-control mr-sm-2" hidden  aria-label="Search" name="foundIssues" value="{{foundIssues}}" >
             <input class="form-control mr-sm-2" hidden  aria-label="Search" name="foundRepositories" value="{{foundRepositories}}" >
+            <input class="form-control mr-sm-2" hidden  aria-label="Search" name="foundUsers" value="{{foundUsers}}" >
             <input class="form-control mr-sm-2" hidden  name="searchedWords" value="{{searchedWords}}" >
           <a class="nav-link" onclick="submitCommitsForm()">Commits<span class="badge badge-success" style="margin-left: 43px;">{{commits|length}}</span></a>
+          </form>
+        </li>   
+        {% endblock %}
+        {% block navUsers %}
+        <li class="nav-item" style="border-style: outset;"> 
+          <form name="usersForm" id="usersForm" method="POST" action="{% url 'searchedUsers' %}">
+            {% csrf_token %}
+            <input class="form-control mr-sm-2" hidden aria-label="Search" name="foundCommits" value="{{foundCommits}}" >
+            <input class="form-control mr-sm-2" hidden  aria-label="Search" name="foundIssues" value="{{foundIssues}}" >
+            <input class="form-control mr-sm-2" hidden  aria-label="Search" name="foundRepositories" value="{{foundRepositories}}" >
+            <input class="form-control mr-sm-2" hidden  aria-label="Search" name="foundUsers" value="{{foundUsers}}" >
+            <input class="form-control mr-sm-2" hidden  name="searchedWords" value="{{searchedWords}}" >
+          <a class="nav-link" onclick="submitUsersForm()">Users<span class="badge badge-success" style="margin-left: 43px;">{{users|length}}</span></a>
           </form>
         </li>   
         {% endblock %}
       </ul>
      
       {% block page_content %} 
-    <div class="tab-pane container active" id="milestones" style="margin-right: -190px; margin-top: -190px;">
+    <div class="tab-pane container active" id="milestones" style="margin-right: -190px; margin-top: -250px;">
         <h5 style="margin-left: -99px;">{{repositories|length}} repository results</h5>
     {% if repositories %}
         {% for r in repositories %}
@@ -93,18 +108,18 @@
     function submitForm() {
           let form = document.getElementById("issuesForm");
           form.submit(); 
-          alert('ok')
-                      
     }
     function submitCommitsForm() {
           let form = document.getElementById("commitsForm");
           form.submit(); 
-          alert('ok')
     }
     function submitRepositoriesForm() {
           let form = document.getElementById("repositoriesForm");
           form.submit(); 
-          alert('ok')
+    }
+    function submitUsersForm() {
+          let form = document.getElementById("usersForm");
+          form.submit(); 
     }
         
     </script>
