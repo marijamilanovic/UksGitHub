@@ -14,6 +14,7 @@ from milestone.models import Milestone
 from issue.models import Issue
 from branch.models import Branch
 from commit.models import Commit
+from django.contrib import messages
 
 
 @login_required(login_url="login")
@@ -70,6 +71,7 @@ def addRepository(request):
         else:
             newRepository = Repository(name = name, status = status, creator = creator)
             newRepository.save()
+            messages.success(request, 'Repository has been created.')
             newRepository.developers.add(creator)
             branch = Branch.objects.create(
                 name = 'master',
@@ -90,7 +92,8 @@ def editRepository(request):
     repo.name = name
     repo.status = status
     repo.save()
-    return redirect("../../home/")
+    messages.success(request, 'Repository has been updated.')
+    return redirect("/repository/all_repositories")
 
 def deleteRepository(request,id):
     repo = Repository.objects.get(id=id)
@@ -100,7 +103,8 @@ def deleteRepository(request,id):
             pr.prRepository = None
     
     repo.delete()
-    return redirect("../../home/")
+    messages.success(request, 'Repository has been deleted.')
+    return redirect("/repository/all_repositories")
 
 def get_my_pullrequests(request, id):
     repository = get_object_or_404(Repository, id=id)
