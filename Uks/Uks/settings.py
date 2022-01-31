@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'user.apps.UserConfig',
     'pullrequest.apps.PullrequestConfig',
     'comment.apps.CommentConfig',
+    'history.apps.HistoryConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
