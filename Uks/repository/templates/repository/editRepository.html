@@ -25,43 +25,44 @@
         Space for code
     </div>
     {% endblock %}
-
-    {% block tabRepository %}
-    <div class="tab-pane container active" id="milestones">
-    <h2 style="margin-top: -20px;">Edit repository</h2>
-        <form style="margin-top: 20px; margin-left: -12px;" method="POST" action="{% url 'editRepository' %}"> 
-            {% csrf_token %}
-            <input type="hidden" name="id"  value="{{repository.id}}"/>
-            <div class="form-group col-md-6">
-                <h5>Name</h5> 
-                <input type="text" class="form-control" id="name" name="name" value="{{ repository.name }}">
-            </div>
-            {% if errorTitle %}
-            <div style="color: red; margin-left: 14px;" >{{errorTitle}}</div>
-            {% endif %}
-            <div class="form-group col-md-6">
-                <h5 for="">Status </h5>
-                {% if repository.status == "public" %}
-                    <input type="radio" id="choice1"
-                    name="status" value="public" checked="checked">
-                    <label for="public">public</label>
-
-                    <input type="radio" style="margin-left: 30px;" id="choice2"
-                    name="status" value="private">
-                    <label for="public" >private</label>
-                {% else %}
-                    <input type="radio" id="choice1"
-                    name="status" value="public">
-                    <label   for="public">public</label>
-
-                    <input type="radio" style="margin-left: 30px;" id="choice2"
-                    name="status" value="private" checked="checked">
-                    <label for="public" >private</label>
+    {% block content %}
+        {% block tabRepository %}
+        <div class="tab-pane container active" id="milestones">
+        <h2 style="margin-top: -20px;">Edit repository</h2>
+            <form style="margin-top: 20px; margin-left: -12px;" method="POST" action="{% url 'editRepository' %}"> 
+                {% csrf_token %}
+                <input type="hidden" name="id"  value="{{repository.id}}"/>
+                <div class="form-group col-md-6">
+                    <h5>Name</h5> 
+                    <input type="text" class="form-control" id="name" name="name" value="{{ repository.name }}">
+                </div>
+                {% if errorTitle %}
+                <div style="color: red; margin-left: 14px;" >{{errorTitle}}</div>
                 {% endif %}
-            </div>
-            <input type="submit" style="margin-left: 12px; margin-top: 5px;"  class="btn btn-success" value="Save changes">
-        </form>
-    </div>  
+                <div class="form-group col-md-6">
+                    <h5 for="">Status </h5>
+                    {% if repository.status == "public" %}
+                        <input type="radio" id="choice1"
+                        name="status" value="public" checked="checked">
+                        <label for="public">public</label>
+
+                        <input type="radio" style="margin-left: 30px;" id="choice2"
+                        name="status" value="private">
+                        <label for="public" >private</label>
+                    {% else %}
+                        <input type="radio" id="choice1"
+                        name="status" value="public">
+                        <label   for="public">public</label>
+
+                        <input type="radio" style="margin-left: 30px;" id="choice2"
+                        name="status" value="private" checked="checked">
+                        <label for="public" >private</label>
+                    {% endif %}
+                </div>
+                <input type="submit" style="margin-left: 12px; margin-top: 5px;"  class="btn btn-success" value="Save changes">
+            </form>
+        </div>  
+        {% endblock %}
     {% endblock %}
 
 </body>

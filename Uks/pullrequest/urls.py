@@ -15,7 +15,11 @@ urlpatterns = [
      path('changeStatusPullrequest/<int:id>', views.changeStatusPullrequest, name='changeStatusPullrequest'),
      path('add_comment/<int:id>', comment.views.add_comment, name='add_comment'),
      path('add_emoji/<int:id>/<int:pr_id>', comment.views.add_emoji, name='add_emoji'),
+     path('approve/<int:pullrequest_id>', views.approve, name='approve'),
+     path('merge/<int:pullrequest_id>', views.merge, name='merge'),
      path('update_comment/<int:id>/<int:pr_id>', comment.views.update_comment, name='update_comment'),
      path('delete_comment/<int:id>/<int:pr_id>', comment.views.delete_comment, name='delete_comment'),
+     path('add_reviewers_on_pull_request/<int:id>', views.add_reviewers_on_pull_request, name='add_reviewers_on_pull_request'),
+     path('remove_reviewer_from_pullrequest/<int:pullrequest_id>/<int:reviewer_id>', views.remove_reviewer_from_pullrequest, name='remove_reviewer_from_pullrequest'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
