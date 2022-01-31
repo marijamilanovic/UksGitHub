@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load bootstrap_icons %}
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>{% block title %} UksGithub {% endblock %}</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'home/style.css' %}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+</head>
+
+<body>
+    {% block content %}
+    <div class="welcome">
+        <div class="card" style="width: 200px;position: absolute;top: 120px;margin-left: 30px; box-shadow: 0 4px 8px 0 rgba(0,0,0,0.6);">
+            <img src="{% static 'images/img_avatar.png' %}" alt="Avatar" style="width:100%;">
+            <div class="container" style="font-size: 15px;">
+                <b>{{user.first_name}} {{user.last_name}}</b>
+                <br>
+                <i style="color: silver;">{{user.get_username}}</i>
+                <br>
+                <i style="color: silver;">{{user.email}}</i>
+                <br>
+                <hr>
+                <a href="#" class="btn btn-primary btn-sm">Edit profile</a>
+            </div>
+        </div>
+    </div>
+    
+
+    <div style="margin-left: 300px;" class="elements">
+      <ul class="nav">
+        {% block navRepos %}
+          <li class="nav-item">
+            <a class="nav-link active" style="border-bottom:3px solid darkviolet; color: black;"  href="{% url 'user_repositories' id=user.id %}"> {% bs_icon 'pc-display-horizontal' size='1.2em' %} Repositories</a>
+          </li>
+          {% endblock %}
+
+          {% block navProjects %}
+          <li class="nav-item">
+            <a class="nav-link" style="color: black;" href="#">{% bs_icon 'layout-text-window-reverse' size='1.2em' %} Projects</a>
+          </li>
+          {% endblock %}
+        </ul>
+
+        {% block page_content %} 
+        <div style="margin-top: 50;" class="row" id="repositories">
+            {% if repositories %}
+                {% for repo in repositories %}
+                    <div class="card border-secondary mb-3" style="margin-top: 15px; margin-left: 95px; width: 400px;">
+                        <div class="card-header">
+                             {{repo.status}}
+                        </div>
+                        <div class="card-body">
+                        <h5 class="card-title">{{repo.name}}</h5>
+                        <a href="{% url 'repository' id=repo.id %}">Open</a>
+                        <a href="{% url 'transferToEditRepository' id=repo.id %}" style="margin-left: 10px;">Edit</a>
+                        <a href="{% url 'deleteRepository' id=repo.id %}" style="margin-left: 10px;">Delete</a>
+                        </div>
+                    </div>
+                {% endfor %}
+            {%else %}
+                <p>No repositories </p>
+            {% endif %}
+        </div>
+        
+        {%endblock%} 
+    </div>  
+      {%endblock%}  
+</body>
+

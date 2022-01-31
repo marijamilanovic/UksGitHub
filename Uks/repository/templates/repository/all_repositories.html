@@ -1,5 +1,6 @@
 {% extends 'home/profile.html' %}
 {% block page_content  %}
+{% include 'messages.html' %}
 <a  href="{% url 'newRepository' %}" style="margin-left: 770px; margin-top: 25px;" type="button" class="btn btn-success" >New repository</a> 
 <div style="margin-top: 50;" class="row" id="repositories">
     {% if all_repositories %}
@@ -21,3 +22,12 @@
     {% endif %}
 </div>
 {% endblock %}
+{% block javascript %}
+  <script>
+    setTimeout(function(){
+      if ($('#msg').length > 0) {
+        $('#msg').remove();
+      }
+    }, 2000)
+  </script>
+  {% endblock %}

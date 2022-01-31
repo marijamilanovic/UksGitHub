@@ -113,15 +113,7 @@ def checkCommits(words):
 
 def searchedRepositories(request):
     if request.method == 'POST':
-       issues = findIssues(request)
-       issuesIds = findIssuesIds(request)
-       commits = findCommits(request)
-       commitsIds = findCommitsIds(request)
-       repositories = findRepositories(request)
-       repositoriesIds = findRepositoriesIds(request)
-       users = findUsers(request)
-       usersIds = findUsersIds(request)
-       searchedWords = request.POST.get('searchedWords')
+       issues, issuesIds,commits,commitsIds,repositories,repositoriesIds,users,usersIds,searchedWords = find_all_searched_results(request)
     return render(request, 'searchedRepositories.html',{"foundCommits":commitsIds, 
     "commits":commits,"foundIssues":issuesIds, "issues":issues,
     "repositories":repositories, "foundRepositories": repositoriesIds, 
@@ -130,15 +122,7 @@ def searchedRepositories(request):
 
 def searchedIssues(request):
     if request.method == 'POST':
-       issues = findIssues(request)
-       issuesIds = findIssuesIds(request)
-       commits = findCommits(request)
-       commitsIds = findCommitsIds(request)
-       repositories = findRepositories(request)
-       repositoriesIds = findRepositoriesIds(request)
-       users = findUsers(request)
-       usersIds = findUsersIds(request)
-       searchedWords = request.POST.get('searchedWords')
+       issues, issuesIds,commits,commitsIds,repositories,repositoriesIds,users,usersIds,searchedWords = find_all_searched_results(request)
     return render(request, 'searchedIssues.html',{"foundCommits":commitsIds, 
     "commits":commits,"foundIssues":issuesIds, "issues":issues,
     "repositories":repositories, "foundRepositories": repositoriesIds, 
@@ -147,16 +131,7 @@ def searchedIssues(request):
 
 def searchedCommits(request):
     if request.method == 'POST':
-       issues = findIssues(request)
-       print("NIJE NASAOO")
-       issuesIds = findIssuesIds(request)
-       commits = findCommits(request)
-       commitsIds = findCommitsIds(request)
-       repositories = findRepositories(request)
-       repositoriesIds = findRepositoriesIds(request)
-       users = findUsers(request)
-       usersIds = findUsersIds(request)
-       searchedWords = request.POST.get('searchedWords')
+       issues, issuesIds,commits,commitsIds,repositories,repositoriesIds,users,usersIds,searchedWords = find_all_searched_results(request)
     return render(request, 'searchedCommits.html',{"foundCommits":commitsIds, 
     "commits":commits,"foundIssues":issuesIds, "issues":issues,
     "repositories":repositories, "foundRepositories": repositoriesIds, 
@@ -278,15 +253,7 @@ def checkUsers(words):
 
 def searchedUsers(request):
     if request.method == 'POST':
-       issues = findIssues(request)
-       issuesIds = findIssuesIds(request)
-       commits = findCommits(request)
-       commitsIds = findCommitsIds(request)
-       repositories = findRepositories(request)
-       repositoriesIds = findRepositoriesIds(request)
-       users = findUsers(request)
-       usersIds = findUsersIds(request)
-       searchedWords = request.POST.get('searchedWords')
+       issues, issuesIds,commits,commitsIds,repositories,repositoriesIds,users,usersIds,searchedWords = find_all_searched_results(request)
     return render(request, 'searchedUsers.html',{"foundCommits":commitsIds, 
     "commits":commits,"foundIssues":issuesIds, "issues":issues,
     "repositories":repositories, "foundRepositories": repositoriesIds, 
@@ -309,3 +276,31 @@ def findUsersIds(request):
     for u in users:
         usersIds.append(u.id)
     return usersIds
+
+def visit_profile(request, id):
+    user = User.objects.get(id = id)
+    user_public_repos = Repository.objects.all().filter(status='public',creator = user)
+    logged_user = User.objects.get(id=request.user.id)
+    if (user.id == logged_user.id):
+        return redirect('/home/profile')
+    return render(request,'userProfile.html', {"user":user, "repositories": user_public_repos})
+
+def user_repositories(request,id):
+    user = User.objects.get(id = id)
+    user_public_repos = Repository.objects.all().filter(status='public', creator = user)
+    print(user_public_repos)
+    
+    return render(request,'userProfile.html', {"user":user, "repositories": user_public_repos})
+
+def find_all_searched_results(request):
+    issues = findIssues(request)
+    issuesIds = findIssuesIds(request)
+    commits = findCommits(request)
+    commitsIds = findCommitsIds(request)
+    repositories = findRepositories(request)
+    repositoriesIds = findRepositoriesIds(request)
+    users = findUsers(request)
+    usersIds = findUsersIds(request)
+    searchedWords = request.POST.get('searchedWords')
+
+    return issues, issuesIds,commits,commitsIds,repositories,repositoriesIds,users,usersIds,searchedWords

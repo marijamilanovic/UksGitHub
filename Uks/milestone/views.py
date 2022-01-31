@@ -6,7 +6,7 @@ from datetime import date
 
 def newMilestone(request, id):
     repository = get_object_or_404(Repository, id=id)
-    return render(request, 'newMilestone.html', { "repository":repository})
+    return render(request, 'newMilestone.html', { "repository":repository, "logged_user_id": request.user.id})
 
 def milestones(request,id):
     milestones = Milestone.objects.all()
@@ -16,7 +16,7 @@ def milestones(request,id):
             repositoryMilestones.append(m)
     repository = get_object_or_404(Repository, id=id)
     
-    return render(request, 'milestones.html', {"milestones":repositoryMilestones, "repository":repository})
+    return render(request, 'milestones.html', {"milestones":repositoryMilestones, "repository":repository, "logged_user_id": request.user.id})
 
 def allMilestones(request):
     milestones = Milestone.objects.all()

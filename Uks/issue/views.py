@@ -1,3 +1,4 @@
+from email import message
 from hashlib import new
 from imp import reload
 from django.shortcuts import render, get_object_or_404, redirect
@@ -9,12 +10,15 @@ from project.models import Project
 from milestone.models import Milestone
 from pullrequest.models import Pullrequest
 
+from django.contrib import messages
+
 def issues(request, id):
     repository = get_current_repository(id)
     issues = Issue.objects.filter(repository = repository)
     return render(request, 'issues.html', {
         "issues":issues, 
-        "repository":repository
+        "repository":repository,
+        "logged_user_id": request.user.id
         })
 
 def all_issues(request):
@@ -39,7 +43,8 @@ def new_issue(request, repo_id):
         'milestones': get_milestones_by_repo(repo_id),
         'projects': get_projects_by_repo(repository),
         'developers': get_users_by_repo(repository),
-        'pullrequests': get_pullrequests_by_repo(repository)
+        'pullrequests': get_pullrequests_by_repo(repository),
+        'logged_user_id': request.user.id
         })
 
 def add_issue(request):
@@ -52,6 +57,7 @@ def add_issue(request):
             opened_by = request.user.username)
         new_issue = add_milestone_in_issue(request, new_issue)
         new_issue.save()
+        messages.success(request, 'Issue has been created.')
         new_issue = add_assignees_in_issue(request, new_issue)
         new_issue = add_projects_in_issue(request, new_issue)
         new_issue = add_pullrequests_in_issue(request, new_issue)
@@ -83,6 +89,7 @@ def update_issue(request, id):
         issue = add_assignees_in_issue(request, issue)
         issue.pullrequests.clear()
         issue = add_pullrequests_in_issue(request, issue)
+        messages.success(request, 'Issue has been updated.')
         return issues(request, issue.repository.id)
 
 def delete_issue(request, id):
@@ -92,6 +99,7 @@ def delete_issue(request, id):
         if(r.id == issue.repository.id):
             repository = r
     issue.delete()
+    messages.success(request, 'Issue has been deleted.')
     issue_update = Issue.objects.filter(repository=issue.repository)
     return render(request, "issues.html", {
         "issues":issue_update, 

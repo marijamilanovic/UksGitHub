@@ -55,9 +55,9 @@
                 {% bs_icon 'person-circle' size='1.4em' color='green' %} <span style="padding-left:15px">{{u.username}}</span>  
             </div>
             <div class="card-body">
-            <p>{{user.email}}</p>
-            <p>Joined on: {{user.date_joined}} </p>
-            <a href="{% url 'profile' %}" class="link-primary">Visit</a>
+            <p>{{u.email}}</p>
+            <p>Joined on: {{u.date_joined}} </p>
+            <a href="{% url 'visit_profile' id=u.id %}" class="link-primary">Visit</a>
             </div>
         </div>
         {% endfor %}

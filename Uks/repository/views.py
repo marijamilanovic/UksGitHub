@@ -18,6 +18,7 @@ from django.contrib import messages
 from label.models import Label
 
 
+
 @login_required(login_url="login")
 def index(request, id):
     template = loader.get_template('repository/index.html')
@@ -35,6 +36,7 @@ def index(request, id):
         'branch_list': branch_list,
         'commit_list': commit_list,
         'selected_branch': default_branch,
+        'logged_user_id': request.user.id,
         'watchers':watchers,
         'stargazers': stargazers,
         'forks':forks,
@@ -90,6 +92,7 @@ def addRepository(request):
         else:
             newRepository = Repository(name = name, status = status, creator = creator)
             newRepository.save()
+            messages.success(request, 'Repository has been created.')
             newRepository.developers.add(creator)
             newRepository.watchers.add(creator)
             add_initial_labels(newRepository)
@@ -129,7 +132,8 @@ def editRepository(request):
     repo.name = name
     repo.status = status
     repo.save()
-    return redirect("../../home/")
+    messages.success(request, 'Repository has been updated.')
+    return redirect("/repository/all_repositories")
 
 def deleteRepository(request,id):
     repo = Repository.objects.get(id=id)
@@ -139,7 +143,8 @@ def deleteRepository(request,id):
             pr.prRepository = None
     
     repo.delete()
-    return redirect("../../home/")
+    messages.success(request, 'Repository has been deleted.')
+    return redirect("/repository/all_repositories")
 
 def get_my_pullrequests(request, id):
     repository = get_object_or_404(Repository, id=id)
@@ -306,7 +311,7 @@ def collaborators(request, id):
         if developer not in collaborators and developer.id != repository.creator.id:
             not_added_developers.append(developer)
     selected_developer = User.objects.first()
-    return render(request, "repository/collaborators.html",{'repository':repository, 'collaborators':only_collaborators,'selected_developer': selected_developer, 'developers':not_added_developers})
+    return render(request, "repository/collaborators.html",{'repository':repository, 'collaborators':only_collaborators,'selected_developer': selected_developer, 'developers':not_added_developers, 'logged_user_id': request.user.id})
 
 def repo_developer(request, id, developer_id):
     print("repo developer")
@@ -437,24 +442,14 @@ def checkCommits(words, repository):
 
 def searched_repo_issues(request, id):
     if request.method == 'POST':
-       repository = Repository.objects.get(id=id)
-       issues = findIssues(request)
-       issuesIds = findIssuesIds(request)
-       commits = findCommits(request)
-       commitsIds = findCommitsIds(request)
-       searchedWords = request.POST.get('searchedWords')
+      repository, issues, issuesIds, commits, commitsIds,searchedWords = find_all_searched_items(request,id)
     return render(request, 'repository/searchedRepoIssues.html',{"foundCommits":commitsIds, 
     "commits":commits,"foundIssues":issuesIds, "issues":issues, "repository": repository,
     "searchedWords":searchedWords})
 
 def searched_repo_commits(request, id):
     if request.method == 'POST':
-       repository = Repository.objects.get(id=id)
-       issues = findIssues(request)
-       issuesIds = findIssuesIds(request)
-       commits = findCommits(request)
-       commitsIds = findCommitsIds(request)
-       searchedWords = request.POST.get('searchedWords')
+       repository, issues, issuesIds, commits, commitsIds,searchedWords = find_all_searched_items(request,id)
     return render(request, 'repository/searchedRepoCommits.html',{"foundCommits":commitsIds, 
     "commits":commits,"foundIssues":issuesIds, "issues":issues, "repository":repository,
     "searchedWords":searchedWords})
@@ -492,3 +487,13 @@ def findCommitsIds(request):
     for c in commits:
         commitsIds.append(c.id)
     return commitsIds
+
+def find_all_searched_items(request,id):
+    repository = Repository.objects.get(id=id)
+    issues = findIssues(request)
+    issuesIds = findIssuesIds(request)
+    commits = findCommits(request)
+    commitsIds = findCommitsIds(request)
+    searchedWords = request.POST.get('searchedWords')
+
+    return repository, issues, issuesIds, commits, commitsIds,searchedWords
