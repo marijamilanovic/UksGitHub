@@ -14,8 +14,6 @@ def pullrequests(request, id):
     for pr in pullrequests:
         if pr.creator == request.user:
             my_pullrequests.append(pr)
-    print("broj pulrequestova je ")
-    print(pullrequests)
     pullrequests_for_review = get_pullrequests_for_review(request, repository)
     return render(request, 'pullrequests.html', {"pullrequests":my_pullrequests, "repository":repository,'pullrequests_for_review':pullrequests_for_review,"logged_user_id":request.user.id})
 
@@ -52,8 +50,6 @@ def updatePullrequestPage(request, id):
 
 def get_not_assigned_collaborators_on_pull_request(request,reviewers,prRepository):
     collaborators_on_repository = User.objects.all().filter(user_developers = prRepository).all()
-    print("collaborators_on_repository")
-    print(len(collaborators_on_repository))
     not_assigned_collaborators_on_repository = []
     for collab in collaborators_on_repository:
         if collab not in reviewers and collab.id != request.user.id:
@@ -123,10 +119,7 @@ def approve(request, pullrequest_id):
 def merge(request, pullrequest_id):
     pullrequest = Pullrequest.objects.get(id = pullrequest_id)
     repository = pullrequest.prRepository
-    print(len(pullrequest.reviewers.all()))
-    if len(pullrequest.reviewers.all()) == 0 and pullrequest.reviewed:
-        pullrequest.status = "Merged"
-        pullrequest.save()
+    try_merge(pullrequest)
     pullrequests = Pullrequest.objects.all().filter(prRepository=repository)
     my_pullrequests = []
     for pr in pullrequests:
@@ -134,3 +127,10 @@ def merge(request, pullrequest_id):
             my_pullrequests.append(pr)
     pullrequests_for_review = get_pullrequests_for_review(request, repository)
     return render(request, 'pullrequests.html', {"pullrequests":my_pullrequests, "repository":repository,'pullrequests_for_review':pullrequests_for_review})
+
+def try_merge(pullrequest):
+    if len(pullrequest.reviewers.all()) == 0 and pullrequest.reviewed:
+        pullrequest.status = "Merged"
+        pullrequest.save()
+        return True
+    return False
