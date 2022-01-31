@@ -55,6 +55,8 @@ class CommitTestCase(TestCase):
         self.assertListEqual(list(Commit.objects.all()), 1)
         self.assertEqual(response.status_code, 200)
 
+    
+
 
 
 

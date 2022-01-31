@@ -1,0 +1,11 @@
+{% extends 'insights/base_insights.html' %}
+
+
+
+{% block side-pulse %}
+    <a class="active" style="border-bottom: 2px solid black;" href="{% url 'insights:pulse' id=repository.id days=1 %}">Pulse</a>
+{% endblock %}
+
+{% block side-contributors %}
+        <a style="border-left:3px solid darkviolet;" href="{% url 'insights:contributors' id=repository.id %}">Contributors</a>
+{% endblock %}
