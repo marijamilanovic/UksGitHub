@@ -25,5 +25,9 @@ urlpatterns = [
     path('remove_collaborator/<int:id>/<int:developer_id>', views.remove_collaborator, name='remove_collaborator'),
     path('add_collaborator/<int:id>/<int:developer_id>', views.add_collaborator, name='add_collaborator'),
     path('repo_developer/<int:id>/<int:developer_id>', views.repo_developer, name='repo_developer'),
+    path('searchInThisRepo/<int:id>', views.search_in_this_repo, name = 'search_in_this_repo'),
+    path('searchedRepoIssues/<int:id>', views.searched_repo_issues, name = 'searched_repo_issues'),
+    path('searchedRepoCommits/<int:id>', views.searched_repo_commits, name = 'searched_repo_commits'),
+
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 

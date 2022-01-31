@@ -391,3 +391,109 @@ def remove_collaborato_from_repository(repository, developer):
     repository.developers.remove(developer)
     collaborators = User.objects.all().filter(user_developers = repository)
     return collaborators
+
+def search_in_this_repo(request, id):
+    if request.method == 'POST':
+        repository = Repository.objects.get(id=id)
+        searchedWord = request.POST['search']
+        words = searchedWord.split()
+        issues = checkIssues(words, repository)
+        commits = checkCommits(words, repository)
+        issuesIds=[]
+        for issu in issues:
+            issuesIds.append(issu.id)
+        commitsIds=[]
+        for c in commits:
+            commitsIds.append(c.id)
+        
+    return render(request, 'repository/searchedRepoResult.html', {"foundCommits":commitsIds, 
+    "commits":commits,"foundIssues":issuesIds, "issues":issues,
+    "repository":repository, 
+    "searchedWords":searchedWord})
+
+
+def checkIssues(words, repository):
+    issues = []
+    all_repo_issues = Issue.objects.all().filter(repository = repository)
+    print(len(all_repo_issues))
+    for issue in all_repo_issues:
+            for word in words:
+                if (word.lower() in issue.issue_title.lower() or word.lower() in issue.description.lower() ):
+                    if (len(issues) == 0):
+                        issues.append(issue)
+                    elif(issue not in issues):
+                        issues.append(issue)
+    return issues
+
+def checkCommits(words, repository):
+    commits = [] 
+    branch_list = Branch.objects.all().filter(repository = repository)
+    all_commits = Commit.objects.all()
+    for branch in branch_list:
+        for commit in all_commits:
+            if (branch.id == commit.branch.id):
+                for word in words:
+                    if (word.lower() in commit.message.lower()):
+                        if (len(commits) == 0):
+                            commits.append(commit)
+                        elif(commit not in commits):
+                            commits.append(commit)
+    return commits
+
+def searched_repo_issues(request, id):
+    if request.method == 'POST':
+      repository, issues, issuesIds, commits, commitsIds,searchedWords = find_all_searched_items(request,id)
+    return render(request, 'repository/searchedRepoIssues.html',{"foundCommits":commitsIds, 
+    "commits":commits,"foundIssues":issuesIds, "issues":issues, "repository": repository,
+    "searchedWords":searchedWords})
+
+def searched_repo_commits(request, id):
+    if request.method == 'POST':
+       repository, issues, issuesIds, commits, commitsIds,searchedWords = find_all_searched_items(request,id)
+    return render(request, 'repository/searchedRepoCommits.html',{"foundCommits":commitsIds, 
+    "commits":commits,"foundIssues":issuesIds, "issues":issues, "repository":repository,
+    "searchedWords":searchedWords})
+
+def findIssues(request):
+    foundIssues = request.POST.get('foundIssues')
+    issues = []
+    if (foundIssues != '[]'):
+        issuesFound = foundIssues.strip('][').split(', ')
+        for foundIssue in issuesFound:
+            issue = get_object_or_404(Issue, id = foundIssue)
+            issues.append(issue)
+    return issues
+
+def findIssuesIds(request):
+    issues = findIssues(request)
+    issuesIds=[]
+    for issu in issues:
+        issuesIds.append(issu.id)
+    return issuesIds
+
+def findCommits(request):
+    foundCommits = request.POST.get('foundCommits')
+    commits = []
+    if (foundCommits != '[]'):
+        commitsFound = foundCommits.strip('][').split(', ')
+        for foundCommit in commitsFound:
+            commit = get_object_or_404(Commit, id = foundCommit)
+            commits.append(commit)
+    return commits
+
+def findCommitsIds(request):
+    commits = findCommits(request)
+    commitsIds=[]
+    for c in commits:
+        commitsIds.append(c.id)
+    return commitsIds
+
+def find_all_searched_items(request,id):
+    repository = Repository.objects.get(id=id)
+    issues = findIssues(request)
+    issuesIds = findIssuesIds(request)
+    commits = findCommits(request)
+    commitsIds = findCommitsIds(request)
+    searchedWords = request.POST.get('searchedWords')
+
+    return repository, issues, issuesIds, commits, commitsIds,searchedWords
