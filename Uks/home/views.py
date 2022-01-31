@@ -9,6 +9,7 @@ from repository.models import Repository
 from user.models import User
 from milestone.models import Milestone
 from issue.models import Issue
+from django.db.models import Q
 
 # Create your views here.
 
@@ -45,7 +46,7 @@ def repository(request, id):
 # def deleteRepository(request, id):
 #     return redirect('/deleteRepository/' + id)
 def get_my_repos(request):
-    return Repository.objects.filter(creator_id=request.user.id)
+    return Repository.objects.filter(Q(creator_id=request.user.id) | Q(developers=request.user))
 
 def get_my_milestones(request):
     return Milestone.objects.all()
