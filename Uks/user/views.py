@@ -45,9 +45,6 @@ def search(request):
         repositories = checkRepositories(words)
         issues = checkIssues(words)
         commits = checkCommits(words)
-        number_of_repos = len(repositories)
-        number_of_issues = len (issues)
-        number_of_commits = len(commits)
         issuesIds=[]
         for issu in issues:
             issuesIds.append(issu.id)
@@ -58,8 +55,9 @@ def search(request):
         for r in repositories:
             repositoriesIds.append(r.id)
 
-    return render(request, 'searchResult.html', {"foundRepos":repositories, "foundRepositoriesNumber":number_of_repos, "foundRepositories":repositoriesIds, 
-    "foundIssues": issuesIds,  "foundIssuesNumber" : number_of_issues, "foundCommits": commitsIds, "foundCommitsNumber": number_of_commits,
+    return render(request, 'searchResult.html', {"foundCommits":commitsIds, 
+    "commits":commits,"foundIssues":issuesIds, "issues":issues,
+    "repositories":repositories, "foundRepositories": repositoriesIds, 
     "searchedWords":searchedWord})
 
 def checkRepositories(words):
@@ -83,7 +81,7 @@ def checkIssues(words):
         for issue in all_issues:
             if (r.id == issue.repository.id):
                 for word in words:
-                    if (word.lower() in issue.issue_title.lower()):
+                    if (word.lower() in issue.issue_title.lower() or word.lower() in issue.description.lower()):
                         if (len(issues) == 0):
                             issues.append(issue)
                         elif(issue not in issues):
@@ -115,13 +113,10 @@ def searchedRepositories(request):
        commitsIds = findCommitsIds(request)
        repositories = findRepositories(request)
        repositoriesIds = findRepositoriesIds(request)
-       repositoriesNumber = len (repositories)
-       commitsNumber = len(commits)
-       issuesNumber = len(issues)
        searchedWords = request.POST.get('searchedWords')
-    return render(request, 'searchedRepositories.html',{"foundCommits":commitsIds, "foundCommitsNumber":commitsNumber,
-    "commits":commits,"foundIssues":issuesIds, "foundIssuesNumber":issuesNumber, "issues":issues,
-    "repositories":repositories, "foundRepositories": repositoriesIds, "foundRepositoriesNumber":repositoriesNumber,
+    return render(request, 'searchedRepositories.html',{"foundCommits":commitsIds, 
+    "commits":commits,"foundIssues":issuesIds, "issues":issues,
+    "repositories":repositories, "foundRepositories": repositoriesIds, 
     "searchedWords":searchedWords})
 
 def searchedIssues(request):
@@ -132,13 +127,10 @@ def searchedIssues(request):
        commitsIds = findCommitsIds(request)
        repositories = findRepositories(request)
        repositoriesIds = findRepositoriesIds(request)
-       repositoriesNumber = len (repositories)
-       commitsNumber = len(commits)
-       issuesNumber = len(issues)
        searchedWords = request.POST.get('searchedWords')
-    return render(request, 'searchedIssues.html',{"foundCommits":commitsIds, "foundCommitsNumber":commitsNumber,
-    "commits":commits,"foundIssues":issuesIds, "foundIssuesNumber":issuesNumber, "issues":issues,
-    "repositories":repositories, "foundRepositories": repositoriesIds, "foundRepositoriesNumber":repositoriesNumber,
+    return render(request, 'searchedIssues.html',{"foundCommits":commitsIds, 
+    "commits":commits,"foundIssues":issuesIds, "issues":issues,
+    "repositories":repositories, "foundRepositories": repositoriesIds, 
     "searchedWords":searchedWords})
 
 def searchedCommits(request):
@@ -150,13 +142,10 @@ def searchedCommits(request):
        commitsIds = findCommitsIds(request)
        repositories = findRepositories(request)
        repositoriesIds = findRepositoriesIds(request)
-       repositoriesNumber = len (repositories)
-       commitsNumber = len(commits)
-       issuesNumber = len(issues)
        searchedWords = request.POST.get('searchedWords')
-    return render(request, 'searchedCommits.html',{"foundCommits":commitsIds, "foundCommitsNumber":commitsNumber,
-    "commits":commits,"foundIssues":issuesIds, "foundIssuesNumber":issuesNumber, "issues":issues,
-    "repositories":repositories, "foundRepositories": repositoriesIds, "foundRepositoriesNumber":repositoriesNumber,
+    return render(request, 'searchedCommits.html',{"foundCommits":commitsIds, 
+    "commits":commits,"foundIssues":issuesIds, "issues":issues,
+    "repositories":repositories, "foundRepositories": repositoriesIds, 
     "searchedWords":searchedWords})
 
 def findIssues(request):

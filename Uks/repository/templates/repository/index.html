@@ -11,6 +11,14 @@
 </head>
 
 <body>
+
+  {% block searchBar %}
+  <form name="searchForm" method="POST" action="{% url 'search_in_this_repo' id=repository.id %}" class="form-inline my-3 my-lg-0" style="margin-left:20px;display:inline-block;">
+    {% csrf_token %}
+    <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" name="search" value="{{search}}" >
+    <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">Search</button>
+  </form>  
+  {% endblock %}
     {% block content %}
 
     <head>
