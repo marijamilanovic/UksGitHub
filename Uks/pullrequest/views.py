@@ -10,8 +10,16 @@ from datetime import date
 def pullrequests(request, id):
     repository = get_object_or_404(Repository, id=id)
     pullrequests = Pullrequest.objects.all().filter(prRepository=repository)
-    return render(request, 'pullrequests.html', {"pullrequests":pullrequests, "repository":repository})
+    pullrequests_for_review = get_pullrequests_for_review(request, repository)
+    return render(request, 'pullrequests.html', {"pullrequests":pullrequests, "repository":repository,'pullrequests_for_review':pullrequests_for_review})
 
+def get_pullrequests_for_review(request, repository):
+    pullrequests_for_this_repository = Pullrequest.objects.all().filter(prRepository = repository)
+    pullrequests_for_review = []
+    for pullrequest in pullrequests_for_this_repository:
+        if request.user in pullrequest.reviewers.all() and request.user != pullrequest.creator:
+            pullrequests_for_review.append(pullrequest)
+    return pullrequests_for_review
 
 def newPullrequest(request, id):
     repository = get_object_or_404(Repository, id=id)
