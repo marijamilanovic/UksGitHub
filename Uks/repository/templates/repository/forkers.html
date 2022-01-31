@@ -22,12 +22,12 @@
                   {% for forker in forks %}
                   <li class="list-group-item">
                     <div >
-                    <a href="#" data-toggle="tooltip" title="Owns this repository" style="font-size: large;"> <span style="color: black;"> {% bs_icon 'person-circle' size='1.7em' %}</span>  {{forked_from}} </a> 
+                    <a href="{% url 'visit_profile' id=forked_from.id %}" data-toggle="tooltip" title="Owns this repository" style="font-size: large;"> <span style="color: black;"> {% bs_icon 'person-circle' size='1.7em' %}</span>  {{forked_from}} </a> 
                     <a href="{% url 'repository' id=forked_repo.id  %}" style="font-size: large;">/{{forked_repo.name}}</a>
                     </div>
                     <div  style="margin-top: 20px; margin-left: 20px;">
                         {% bs_icon 'arrow-return-right' size='1.7em' %}
-                    <a href="{% url 'profile' %}" data-toggle="tooltip" title="Forker" style="font-size: large;"> <span style="color: black;"> {% bs_icon 'person-circle' size='1.7em' %}</span>  {{forker}}</a>
+                    <a href="{% url 'visit_profile' id=forker.id %}" data-toggle="tooltip" title="Forker" style="font-size: large;"> <span style="color: black;"> {% bs_icon 'person-circle' size='1.7em' %}</span>  {{forker}}</a>
                     <a href="{% url 'repository' id=repo_copy.id  %}" style="font-size: large;">/{{repo_copy.name}}</a>
                     </div>
                 </div>

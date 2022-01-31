@@ -253,3 +253,16 @@ def delete_user(request, id):
 def all_users(request):
     users = User.objects.all()
     return render(request, "all_users.html",{"all_users":users})
+
+def visit_profile(request, id):
+    user = User.objects.get(id = id)
+    user_public_repos = Repository.objects.all().filter(status='public',creator = user)
+    
+    return render(request,'userProfile.html', {"user":user, "repositories": user_public_repos})
+
+def user_repositories(request,id):
+    user = User.objects.get(id = id)
+    user_public_repos = Repository.objects.all().filter(status='public', creator = user)
+    print(user_public_repos)
+    
+    return render(request,'userProfile.html', {"user":user, "repositories": user_public_repos})
