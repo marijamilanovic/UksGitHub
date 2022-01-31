@@ -15,10 +15,8 @@ from issue.models import Issue
 from branch.models import Branch
 from commit.models import Commit
 from django.contrib import messages
-<<<<<<< HEAD
-=======
 from label.models import Label
->>>>>>> develop
+
 
 
 @login_required(login_url="login")
