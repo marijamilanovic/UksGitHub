@@ -27,7 +27,7 @@
     {% block page_content %}
         <div class="row">
             <div class="tab-pane container active" id="milestones" style="width: 40%; margin-left: auto; margin-right: auto;" >
-                <a href="{% url 'newPullrequest' id=repository.id %}" style="margin-left: 85%; margin-top: -25px;" type="button" class="btn btn-success" >New pull request</a>
+                <a href="{% url 'newPullrequest' id=repository.id %}" style=" margin-top: -55px; margin-bottom: 30;" type="button" class="btn btn-success" >New pull request</a>
                 <p>My pullrequests</p>
                 {% if pullrequests %}
                 {% for pr in pullrequests %}
@@ -46,7 +46,7 @@
                     </div>
                     {% endif %}
                     <div class="card-body">
-                        <h7 class="card-title">#23 opened {{pr.created}} by _____</h7>
+                        <h7 class="card-title">#23 opened {{pr.created}} by {{pr.creator.username}}</h7>
                     </div>
                     <a href="{% url 'updatePullrequestPage' id=pr.id %}" style="margin-left: 20px; margin-top: -10px; width: 150px; margin-bottom: 10px;" type="button" class="btn btn-success">Edit</a>
                 </div>
@@ -74,12 +74,11 @@
                             </div>
                             {% endif %}
                             <div class="card-body">
-                                <h7 class="card-title">#23 opened {{pr.created}} by _____</h7>
+                                <h7 class="card-title">#23 opened {{pr.created}} by {{pr.creator.username}}</h7>
                             </div>
                             <div>
-                                <a href="{% url 'updatePullrequestPage' id=pr.id %}" style="margin-left: 20px; margin-top: -10px; width: 150px; margin-bottom: 10px; background-color:rgb(7, 113, 252); border: rgb(7, 113, 252);" type="button" class="btn btn-success">Approve</a>
+                                <a href="{% url 'approve' pullrequest_id=pr.id  %}" style="margin-left: 20px; margin-top: -10px; width: 150px; margin-bottom: 10px; background-color:rgb(7, 113, 252); border: rgb(7, 113, 252);" type="button" class="btn btn-success">Approve</a>
                                 <a href="{% url 'updatePullrequestPage' id=pr.id %}" style="margin-left: 20px; margin-top: -10px; width: 150px; margin-bottom: 10px; background-color:rgb(7, 113, 252); border: rgb(7, 113, 252);" type="button" class="btn btn-success">Comment</a>
-                                <a href="{% url 'updatePullrequestPage' id=pr.id %}" style="margin-left: 20px; margin-top: -10px; width: 150px; margin-bottom: 10px; background-color:rgb(7, 113, 252); border: rgb(7, 113, 252);" type="button" class="btn btn-success">Request change</a>
                             </div>
                         </div>
                     {% endfor %}

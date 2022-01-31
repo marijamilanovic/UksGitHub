@@ -3,15 +3,21 @@ from xml.etree.ElementTree import Comment
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.models import User
 from repository.views import collaborators
-from .models import Pullrequest, Repository, Branch
+from .models import MERGED, PULL_REQUEST_STATE, Pullrequest, Repository, Branch
 from comment.models import EMOJI_PICKER
 from datetime import date
 
 def pullrequests(request, id):
     repository = get_object_or_404(Repository, id=id)
     pullrequests = Pullrequest.objects.all().filter(prRepository=repository)
+    my_pullrequests = []
+    for pr in pullrequests:
+        if pr.creator == request.user:
+            my_pullrequests.append(pr)
+    print("broj pulrequestova je ")
+    print(pullrequests)
     pullrequests_for_review = get_pullrequests_for_review(request, repository)
-    return render(request, 'pullrequests.html', {"pullrequests":pullrequests, "repository":repository,'pullrequests_for_review':pullrequests_for_review})
+    return render(request, 'pullrequests.html', {"pullrequests":my_pullrequests, "repository":repository,'pullrequests_for_review':pullrequests_for_review})
 
 def get_pullrequests_for_review(request, repository):
     pullrequests_for_this_repository = Pullrequest.objects.all().filter(prRepository = repository)
@@ -34,6 +40,7 @@ def addPullrequest(request):
         target = get_object_or_404(Branch, id = request.POST['branch_target_id'] )
         name = target.name
         newPullrequest = Pullrequest(name = name, status = 'Opened', created = created, prRepository = prRepository, source = source, target = target)
+        newPullrequest.creator = request.user
         newPullrequest.save()
         reviewers = add_reviewrs(request, newPullrequest)
         not_assigned_collaborators_on_repository = get_not_assigned_collaborators_on_pull_request(request, reviewers, prRepository)
@@ -95,3 +102,35 @@ def remove_reviewer_from_pullrequest(request, pullrequest_id, reviewer_id):
         pull_request.reviewers.remove(reviewer)
     pullrequest, repository, comments, emojis, not_assigned_collaborators_on_repository, reviewers=pull_request_page_data(request, pullrequest_id)
     return render(request, "updatePullrequest.html", {'reviewers': reviewers, 'not_assigned_collaborators_on_repository': not_assigned_collaborators_on_repository, "pullrequest": pullrequest, "repository": repository, "comments":comments, "emojis":emojis})
+
+def approve(request, pullrequest_id):
+    pullrequest = Pullrequest.objects.get(id = pullrequest_id)
+    repository = pullrequest.prRepository
+    pullrequests = Pullrequest.objects.all().filter(prRepository=repository)
+    my_pullrequests = []
+    for pr in pullrequests:
+        if pr.creator == request.user:
+            my_pullrequests.append(pr)
+    repository = pullrequest.prRepository
+    reviewer = request.user
+    if reviewer in pullrequest.reviewers.all():
+        pullrequest.reviewers.remove(reviewer)
+        pullrequest.reviewed = True
+        pullrequest.save()
+    pullrequests_for_review = get_pullrequests_for_review(request, repository)
+    return render(request, 'pullrequests.html', {"pullrequests":my_pullrequests, "repository":repository,'pullrequests_for_review':pullrequests_for_review})
+
+def merge(request, pullrequest_id):
+    pullrequest = Pullrequest.objects.get(id = pullrequest_id)
+    repository = pullrequest.prRepository
+    print(len(pullrequest.reviewers.all()))
+    if len(pullrequest.reviewers.all()) == 0 and pullrequest.reviewed:
+        pullrequest.status = "Merged"
+        pullrequest.save()
+    pullrequests = Pullrequest.objects.all().filter(prRepository=repository)
+    my_pullrequests = []
+    for pr in pullrequests:
+        if pr.creator == request.user:
+            my_pullrequests.append(pr)
+    pullrequests_for_review = get_pullrequests_for_review(request, repository)
+    return render(request, 'pullrequests.html', {"pullrequests":my_pullrequests, "repository":repository,'pullrequests_for_review':pullrequests_for_review})

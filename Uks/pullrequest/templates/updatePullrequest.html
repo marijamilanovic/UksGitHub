@@ -159,7 +159,7 @@
                     <hr>
                     {% if pullrequest.status == 'Opened' %}
                         <div class="card-header" style="border-color: green;">
-                            {% bs_icon 'bezier2' size='1em' color='green' %} <a href="#" style="margin-left: 20px; margin-top: 10px; width: 200px; height: 50px; margin-bottom: 10px;" type="button" class="btn btn-success">Merge pull request</a>
+                            {% bs_icon 'bezier2' size='1em' color='green' %} <a href="{% url 'merge' pullrequest_id=pullrequest.id %}" style="margin-left: 20px; margin-top: 10px; width: 200px; height: 50px; margin-bottom: 10px;" type="button" class="btn btn-success">Merge pull request</a>
                         </div>
                     {% elif pullrequest.status == 'Merged' %}
                         <div class="card-header" style="border-color: purple;">

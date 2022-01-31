@@ -28,6 +28,6 @@ class Pullrequest(models.Model):
     comments = models.ManyToManyField(Comment)
     creator = models.ForeignKey(to=User, null=True, on_delete=models.CASCADE)
     reviewers = models.ManyToManyField(User,related_name='pullrequest_reviewers')
-
+    reviewed = models.BooleanField(default=False)
     def __str__(self):
         return self.name
