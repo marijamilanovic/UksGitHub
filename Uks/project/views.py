@@ -11,7 +11,7 @@ def all_projects(request):
 def projects(request,id):
     repository = Repository.objects.get(id=id)
     projects = Project.objects.all().filter(repository = repository)
-    return render (request, 'repoProjects.html', {"projects":projects, "repository": repository})
+    return render (request, 'repoProjects.html', {"projects":projects, "repository": repository,"logged_user_id": request.user.id})
 
 def newProject(request, id):
     repository = get_object_or_404(Repository, id=id)
@@ -46,3 +46,19 @@ def reopenProject(request,id):
     project.status = 'Opened'
     project.save()
     return redirect('/project/projects/'+ str(project.repository.id))
+
+def getProjectById(request, id):
+    project = get_object_or_404(Project, id=id)
+    repository = get_object_or_404(Repository, id = project.repository.id)
+
+    return render(request, "updateProject.html", {"project": project, "repository": repository})
+
+def updateProject(request, id):
+    if request.method == 'POST':
+        project = get_object_or_404(Project, id=id)
+        project.name = request.POST['name']
+        project.description = request.POST['description']
+        repository = get_object_or_404(Repository, id = request.POST['repository'] )
+        project.save()
+        
+    return redirect('/project/projects/'+ str(repository.id))

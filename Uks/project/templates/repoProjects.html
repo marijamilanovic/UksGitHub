@@ -49,9 +49,8 @@
                     </div>
                     <div style="margin-left: 8px; margin-top: 2px;">
                       <p >{{p.description}}</p>
-                      <a href="#" class="link-primary">Edit</a>
+                      <a href="{% url 'project:getProjectById' id=p.id %}" class="link-primary">Edit</a>
                       <a href="{% url 'project:closeProject' id=p.id %}" class="link-primary" style="margin-left: 10px;">Close</a>
-                      <a href="#" class="link-primary" style="margin-left: 10px;">Delete</a>
                     </div>
                   </li>
                   {% endif %}
