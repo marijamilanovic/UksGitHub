@@ -9,6 +9,7 @@ from user.models import User
 from project.models import Project
 from milestone.models import Milestone
 from pullrequest.models import Pullrequest
+from label.models import Label
 from datetime import datetime
 
 from django.contrib import messages
@@ -45,6 +46,7 @@ def new_issue(request, repo_id):
         'projects': get_projects_by_repo(repository),
         'developers': get_users_by_repo(repository),
         'pullrequests': get_pullrequests_by_repo(repository),
+        'labels': get_labels_by_repo(repository),
         'logged_user_id': request.user.id
         })
 
@@ -63,6 +65,7 @@ def add_issue(request):
         new_issue = add_assignees_in_issue(request, new_issue)
         new_issue = add_projects_in_issue(request, new_issue)
         new_issue = add_pullrequests_in_issue(request, new_issue)
+        new_issue = add_labels_in_issue(request, new_issue)
     return redirect('issues/' + str(repository.id))
 
 def view_issue(request, id):
@@ -74,7 +77,8 @@ def view_issue(request, id):
         'milestones': get_milestones_by_issue_repo(id), 
         'developers':get_users_by_repo(repository),
         'projects': get_projects_by_repo(repository),
-        'pullrequests': get_pullrequests_by_repo(repository)
+        'pullrequests': get_pullrequests_by_repo(repository),
+        'labels': get_labels_by_repo(repository)
         })
 
 def update_issue(request, id):
@@ -91,6 +95,8 @@ def update_issue(request, id):
         issue = add_assignees_in_issue(request, issue)
         issue.pullrequests.clear()
         issue = add_pullrequests_in_issue(request, issue)
+        issue.labels.clear()
+        issue = add_labels_in_issue(request, issue)
         messages.success(request, 'Issue has been updated.')
         return issues(request, issue.repository.id)
 
@@ -157,10 +163,10 @@ def get_milestones_by_issue_repo(id):
     return Milestone.objects.all().filter(repository=repository)
 
 def add_milestone_in_issue(request, issue):
-    if request.POST['milestone_id'] != 'empty':
-        issue.milestone = Milestone.objects.get(id = request.POST['milestone_id'])
-    elif issue.milestone != None:
+    if not request.POST.getlist('milestone_id'):
         issue.milestone = None
+    else:
+        issue.milestone = Milestone.objects.get(id = request.POST.getlist('milestone_id')[0])
     return issue
 
 # pullrequests methods
@@ -175,5 +181,16 @@ def add_pullrequests_in_issue(request, issue):
             issue.pullrequests.add(pullrequest)
     return issue
 
+# labels methods
+def get_labels_by_repo(repository):
+    return Label.objects.filter(repository = repository)
+
+def add_labels_in_issue(request, issue):
+    labels_ids = request.POST.getlist('labels_ids')
+    if labels_ids:
+        for label_id in labels_ids:
+            label = get_object_or_404(Label, id = label_id)
+            issue.labels.add(label)
+    return issue
 
 

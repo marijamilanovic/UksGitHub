@@ -33,7 +33,7 @@
             <div style="margin-left: 600px;position: absolute;">
                 Assignees:
                 <br>
-                <select name="developers" style="min-width:100px;border-radius: 6px;border: 2px solid #AAA;box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.1);" multiple class="chosen-select">
+                <select name="developers" style="min-width:100px;border-radius: 6px;border: 2px solid #AAA;box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.1);" class="selectpicker" multiple data-live-search="true">
                     {% for dev in developers.all %}
                         {% if dev in  issue.assignees.all %} 
                             <option value="{{ dev.username }}" selected>{{ dev.username }}</option>
@@ -45,13 +45,21 @@
                 <hr color='gray' style=" box-shadow: 0 0 2px 0.5px gray;">
                 Labels:
                 <br>
-                <select name="cars" id="cars">
-                    <option value="masha"> todo</option>
+                <select name="labels_ids" style="min-width:100px;border-radius: 6px;border: 2px solid #AAA;box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.1);" class="selectpicker" multiple data-live-search="true">
+                    {% for lab in labels.all %}
+                        {% if lab in  issue.labels.all %} 
+                            <option value="{{ lab.id }}" class="badge badge-pill d-inline-flex align-items-center justify-content-center  " style="margin-top: 5px; margin-left: 5px; font-size: 0.9em;  height: 30px;display: inline-block;  
+                            background-color: {{ lab.color }}" selected>{{ lab.name }}</option>
+                        {% else %}      
+                            <option value="{{ lab.id }}" class="badge badge-pill d-inline-flex align-items-center justify-content-center  " style="margin-top: 5px; margin-left: 5px; font-size: 0.9em;  height: 30px;display: inline-block;  
+                            background-color: {{ lab.color }}">{{ lab.name }}</option>
+                        {% endif %}
+                    {% endfor %}
                 </select>
                 <hr color='gray' style=" box-shadow: 0 0 2px 0.5px gray;">
                 Projects:
                 <br>
-                <select name="projects_ids" style="min-width:100px;border-radius: 6px;border: 2px solid #AAA;box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.1);" multiple class="chosen-select">
+                <select name="projects_ids" style="min-width:100px;border-radius: 6px;border: 2px solid #AAA;box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.1);" class="selectpicker" multiple data-live-search="true">
                     {% for p in projects.all %}
                         {% if p in  issue.projects.all %} 
                             <option value="{{ p.id }}" selected>{{ p.name }}</option>
@@ -63,8 +71,7 @@
                 <hr color='gray' style=" box-shadow: 0 0 2px 0.5px gray;">
                 Milestone:
                 <br>
-                <select name="milestone_id"  style="min-width:100px;border-radius: 6px;border: 2px solid #AAA;box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.1);">
-                    <option value="empty"></option>
+                <select name="milestone_id"  style="min-width:100px;border-radius: 6px;border: 2px solid #AAA;box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.1);" class="selectpicker" multiple data-max-options="1" data-live-search="true">
                     {% for m in milestones %}
                         {% if m.id == issue.milestone.id %}
                             <option value="{{ m.id }}" selected>{{ m.title }} (Due by: {{m.due_date}})</option>
@@ -76,7 +83,7 @@
                 <hr color='gray' style=" box-shadow: 0 0 2px 0.5px gray;">
                 Linked pull request:
                 <br>
-                <select name="pullrequests_ids" style="min-width:100px;border-radius: 6px;border: 2px solid #AAA;box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.1);" multiple>
+                <select name="pullrequests_ids" style="min-width:100px;border-radius: 6px;border: 2px solid #AAA;box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.1);" class="selectpicker" multiple data-live-search="true">
                     {% for pr in pullrequests.all %}
                         {% if pr in  issue.pullrequests.all %} 
                             <option value="{{ pr.id }}" selected>{{ pr.name }}</option>
