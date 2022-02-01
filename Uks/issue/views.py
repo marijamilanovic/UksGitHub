@@ -2,6 +2,9 @@ from email import message
 from hashlib import new
 from imp import reload
 from django.shortcuts import render, get_object_or_404, redirect
+from label.models import Label
+
+from repository.views import collaborators
 
 from .models import Issue
 from repository.models import Repository
@@ -15,11 +18,72 @@ from django.contrib import messages
 def issues(request, id):
     repository = get_current_repository(id)
     issues = Issue.objects.filter(repository = repository)
+    assignees = load_assignees(request, id)
+    milestones_for_repository = get_milestones_for_repository(repository)
     return render(request, 'issues.html', {
         "issues":issues, 
         "repository":repository,
-        "logged_user_id": request.user.id
+        "logged_user_id": request.user.id,
+        "assignees":assignees,
+        'milestones': milestones_for_repository
         })
+
+def filter_issues_for_multiple_objects(request, repo_id, pk, object_id):
+    pass
+
+def filter_issues(request,repo_id,pk):
+    repo_id = 8
+    print("print")
+    print(pk)
+    repository = Repository.objects.get(id = repo_id)
+    assignees = load_assignees(request, repo_id)
+
+    if "," in pk:
+        params = pk.split(",")
+    else:
+        params = []
+        params.append(pk)
+    print(params)
+    milestones_for_repository = get_milestones_for_repository(repository)
+    issues_for_return = Issue.objects.filter(repository = repository)
+    for param in params:
+        filter_type ,filter_value= param.split(":")
+        if filter_type == "issue_title":
+            issues_for_return =  Issue.objects.filter(issue_title = filter_value)
+        elif filter_type == "description":
+            issues_for_return =  Issue.objects.filter(description = filter_value)
+        elif filter_type == "state":
+            issues_for_return =  Issue.objects.filter(state = filter_value)
+        elif filter_type == "milestone":
+            milestone = Milestone.objects.get(id = int(filter_value))
+            issues_for_return =  Issue.objects.filter(milestone = filter_value)
+        elif filter_type == "assigned":
+            user = User.objects.get(username = filter_value)
+            issues_for_return =  Issue.objects.filter(assignees = user)
+        elif filter_type == "label":
+            label = Label.objects.get(id = int(filter_value))
+            issues_for_return =  Issue.objects.filter(labels = label)
+        elif filter_type == "author":
+            user = User.objects.get(username = filter_value)
+            issues_for_return =  Issue.objects.filter(opened_by = user)
+
+    return render(request, 'issues.html', {
+    "assignees":assignees,
+    "issues":issues_for_return, 
+    "repository":repository,
+    "logged_user_id": request.user.id,
+    "milestones": milestones_for_repository
+    })
+
+def get_milestones_for_repository(repository):
+    return  Milestone.objects.filter(repository = repository)
+
+def load_assignees(request, repo_id):
+    print("Usao ovde")
+    reposiotry = Repository.objects.get(id = repo_id)
+    assignees = reposiotry.developers
+    assignees.add(reposiotry.creator)
+    return assignees.all()
 
 def all_issues(request):
     return render(request,"all_issues.html",{
@@ -37,6 +101,7 @@ def get_my_issues(request):
 def new_issue(request, repo_id):
     repository = get_current_repository(repo_id)
     users = User.objects.all()
+    milestones_for_repository = get_milestones_for_repository(repository)
     return render(request, 'newIssue.html', {
         'repository':repository,
         'users':users, 
@@ -44,7 +109,8 @@ def new_issue(request, repo_id):
         'projects': get_projects_by_repo(repository),
         'developers': get_users_by_repo(repository),
         'pullrequests': get_pullrequests_by_repo(repository),
-        'logged_user_id': request.user.id
+        'logged_user_id': request.user.id,        
+        'milestones': milestones_for_repository
         })
 
 def add_issue(request):
@@ -66,13 +132,15 @@ def add_issue(request):
 def view_issue(request, id):
     issue = get_issue_by_id(id)
     repository = get_current_repository(issue.repository.id)
+    milestones_for_repository = get_milestones_for_repository(repository)
     return render(request, 'viewIssue.html',{
         'repository': repository, 
         'issue': issue, 
         'milestones': get_milestones_by_issue_repo(id), 
         'developers':get_users_by_repo(repository),
         'projects': get_projects_by_repo(repository),
-        'pullrequests': get_pullrequests_by_repo(repository)
+        'pullrequests': get_pullrequests_by_repo(repository),
+        "milestones": milestones_for_repository
         })
 
 def update_issue(request, id):
@@ -172,6 +240,5 @@ def add_pullrequests_in_issue(request, issue):
             pullrequest = get_object_or_404(Pullrequest, id = pullrequest_id)
             issue.pullrequests.add(pullrequest)
     return issue
-
 
 
