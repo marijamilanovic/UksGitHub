@@ -25,6 +25,8 @@ class Issue(models.Model):
     pullrequests = models.ManyToManyField(Pullrequest)
     milestone = models.ForeignKey(to=Milestone,null=True, on_delete=models.CASCADE)
     labels = models.ManyToManyField(Label)
+    created = models.DateField(null=True, blank=True)
+    
     
     def __str__(self):
         return self.issue_title

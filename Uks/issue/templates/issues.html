@@ -30,7 +30,7 @@
     {% block page_content %}
         <div class="tab-pane container active" id="milestones">
           {% include 'messages.html' %}
-            <a href="{% url 'new_issue' repo_id=repository.id %}" style="margin-left: 900px; margin-top: -25px;" type="button" class="btn btn-success" >New issue</a>
+          <a href="{% url 'new_issue' repo_id=repository.id %}" style="margin-left: 900px; margin-top: -25px;" type="button" class="btn btn-success" >New issue</a>
         {% if issues %}
         <div class="accordion" id="accordionExample">
             <div class="card">
@@ -45,11 +45,41 @@
                 <div class="card-body">
                     {% for issue in issues %}
                         {% if issue.state == 'Opened' %}
-                            <a href="{% url 'delete_issue' id=issue.id %}" class="link-primary" style="position:absolute; margin-left: 900px;">❌</a>
-                            <a  class="nav-link" href="{% url 'view_issue' id=issue.id %}">
-                                    <img src="https://img.icons8.com/external-vitaliy-gorbachev-flat-vitaly-gorbachev/58/000000/external-open-sales-vitaliy-gorbachev-flat-vitaly-gorbachev.png" style="width: 30px;height: 30px;"/>
-                                &nbsp;&nbsp;&nbsp;{{issue.issue_title}}
-                            </a>
+                            <a href="#" id="{{issue.id}}" onclick="askToDeleteIssueModal(this.id)" class="link-primary" style="position:absolute; margin-left: 900px;">❌</a>
+                            <!-- DELETE MODAL -->
+                            <div class="modal" id="delete_{{issue.id}}" tabindex="-1" role="dialog">
+                              <div class="modal-dialog modal-dialog-centered" role="document">
+                                <div class="modal-content">
+                                  <div class="modal-header">
+                                    <h5 class="modal-title">Delete</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                      <span aria-hidden="true">&times;</span>
+                                    </button>
+                                  </div>
+                                  <div class="modal-body">
+                                    <p>Do you want to delete issue ({{issue.issue_title}}) ?</p>
+                                  </div>
+                                  <div class="modal-footer">
+                                    <a class="btn btn-primary" href="{% url 'delete_issue' id=issue.id %}" role="button">Yes</a>
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                            <div >
+                              <a  class="nav-link" href="{% url 'view_issue' id=issue.id %}" style="display: inline-block;">
+                                <img src="https://img.icons8.com/external-vitaliy-gorbachev-flat-vitaly-gorbachev/58/000000/external-open-sales-vitaliy-gorbachev-flat-vitaly-gorbachev.png" style="width: 30px;height: 30px;"/>
+                                &nbsp;&nbsp;&nbsp;{{issue.issue_title}}&nbsp;&nbsp;&nbsp; 
+                              </a>
+                              <span>
+                                {% for lab in issue.labels.all %}
+                                <span class="badge badge-pill d-inline-flex align-items-center justify-content-center  "
+                                style="margin-top: 5px; margin-left: 5px; font-size: 0.9em;  height: 30px;display: inline-block;  
+                                background-color: {{ lab.color }}">{{lab.name}}
+                                </span>
+                                {% endfor %}
+                              </span>
+                            </div>
                             <small style="margin-left: 60px;color: gray;">
                                 opened by <b>{{issue.opened_by}}</b>
                                 {% if issue.assignees.all %}
@@ -81,14 +111,42 @@
                 <div class="card-body">
                     {% for issue in issues %}
                         {% if issue.state == 'Close' %}
-                            <a href="{% url 'delete_issue' id=issue.id %}" class="link-primary" style="position:absolute; margin-left: 900px;">❌</a>
-                            <a  class="nav-link" href="{% url 'view_issue' id=issue.id %}">
+                            <a href="#" id="{{issue.id}}" onclick="askToDeleteClosedIssueModal(this.id)" class="link-primary" style="position:absolute; margin-left: 900px;">❌</a>
+                            <!-- DELETE MODAL -->
+                            <div class="modal" id="delete_{{issue.id}}" tabindex="-1" role="dialog">
+                              <div class="modal-dialog modal-dialog-centered" role="document">
+                                <div class="modal-content">
+                                  <div class="modal-header">
+                                    <h5 class="modal-title">Delete</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                      <span aria-hidden="true">&times;</span>
+                                    </button>
+                                  </div>
+                                  <div class="modal-body">
+                                    <p>Do you want to delete issue ({{issue.issue_title}}) ?</p>
+                                  </div>
+                                  <div class="modal-footer">
+                                    <a class="btn btn-primary" href="{% url 'delete_issue' id=issue.id %}" role="button">Yes</a>
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                            <div>
+                              <a  class="nav-link" href="{% url 'view_issue' id=issue.id %}" style="display: inline-block;">
                                 <img src="https://img.icons8.com/color/48/000000/checkmark--v1.png" style="width: 30px;height: 30px;"/>
                                 &nbsp;&nbsp;&nbsp;{{issue.issue_title}}
-                                <small style="color: gray;">
-                                    / {{issue.repository.name}}
-                                </small>
-                            </a>
+                              </a>
+                              <span>
+                                {% for lab in issue.labels.all %}
+                                <span class="badge badge-pill d-inline-flex align-items-center justify-content-center  "
+                                style="margin-top: 5px; margin-left: 5px; font-size: 0.9em;  height: 30px;display: inline-block;  
+                                background-color: {{ lab.color }}">{{lab.name}}
+                                </span>
+                                {% endfor %}
+                              </span>
+                            </div>
+                            
                             <small style="margin-left: 60px;color: gray;">
                                 opened by <b>{{issue.opened_by}}</b>
                                 {% if issue.assignees.all %}
@@ -108,6 +166,7 @@
                 </div>
               </div>
             </div>
+            
         </div>
         {% else %}
         <p>There are no issues yet.</p>
@@ -121,6 +180,12 @@
         $('#msg').remove();
       }
     }, 2000)
+    function askToDeleteIssueModal(id) {
+        $('#delete_' + id).modal('show')
+    }
+    function askToDeleteClosedIssueModal(id) {
+        $('#delete_' + id).modal('show')
+    }
   </script>
   {% endblock %}
 </body>

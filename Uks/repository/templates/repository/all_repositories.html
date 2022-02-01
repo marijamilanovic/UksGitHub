@@ -13,7 +13,27 @@
                 <h5 class="card-title">{{repo.name}}</h5>
                 <a href="{% url 'repository' id=repo.id %}">Open</a>
                 <a href="{% url 'transferToEditRepository' id=repo.id %}" style="margin-left: 10px;">Edit</a>
-                <a href="{% url 'deleteRepository' id=repo.id %}" style="margin-left: 10px;">Delete</a>
+                <a href="#" id="{{repo.id}}" onclick="askToDeleteRepoModal(this.id)" style="margin-left: 10px;">Delete</a>
+                <!-- DELETE MODAL -->
+                <div class="modal" id="delete_repo_{{repo.id}}" tabindex="-1" role="dialog">
+                  <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title">Delete</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <div class="modal-body">
+                        <p>Do you want to delete repository with name <i>{{repo.name}}</i> ?</p>
+                      </div>
+                      <div class="modal-footer">
+                        <a class="btn btn-primary" href="{% url 'deleteRepository' id=repo.id %}" role="button">Yes</a>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
                 </div>
             </div>
         {% endfor %}
@@ -29,5 +49,9 @@
         $('#msg').remove();
       }
     }, 2000)
+
+    function askToDeleteRepoModal(id) {
+        $('#delete_repo_' + id).modal('show')
+    }
   </script>
   {% endblock %}

@@ -14,8 +14,10 @@ from milestone.models import Milestone
 from issue.models import Issue
 from branch.models import Branch
 from commit.models import Commit
-from django.contrib import messages
 from label.models import Label
+
+from django.contrib import messages
+
 
 
 
