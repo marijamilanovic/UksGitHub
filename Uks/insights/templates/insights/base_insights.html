@@ -80,7 +80,7 @@
 
   </div>
 
-<div class="chart_up">
+    <div class="chart_up">
     <select class="selectpicker" data-live-search="true" data-size="5" onchange="location = this.value">
           <option value="{% url 'insights:pulse' id=repository.id days=1 %}" {% if days == 1 %} selected {% endif %}  >24 hours</option>
           <option value="{% url 'insights:pulse' id=repository.id days=3 %}" {% if days == 3 %} selected {% endif %} >3 days</option>
@@ -89,20 +89,72 @@
         </a>
 
       </select>
-</div>
+    </div>
 
-<div class="chart_data1">
+  <div class="chart_data1">
 
     <canvas id="pie-chart"></canvas>
 
+  </div>
+
+  <div class="chart_data2">
+
+    <canvas id="pie-chart2"></canvas>
+
+
+  </div>
+
+  <div class="reports">
+
+    <div class="report1">
+      <h2>{{open_pr_list|length}} Open pull requests</h2>
+
+      {% for open_pr in open_pr_list %}
+
+        <a href="{% url 'updatePullrequestPage' open_pr.id %}">{{open_pr.name}}</a>
+
+      {% endfor %}
+
+    </div>
+
+    <div style="margin-top: 3%;" class="report2">
+      <h2>{{closed_pr_list|length}} Closed pull requests</h2>
+
+      {% for closed_pr in closed_pr_list %}
+
+        <a href="{% url 'updatePullrequestPage' closed_pr.id %}">{{closed_pr.name}}</a>
+
+      {% endfor %}
+
+    </div>
+
+    <div style="margin-top: 3%;" class="report3">
+      <h2>{{open_is_list|length}} Open issues</h2>
+
+      {% for open_is in open_is_list %}
+
+        <a href="{% url 'view_issue' open_is.id %}">{{open_is.issue_title}}</a>
+
+      {% endfor %}
+
+    </div>
+
+    <div style="margin-top: 3%;" class="report4">
+      <h2>{{closed_is_list|length}} Closed issues</h2>
+
+      {% for closed_is in closed_is_list %}
+
+        <a href="{% url 'view_issue' closed_is.id %}">{{closed_is.issue_title}}</a>
+
+      {% endfor %}
+
+    </div>
+
+
+
 </div>
 
-<div class="chart_data2">
 
-  <canvas id="pie-chart2"></canvas>
-
-
-</div>
 
 </div>
 

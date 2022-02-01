@@ -28,6 +28,15 @@ def pulse(request, id, days):
         closed_is = Issue.objects.all().filter(repository = repository, state = ISSUE_STATE[1][0], created__range = [(now - timedelta(days=1)), now])
 
 
+        open_pr_list = list(open_pr)
+        closed_pr_list = list(closed_pr)
+        merge_pr_list = list(merge_pr)
+
+        open_is_list = list(open_is)
+        closed_is_list = list(closed_is)
+
+
+
         context = {
             'repository': repository,
             'days': days,
@@ -36,6 +45,11 @@ def pulse(request, id, days):
             'merge_pr': merge_pr.count,
             'open_is': open_is.count,
             'closed_is': closed_is.count,
+            'open_pr_list': open_pr_list,
+            'closed_pr_list': closed_pr_list,
+            'merge_pr_list': merge_pr_list,
+            'open_is_list': open_is_list,
+            'closed_is_list': closed_is_list,
         }
 
         return render(request, "insights/base_insights.html", context)
@@ -52,6 +66,13 @@ def pulse(request, id, days):
         open_is = Issue.objects.all().filter(repository = repository, state = ISSUE_STATE[0][0], created__range = [(now - timedelta(days=3)), now])
         closed_is = Issue.objects.all().filter(repository = repository, state = ISSUE_STATE[1][0], created__range = [(now - timedelta(days=3)), now])
 
+
+        open_pr_list = list(open_pr)
+        closed_pr_list = list(closed_pr)
+        merge_pr_list = list(merge_pr)
+
+        open_is_list = list(open_is)
+        closed_is_list = list(closed_is)
 
         context = {
             'repository': repository,
@@ -78,6 +99,12 @@ def pulse(request, id, days):
         open_is = Issue.objects.all().filter(repository = repository, state = ISSUE_STATE[0][0], created__range = [(now - timedelta(days=7)), now])
         closed_is = Issue.objects.all().filter(repository = repository, state = ISSUE_STATE[1][0], created__range = [(now - timedelta(days=7)), now])
 
+        open_pr_list = list(open_pr)
+        closed_pr_list = list(closed_pr)
+        merge_pr_list = list(merge_pr)
+
+        open_is_list = list(open_is)
+        closed_is_list = list(closed_is)
 
         context = {
             'repository': repository,
