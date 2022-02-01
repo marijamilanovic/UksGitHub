@@ -64,12 +64,12 @@
     </div>
 
     <div style="margin-left: 1150px; margin-top: -50px;">
-      <a href="{% url 'watchRepository' id=repository.id  %}" class="btn btn-outline-secondary btn-sm" style="width: 100px;  color: black;"><span style="margin-left: -4px;  ">{% bs_icon 'eye' size='1.1em' %}</span> Watch <span class="badge badge-success">{{watchers|length}}</span></a>
-      <a href="#"  onclick="showModal()" class="btn btn-outline-secondary btn-sm" style="width: 100px; margin-left: 10px; color: black;"><span style="margin-left: -4px; ">{% bs_icon 'diagram-2' size='1.1em' %} </span> Fork <span class="badge badge-success">{{forks|length}}</span></a>
+      <a href="{% url 'watchRepository' id=repository.id  %}" class="btn btn-outline-secondary btn-sm" style="width: 100px;  color: black;"><span style="margin-left: -4px;  ">{% bs_icon 'eye' size='1.1em' %}</span> Watch <span class="badge badge-success">{{repository.get_watchers_number}}</span></a>
+      <a href="#"  onclick="showModal()" class="btn btn-outline-secondary btn-sm" style="width: 100px; margin-left: 10px; color: black;"><span style="margin-left: -4px; ">{% bs_icon 'diagram-2' size='1.1em' %} </span> Fork <span class="badge badge-success">{{repository.get_forks_number}}</span></a>
       {% if stargazers %}
-      <a href="{% url 'starRepository' id=repository.id  %}"  class="btn btn-outline-secondary btn-sm" style="width: 100px;margin-left: 10px;color: black;"><span style="margin-left: -4px; color:orange">{% bs_icon 'star-fill' size='1.1em' %} </span>  Star <span class="badge badge-success">{{stargazers|length}}</span></a>
+      <a href="{% url 'starRepository' id=repository.id  %}"  class="btn btn-outline-secondary btn-sm" style="width: 100px;margin-left: 10px;color: black;"><span style="margin-left: -4px; color:orange">{% bs_icon 'star-fill' size='1.1em' %} </span>  Star <span class="badge badge-success">{{repository.get_stars_number}}</span></a>
       {% else %}
-      <a href="{% url 'starRepository' id=repository.id  %}"  class="btn btn-outline-secondary btn-sm" style="width: 100px;margin-left: 10px;color: black;"><span style="margin-left: -4px; color: grey;">{% bs_icon 'star-fill' size='1.1em' %} </span>  Star <span class="badge badge-success">{{stargazers|length}}</span></a>
+      <a href="{% url 'starRepository' id=repository.id  %}"  class="btn btn-outline-secondary btn-sm" style="width: 100px;margin-left: 10px;color: black;"><span style="margin-left: -4px; color: grey;">{% bs_icon 'star-fill' size='1.1em' %} </span>  Star <span class="badge badge-success">{{repository.get_stars_number}}</span></a>
       {% endif %}
       </div>
     </div>
@@ -86,12 +86,12 @@
    
 
     <div style="margin-left: 1150px; margin-top: -30px;">
-      <a href="{% url 'watchRepository' id=repository.id  %}" class="btn btn-outline-secondary btn-sm" style="width: 100px;  color: black;"><span style="margin-left: -4px;  ">{% bs_icon 'eye' size='1.1em' %}</span> Watch <span class="badge badge-success">{{watchers|length}}</span></a>
-      <a href="#"  onclick="showModal()" class="btn btn-outline-secondary btn-sm" style="width: 100px; margin-left: 10px; color: black;"><span style="margin-left: -4px; ">{% bs_icon 'diagram-2' size='1.1em' %} </span> Fork <span class="badge badge-success">{{forks|length}}</span></a>
+      <a href="{% url 'watchRepository' id=repository.id  %}" class="btn btn-outline-secondary btn-sm" style="width: 100px;  color: black;"><span style="margin-left: -4px;  ">{% bs_icon 'eye' size='1.1em' %}</span> Watch <span class="badge badge-success">{{repository.get_watchers_number}}</span></a>
+      <a href="#"  onclick="showModal()" class="btn btn-outline-secondary btn-sm" style="width: 100px; margin-left: 10px; color: black;"><span style="margin-left: -4px; ">{% bs_icon 'diagram-2' size='1.1em' %} </span> Fork <span class="badge badge-success">{{repository.get_forks_number}}</span></a>
       {% if stargazers %}
-      <a href="{% url 'starRepository' id=repository.id  %}"  class="btn btn-outline-secondary btn-sm" style="width: 100px;margin-left: 10px;color: black;"><span style="margin-left: -4px; color:orange">{% bs_icon 'star-fill' size='1.1em' %} </span>  Star <span class="badge badge-success">{{stargazers|length}}</span></a>
+      <a href="{% url 'starRepository' id=repository.id  %}"  class="btn btn-outline-secondary btn-sm" style="width: 100px;margin-left: 10px;color: black;"><span style="margin-left: -4px; color:orange">{% bs_icon 'star-fill' size='1.1em' %} </span>  Star <span class="badge badge-success">{{repository.get_stargazers_number}}</span></a>
       {% else %}
-      <a href="{% url 'starRepository' id=repository.id  %}"  class="btn btn-outline-secondary btn-sm" style="width: 100px;margin-left: 10px;color: black;"><span style="margin-left: -4px; color: grey;">{% bs_icon 'star-fill' size='1.1em' %} </span>  Star <span class="badge badge-success">{{stargazers|length}}</span></a>
+      <a href="{% url 'starRepository' id=repository.id  %}"  class="btn btn-outline-secondary btn-sm" style="width: 100px;margin-left: 10px;color: black;"><span style="margin-left: -4px; color: grey;">{% bs_icon 'star-fill' size='1.1em' %} </span>  Star <span class="badge badge-success">{{repository.get_stargazers_number}}</span></a>
       {% endif %}
     </div>
     
@@ -135,6 +135,12 @@
         <a class="nav-link" id="pullRequests" style="color: black;" href="{% url 'pullrequests' id=repository.id  %}">{% bs_icon 'shuffle' size='1.3em' %} Pull requests</a>
       </li>
       {% endblock %}
+
+      {% block navProjects %}
+          <li class="nav-item">
+            <a class="nav-link" style="color: black;" href="{% url 'project:projects' id=repository.id  %}">{% bs_icon 'layout-text-window-reverse' size='1.3em' %} Projects</a>
+          </li>
+       {% endblock %}
 
       {% block navInsights %}
       <li class="nav-item">
