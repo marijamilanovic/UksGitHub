@@ -34,3 +34,15 @@ def addProject(request):
             newProject.save()
     
     return redirect('/project/projects/'+ str(repository.id))
+
+def closeProject(request,id):
+    project = get_object_or_404(Project, id=id)
+    project.status = 'Closed'
+    project.save()
+    return redirect('/project/projects/'+ str(project.repository.id))
+
+def reopenProject(request,id):
+    project = get_object_or_404(Project, id=id)
+    project.status = 'Opened'
+    project.save()
+    return redirect('/project/projects/'+ str(project.repository.id))

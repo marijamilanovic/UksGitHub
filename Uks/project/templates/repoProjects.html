@@ -28,25 +28,99 @@
     {%block page_content%}
         <div class="tab-pane container active" id="milestones" style="margin-right: 60px;">
             <a href="{% url 'project:newProject' id=repository.id %}" style="margin-left: 763px; margin-top: -25px;" type="button" class="btn btn-success" >New project</a>
-        {% if projects %}
-        {% for p in projects %}
-        <div class="card" style="max-width: 900px; margin-top: 20px; margin-left: -20px;">
+        
+        <div class="card" style="width: 870px; margin-top: 15px;">
           <div class="card-header" style="background-color: #d7f0db;">
-            Opened
+              {% bs_icon 'card-checklist' size='1.2em' %} <a style="color: darkgray" href="#" id="open" > {{repository.get_opened_projects_number}} Open </a>
+              <span style="margin-left: 15px;"></span>
+              {% bs_icon 'archive' size='1.1em' %}<a style="color:darkgray;" href="#" id="close" >{{repository.get_closed_projects_number}} Closed </a>
           </div>
-          <div class="card-body">
-            <h5 class="card-title">{{p.name}}</h5>
-            <p class="card-text">{{p.description}}</p>
-            <a href="#" class="link-primary">Edit</a>
-            <a href="#" class="link-primary" style="margin-left: 10px;">Close</a>
-            <a href="#" class="link-primary" style="margin-left: 10px;">Delete</a>
-          </div>
-        </div>
-        {% endfor %}
-        {% else %}
-        <p>There are no projects yet.</p>
-        {% endif %}
+
+          {% if projects %}
+          <div class="opened" id="Div1">
+          <ul class="list-group list-group-flush">
+                  {% for p in projects %} 
+                  {% if p.status == 'Opened' %}
+                  <li class="list-group-item"> 
+                    <div class="row" style="margin-left: 5px; margin-top: 5px;">
+                      <h5>{{p.name}}</h5>
+                      <span style="height: 20px; margin-left: 10px; margin-top: 4px;" class="badge badge-pill badge-success">{{repository.status}}</span>
+                      <span style="height: 20px; margin-left: 10px; margin-top: 4px;" class="badge badge-pill badge-info">{{p.status}}</span>
+                    </div>
+                    <div style="margin-left: 8px; margin-top: 2px;">
+                      <p >{{p.description}}</p>
+                      <a href="#" class="link-primary">Edit</a>
+                      <a href="{% url 'project:closeProject' id=p.id %}" class="link-primary" style="margin-left: 10px;">Close</a>
+                      <a href="#" class="link-primary" style="margin-left: 10px;">Delete</a>
+                    </div>
+                  </li>
+                  {% endif %}
+                  {% endfor %}
+
+          {% else %}
+          <p>There are no  projects yet.</p>
+          {% endif %}
+          </ul> 
+      </div>
+
+          {% if projects %}
+          <div class="closed" id="Div2" style="display: none;">
+          <ul class="list-group list-group-flush">
+                  {% for p in projects %} 
+                  {% if p.status == 'Closed' %}
+                  <li class="list-group-item"> 
+                    <div class="row" style="margin-left: 5px; margin-top: 5px;">
+                      <h5>{{p.name}}</h5>
+                      <span style="height: 20px; margin-left: 10px; margin-top: 4px;" class="badge badge-pill badge-success">{{repository.status}}</span>
+                      <span style="height: 20px; margin-left: 10px; margin-top: 4px;" class="badge badge-pill badge-danger">{{p.status}}</span>
+                    </div>
+                    <div style="margin-left: 8px; margin-top: 2px;">
+                      <p >{{p.description}}</p>
+                    </div>
+                    <a href="{% url 'project:reopenProject' id=p.id %}" class="link-primary" style="margin-left: 10px;">Reopen</a>
+                  </li>
+                  {% endif %}
+                  {% endfor %}
+          {% endif %}
+          </ul> 
+      </div>
+      </div>
         </div>
         {%endblock%}
+
+        {% block javascript %}
+        <script>
+            document.getElementById('searchAll').style.display = 'none';
+            var el = document.getElementById('open');
+            el.onclick = opened;
+            document.getElementById('open').style.color = "black";
+    
+            function searchAll(){
+            document.getElementById('searchAll').style.display = 'block';
+            document.getElementById('searchRepo').style.display = 'none';
+            }
+    
+            var el2 = document.getElementById('close');
+            el2.onclick = closed;
+    
+            function opened() {
+                if (document.getElementById('Div1')) {
+                    document.getElementById('Div1').style.display = 'block';
+                    document.getElementById('Div2').style.display = 'none';
+                    document.getElementById('open').style.color = "black";
+                    document.getElementById('close').style.color = "darkgray";
+                }
+            }
+    
+            function closed(){
+                if (document.getElementById('Div2')) {
+                    document.getElementById('Div2').style.display = 'block';
+                    document.getElementById('Div1').style.display = 'none';
+                    document.getElementById('close').style.color = "black";
+                    document.getElementById('open').style.color = "darkgray";
+                }
+            }
+        </script>
+        {% endblock %}
 </body>
 </html>

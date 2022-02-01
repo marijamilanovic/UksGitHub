@@ -19,3 +19,9 @@ class Repository(models.Model):
 
     def __str__(self):
         return self.name
+
+    def get_closed_projects_number(self):
+        return self.project_set.filter(status='Closed').count()
+
+    def get_opened_projects_number(self):
+        return self.project_set.filter(status='Opened').count()
