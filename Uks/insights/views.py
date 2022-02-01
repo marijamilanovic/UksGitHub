@@ -8,6 +8,7 @@ from issue.models import Issue, ISSUE_STATE
 from commit.models import Commit
 from django.utils.dateparse import parse_date
 from datetime import datetime, timedelta
+from user.models import User
 
 
 
@@ -82,6 +83,11 @@ def pulse(request, id, days):
             'merge_pr': merge_pr.count,
             'open_is': open_is.count,
             'closed_is': closed_is.count,
+            'open_pr_list': open_pr_list,
+            'closed_pr_list': closed_pr_list,
+            'merge_pr_list': merge_pr_list,
+            'open_is_list': open_is_list,
+            'closed_is_list': closed_is_list,
         }
 
         return render(request, "insights/base_insights.html", context)
@@ -114,6 +120,11 @@ def pulse(request, id, days):
             'merge_pr': merge_pr.count,
             'open_is': open_is.count,
             'closed_is': closed_is.count,
+            'open_pr_list': open_pr_list,
+            'closed_pr_list': closed_pr_list,
+            'merge_pr_list': merge_pr_list,
+            'open_is_list': open_is_list,
+            'closed_is_list': closed_is_list,
         }
 
         return render(request, "insights/base_insights.html", context)
@@ -131,6 +142,12 @@ def pulse(request, id, days):
         open_is = Issue.objects.all().filter(repository = repository, state = ISSUE_STATE[0][0], created__range = [(now - timedelta(days=30)), now])
         closed_is = Issue.objects.all().filter(repository = repository, state = ISSUE_STATE[1][0], created__range = [(now - timedelta(days=30)), now])
 
+        open_pr_list = list(open_pr)
+        closed_pr_list = list(closed_pr)
+        merge_pr_list = list(merge_pr)
+
+        open_is_list = list(open_is)
+        closed_is_list = list(closed_is)
 
         context = {
             'repository': repository,
@@ -140,6 +157,11 @@ def pulse(request, id, days):
             'merge_pr': merge_pr.count,
             'open_is': open_is.count,
             'closed_is': closed_is.count,
+            'open_pr_list': open_pr_list,
+            'closed_pr_list': closed_pr_list,
+            'merge_pr_list': merge_pr_list,
+            'open_is_list': open_is_list,
+            'closed_is_list': closed_is_list,
         }
 
         return render(request, "insights/base_insights.html", context)
@@ -168,7 +190,7 @@ def contributors(request, id, days):
         commits2 = list(Commit.objects.all().filter(repository = repository, date_time__range = [two_days, today_date]))
         commits3 = list(Commit.objects.all().filter(repository = repository, date_time__range = [three_days, two_days]))
 
-
+        all_commits = commits1 + commits2 + commits3
 
         labels = []
         data = []
@@ -183,8 +205,26 @@ def contributors(request, id, days):
             date = (date_now - timedelta(x)).strftime("%Y/%m/%d")
             labels.append(date)
             print(date)
+        
+        collaborators = []
+        commits_collaborator = []
 
-        print("Data: ", data)
+
+        for user in list(repository.developers.all()):
+            collaborators.append(user)
+
+        filtered = []
+
+        for x in range(0, len(collaborators)):
+            filtered = filter(lambda commit: commit.author_id == collaborators[x].id, all_commits)
+            commits_collaborator.append(len(list(filtered)))
+            filtered = []
+
+        print("Collaborators: ", collaborators)
+        print("Commits_collaborator: ", commits_collaborator)
+
+        zip_iterator = zip(collaborators, commits_collaborator)
+        commit_dic = dict(zip_iterator)
 
         context = {
         'repository': repository,
@@ -192,6 +232,7 @@ def contributors(request, id, days):
         'days': days,
         'labels': labels,
         'data': data,
+        'collaborators': commit_dic,
         }
 
         return render(request, "insights/contributors.html", context)
@@ -206,13 +247,35 @@ def contributors(request, id, days):
         labels = []
         data = []
 
+        all_commits = []
+
         for x in range(0, 7):
             commits = list(Commit.objects.all().filter(repository = repository, date_time__range = [today_date, (today_date + timedelta(days=1))]))
             data.append(len(commits))
             date = (now - timedelta(x)).strftime("%Y/%m/%d")
             labels.append(date)
             today_date = today_date - timedelta(days=1)
+            all_commits = all_commits + commits
             
+        collaborators = []
+        commits_collaborator = []
+
+
+        for user in list(repository.developers.all()):
+            collaborators.append(user)
+
+        filtered = []
+
+        for x in range(0, len(collaborators)):
+            filtered = filter(lambda commit: commit.author_id == collaborators[x].id, all_commits)
+            commits_collaborator.append(len(list(filtered)))
+            filtered = []
+
+        print("Collaborators: ", collaborators)
+        print("Commits_collaborator: ", commits_collaborator)
+
+        zip_iterator = zip(collaborators, commits_collaborator)
+        commit_dic = dict(zip_iterator)
 
 
         print("Labels: ", labels)
@@ -224,6 +287,7 @@ def contributors(request, id, days):
         'days': days,
         'labels': labels,
         'data': data,
+        'collaborators': commit_dic,
         }
 
         return render(request, "insights/contributors.html", context)
@@ -238,12 +302,35 @@ def contributors(request, id, days):
         labels = []
         data = []
 
+        all_commits = []
+
         for x in range(0, 30):
             commits = list(Commit.objects.all().filter(repository = repository, date_time__range = [today_date, (today_date + timedelta(days=1))]))
             data.append(len(commits))
             date = (now - timedelta(x)).strftime("%Y/%m/%d")
             labels.append(date)
             today_date = today_date - timedelta(days=1)
+            all_commits = all_commits + commits
+
+        collaborators = []
+        commits_collaborator = []
+
+
+        for user in list(repository.developers.all()):
+            collaborators.append(user)
+
+        filtered = []
+
+        for x in range(0, len(collaborators)):
+            filtered = filter(lambda commit: commit.author_id == collaborators[x].id, all_commits)
+            commits_collaborator.append(len(list(filtered)))
+            filtered = []
+
+        print("Collaborators: ", collaborators)
+        print("Commits_collaborator: ", commits_collaborator)
+
+        zip_iterator = zip(collaborators, commits_collaborator)
+        commit_dic = dict(zip_iterator)
             
 
 
@@ -256,6 +343,7 @@ def contributors(request, id, days):
         'days': days,
         'labels': labels,
         'data': data,
+        'collaborators': commit_dic,
         }
 
         return render(request, "insights/contributors.html", context)
@@ -269,14 +357,35 @@ def contributors(request, id, days):
         labels = []
         data = []
 
+        all_commits = []
+
         for x in range(0, 12):
             commits = list(Commit.objects.all().filter(repository = repository, date_time__range = [today_date, (today_date + timedelta(days=30))]))
             data.append(len(commits))
             date = (now - timedelta(x*30)).strftime("%Y/%m")
             labels.append(date)
             today_date = today_date - timedelta(days=30)
+            all_commits = all_commits + commits
             
+        collaborators = []
+        commits_collaborator = []
 
+
+        for user in list(repository.developers.all()):
+            collaborators.append(user)
+
+        filtered = []
+
+        for x in range(0, len(collaborators)):
+            filtered = filter(lambda commit: commit.author_id == collaborators[x].id, all_commits)
+            commits_collaborator.append(len(list(filtered)))
+            filtered = []
+
+        print("Collaborators: ", collaborators)
+        print("Commits_collaborator: ", commits_collaborator)
+
+        zip_iterator = zip(collaborators, commits_collaborator)
+        commit_dic = dict(zip_iterator)
 
         print("Labels: ", labels)
         print("Data: ", data)
@@ -287,6 +396,7 @@ def contributors(request, id, days):
         'days': days,
         'labels': labels,
         'data': data,
+        'collaborators': commit_dic,
         }
 
         return render(request, "insights/contributors.html", context)
