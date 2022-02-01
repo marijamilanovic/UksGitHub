@@ -234,12 +234,22 @@ def forkRepository(request,id):
     if request.user not in forks:
         newRepository = Repository(name = repository.name, status = repository.status, creator = request.user)
         newRepository.save()
-        newRepository.developers.add(repository.creator)
-        branch = Branch.objects.create(
-                name = 'master',
-                is_default = True,
-                repository = Repository.objects.get(pk = newRepository.id)
-            )  
+        newRepository.developers.add(request.user)
+        #to do dodati i grane i komite od forkovanog u novi
+        #dobavi sve grane od repoa koji se forkuje
+        repo_branches = Branch.objects.all().filter(repository = repository)
+        for branch in repo_branches:
+            if (branch.is_default):
+                newBranch = Branch.objects.create(name = branch.name, is_default = True , repository = newRepository )
+                newBranch.save()
+            else:
+                newBranch = Branch.objects.create(name = branch.name, is_default = False , repository = newRepository )
+            branch_commits = Commit.objects.all().filter(branch = branch)
+            for commit in branch_commits:
+                newCommit = Commit.objects.create(message = commit.message, date_time = commit.date_time,
+                hash_id = commit.hash_id, branch = newBranch, author = commit.author, repository = newRepository)
+                newCommit.save()
+        
         repository.forks.add(user)
         newRepository.forks.add(user)
     else:

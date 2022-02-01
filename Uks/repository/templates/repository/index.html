@@ -194,13 +194,13 @@
         <div class="col-lg-4">
           <h5 style="margin-top: 20px;">About</h5>
           <div class="col">
-          <a href="{% url 'stargazers' id=repository.id  %}"  style="margin-left: -15px; color:black;">{% bs_icon 'star' size='1.1em' %} {{stargazers|length}} stars</a> 
+          <a href="{% url 'stargazers' id=repository.id  %}"  style="margin-left: -15px; color:black;">{% bs_icon 'star' size='1.1em' %} {{repository.get_stargazers_number}} stars</a> 
           </div>
           <div class="col" style="margin-top: 5px;">
-            <a href="{% url 'watchers' id=repository.id  %}" style="margin-left: -15px;color:black;">{% bs_icon 'eye' size='1.1em' %} {{watchers|length}} watching</a> 
+            <a href="{% url 'watchers' id=repository.id  %}" style="margin-left: -15px;color:black;">{% bs_icon 'eye' size='1.1em' %} {{repository.get_watchers_number}} watching</a> 
           </div>
           <div class="col" style="margin-top: 5px;">
-            <a href="{% url 'forkers' id=repository.id  %}" style="margin-left: -15px;color: black; ">{% bs_icon 'diagram-2' size='1.1em' %}  {{forks|length}} forks </a>
+            <a href="{% url 'forkers' id=repository.id  %}" style="margin-left: -15px;color: black; ">{% bs_icon 'diagram-2' size='1.1em' %}  {{repository.get_forks_number}} forks </a>
           </div>
           <hr style="margin-top: 20px;">
           <h5 style="margin-top: 20px;">Contributors</h5>
