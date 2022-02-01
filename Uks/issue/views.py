@@ -8,6 +8,7 @@ from user.models import User
 from project.models import Project
 from milestone.models import Milestone
 from pullrequest.models import Pullrequest
+from datetime import datetime
 
 def issues(request, id):
     repository = get_current_repository(id)
@@ -49,7 +50,8 @@ def add_issue(request):
             issue_title = request.POST['title'], 
             description = request.POST['description'], 
             repository = repository, 
-            opened_by = request.user.username)
+            opened_by = request.user.username,
+            created = datetime.now())
         new_issue = add_milestone_in_issue(request, new_issue)
         new_issue.save()
         new_issue = add_assignees_in_issue(request, new_issue)

@@ -13,26 +13,109 @@ from datetime import datetime, timedelta
 
 def pulse(request, id, days):
     repository = get_object_or_404(Repository, id=id)
+    now = datetime.now()
 
-    open_pr = Pullrequest.objects.all().filter(prRepository = repository, status=OPENED)
-    closed_pr = Pullrequest.objects.all().filter(prRepository = repository, status=CLOSED)
-    merge_pr = Pullrequest.objects.all().filter(prRepository = repository, status=MERGED)
+    if days == 1:
 
-    open_is = Issue.objects.all().filter(repository = repository, state = ISSUE_STATE[0][0])
-    closed_is = Issue.objects.all().filter(repository = repository, state = ISSUE_STATE[1][0])
+        today = now.strftime("%Y/%m/%d")
+        today_date = datetime.strptime(today, "%Y/%m/%d")
+
+        open_pr = Pullrequest.objects.all().filter(prRepository = repository, status=OPENED, created__range = [(now - timedelta(days=1)), now])
+        closed_pr = Pullrequest.objects.all().filter(prRepository = repository, status=CLOSED, created__range = [(now - timedelta(days=1)), now])
+        merge_pr = Pullrequest.objects.all().filter(prRepository = repository, status=MERGED, created__range = [(now - timedelta(days=1)), now])
+
+        open_is = Issue.objects.all().filter(repository = repository, state = ISSUE_STATE[0][0], created__range = [(now - timedelta(days=1)), now])
+        closed_is = Issue.objects.all().filter(repository = repository, state = ISSUE_STATE[1][0], created__range = [(now - timedelta(days=1)), now])
 
 
-    context = {
-        'repository': repository,
-        'days': days,
-        'open_pr': open_pr.count,
-        'closed_pr': closed_pr.count,
-        'merge_pr': merge_pr.count,
-        'open_is': open_is.count,
-        'closed_is': closed_is.count,
-    }
+        context = {
+            'repository': repository,
+            'days': days,
+            'open_pr': open_pr.count,
+            'closed_pr': closed_pr.count,
+            'merge_pr': merge_pr.count,
+            'open_is': open_is.count,
+            'closed_is': closed_is.count,
+        }
 
-    return render(request, "insights/base_insights.html", context)
+        return render(request, "insights/base_insights.html", context)
+
+    elif days == 3:
+
+        today = now.strftime("%Y/%m/%d")
+        today_date = datetime.strptime(today, "%Y/%m/%d")
+
+        open_pr = Pullrequest.objects.all().filter(prRepository = repository, status=OPENED, created__range = [(now - timedelta(days=3)), now])
+        closed_pr = Pullrequest.objects.all().filter(prRepository = repository, status=CLOSED, created__range = [(now - timedelta(days=3)), now])
+        merge_pr = Pullrequest.objects.all().filter(prRepository = repository, status=MERGED, created__range = [(now - timedelta(days=3)), now])
+
+        open_is = Issue.objects.all().filter(repository = repository, state = ISSUE_STATE[0][0], created__range = [(now - timedelta(days=3)), now])
+        closed_is = Issue.objects.all().filter(repository = repository, state = ISSUE_STATE[1][0], created__range = [(now - timedelta(days=3)), now])
+
+
+        context = {
+            'repository': repository,
+            'days': days,
+            'open_pr': open_pr.count,
+            'closed_pr': closed_pr.count,
+            'merge_pr': merge_pr.count,
+            'open_is': open_is.count,
+            'closed_is': closed_is.count,
+        }
+
+        return render(request, "insights/base_insights.html", context)
+
+
+    elif days == 7:
+
+        today = now.strftime("%Y/%m/%d")
+        today_date = datetime.strptime(today, "%Y/%m/%d")
+
+        open_pr = Pullrequest.objects.all().filter(prRepository = repository, status=OPENED, created__range = [(now - timedelta(days=7)), now])
+        closed_pr = Pullrequest.objects.all().filter(prRepository = repository, status=CLOSED, created__range = [(now - timedelta(days=7)), now])
+        merge_pr = Pullrequest.objects.all().filter(prRepository = repository, status=MERGED, created__range = [(now - timedelta(days=7)), now])
+
+        open_is = Issue.objects.all().filter(repository = repository, state = ISSUE_STATE[0][0], created__range = [(now - timedelta(days=7)), now])
+        closed_is = Issue.objects.all().filter(repository = repository, state = ISSUE_STATE[1][0], created__range = [(now - timedelta(days=7)), now])
+
+
+        context = {
+            'repository': repository,
+            'days': days,
+            'open_pr': open_pr.count,
+            'closed_pr': closed_pr.count,
+            'merge_pr': merge_pr.count,
+            'open_is': open_is.count,
+            'closed_is': closed_is.count,
+        }
+
+        return render(request, "insights/base_insights.html", context)
+
+
+    else:
+
+        today = now.strftime("%Y/%m/%d")
+        today_date = datetime.strptime(today, "%Y/%m/%d")
+
+        open_pr = Pullrequest.objects.all().filter(prRepository = repository, status=OPENED, created__range = [(now - timedelta(days=30)), now])
+        closed_pr = Pullrequest.objects.all().filter(prRepository = repository, status=CLOSED, created__range = [(now - timedelta(days=30)), now])
+        merge_pr = Pullrequest.objects.all().filter(prRepository = repository, status=MERGED, created__range = [(now - timedelta(days=30)), now])
+
+        open_is = Issue.objects.all().filter(repository = repository, state = ISSUE_STATE[0][0], created__range = [(now - timedelta(days=30)), now])
+        closed_is = Issue.objects.all().filter(repository = repository, state = ISSUE_STATE[1][0], created__range = [(now - timedelta(days=30)), now])
+
+
+        context = {
+            'repository': repository,
+            'days': days,
+            'open_pr': open_pr.count,
+            'closed_pr': closed_pr.count,
+            'merge_pr': merge_pr.count,
+            'open_is': open_is.count,
+            'closed_is': closed_is.count,
+        }
+
+        return render(request, "insights/base_insights.html", context)
 
 
 def contributors(request, id, days):
