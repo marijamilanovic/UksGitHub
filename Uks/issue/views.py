@@ -9,7 +9,11 @@ from user.models import User
 from project.models import Project
 from milestone.models import Milestone
 from pullrequest.models import Pullrequest
+<<<<<<< HEAD
 from label.models import Label
+=======
+from datetime import datetime
+>>>>>>> develop
 
 from django.contrib import messages
 
@@ -56,7 +60,8 @@ def add_issue(request):
             issue_title = request.POST['title'], 
             description = request.POST['description'], 
             repository = repository, 
-            opened_by = request.user.username)
+            opened_by = request.user.username,
+            created = datetime.now())
         new_issue = add_milestone_in_issue(request, new_issue)
         new_issue.save()
         messages.success(request, 'Issue has been created.')
