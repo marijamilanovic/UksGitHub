@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.shortcuts import get_object_or_404
 
 PUBLIC = "Public"
 PRIVATE = "Private"
@@ -34,5 +35,32 @@ class Repository(models.Model):
 
     def get_stargazers_number(self):
         return self.stargazers.count()
+
+    def is_repo_forked(self):
+        forks = self.forks.count()
+        forkers = self.forks.get()
+        repos_with_same_name = Repository.objects.all().filter(name = self.name)
+        user = get_object_or_404(User, username=forkers)
+        forkersRepo = User.objects.all().filter(user_forks = self)
+        forked_from = None
+        for f in forkersRepo:
+            if (f.id == self.creator.id):
+                for r in repos_with_same_name:
+                    if (r.creator.id != self.creator.id):
+                        forked_from = get_object_or_404(User, id=r.creator.id)
+                        break
+                    else:
+                        forked_from = get_object_or_404(User, id=r.creator.id)
+            else:
+                if (f.id != self.creator.id):
+                    for r in repos_with_same_name:
+                        if (r.creator.id != self.creator.id): 
+                            forked_from = get_object_or_404(User, id=r.creator.id)
+                        else:
+                            forked_from = get_object_or_404(User, id=repo.creator.id)
+                            break
+        
+        return forked_from
+
 
     

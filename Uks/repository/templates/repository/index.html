@@ -48,7 +48,7 @@
     <div style="background-color:  rgb(243, 243, 243); height: 65px;">
 
     <!--Style if forked repo-->
-    {% if forked_from  and show %}
+    {% if repository.is_repo_forked and  repository.is_repo_forked != request.user.id %}
     <span style="margin-left: 20px;">{% bs_icon 'diagram-2' size='1.4em' %}</span>
     <a href="{% url 'profile' %}" style="font-size: large; margin-left: 5px; margin-top: 15px; display:inline-block;"> {{repository.creator}} </a>
     <span style="font-size: large;">/</span>
@@ -113,7 +113,7 @@
       {% endblock %}
 
       {% block navIssues %}
-      <li class="nav-item">
+      <li class="nav-item" >
         <a class="nav-link"  id="issues" style="color: black;" href="{% url 'issues' id=repository.id  %}">{% bs_icon 'record-circle' size='1em' %} Issues</a>
       </li>
       {% endblock %}

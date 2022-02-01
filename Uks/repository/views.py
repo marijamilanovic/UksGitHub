@@ -277,7 +277,7 @@ def find_forkers_info(request,id,repository):
     forkers = User.objects.all().filter(user_forks = repository)
     forked_from = None
     forked_repo = None
-    proba = None
+    #proba = None
     repo_copy = None
     for f in forkers:
         if (f.id == repository.creator.id): 
