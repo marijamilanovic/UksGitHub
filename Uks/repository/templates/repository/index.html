@@ -142,6 +142,11 @@
           </li>
        {% endblock %}
 
+      {% block navInsights %}
+      <li class="nav-item">
+        <a class="nav-link" id="insights" style="color: black;" href="{% url 'insights:pulse' id=repository.id days=1  %}">{% bs_icon 'graph-up' size='1.3em' %} Insights</a>
+      </li>
+      {% endblock %}
       {% if logged_user_id == repository.creator_id %}
         {% block navCollaborator %}
         <li class="nav-item">
