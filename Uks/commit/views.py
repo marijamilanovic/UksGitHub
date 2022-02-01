@@ -29,7 +29,8 @@ def createCommit(request, id):
                 branch = Branch.objects.get(pk = id),
                 date_time = datetime.now(),
                 hash_id = " ", 
-                author = User.objects.get(pk = request.user.id)
+                author = User.objects.get(pk = request.user.id),
+                repository = Repository.objects.get(pk = branch.repository.id)
             )
 
             print("commit id: ",  str(commit.pk))

@@ -9,6 +9,6 @@ app_name = "insights"
 
 urlpatterns = [
     path('pulse/<int:id>/<int:days>', views.pulse, name='pulse'),
-    path('contributors/<int:id>', views.contributors, name='contributors'),
+    path('contributors/<int:id>/<int:days>', views.contributors, name='contributors'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
