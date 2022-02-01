@@ -50,9 +50,11 @@
                 <select name="labels_ids" style="min-width:100px;border-radius: 6px;border: 2px solid #AAA;box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.1);" class="selectpicker" multiple data-live-search="true">
                     {% for lab in labels.all %}
                         {% if lab in  issue.labels.all %} 
-                            <option value="{{ lab.id }}" selected>{{ lab.name }}</option>
+                            <option value="{{ lab.id }}" class="badge badge-pill d-inline-flex align-items-center justify-content-center  " style="margin-top: 5px; margin-left: 5px; font-size: 0.9em;  height: 30px;display: inline-block;  
+                            background-color: {{ lab.color }}" selected>{{ lab.name }}</option>
                         {% else %}      
-                            <option value="{{ lab.id }}">{{ lab.name }}</option>
+                            <option value="{{ lab.id }}" class="badge badge-pill d-inline-flex align-items-center justify-content-center  " style="margin-top: 5px; margin-left: 5px; font-size: 0.9em;  height: 30px;display: inline-block;  
+                            background-color: {{ lab.color }}">{{ lab.name }}</option>
                         {% endif %}
                     {% endfor %}
                 </select>

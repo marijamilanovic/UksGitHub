@@ -35,19 +35,19 @@
             <ul class="list-group list-group-flush">
                 {% for l in labels %}   
                 <li class="list-group-item" style="height: 65px;"> 
-                <span class="badge badge-pill d-inline-flex align-items-center justify-content-center  "
-                 style="margin-top: 5px; margin-left: 5px; font-size: 0.9em;  height: 30px;  
-                 background-color:{{l.color}}">{{l.name}}
-                 </span>
-                <div class="row">
-                <label style=" margin-left: 250px; margin-top: -30px;">{{l.description}}</label>
-                </div>
-                <div style="margin-left: 955px; margin-top: -30px;">
-                <a href="{% url 'getLabelById' id=l.id %}" class="link" style="color: black;" >Edit</a>
-                </div>
-                <div style="margin-top: -25px; margin-left: 1000px;">
-                <a href="{% url 'deleteLabel' id=l.id %}" class="link" style=" color: black;">Delete</a>
-                </div>
+                  <span class="badge badge-pill d-inline-flex align-items-center justify-content-center  "
+                  style="margin-top: 5px; margin-left: 5px; font-size: 0.9em;  height: 30px;  
+                  background-color:{{l.color}}">{{l.name}}
+                  </span>
+                  <div class="row">
+                  <label style=" margin-left: 250px; margin-top: -30px;">{{l.description}}</label>
+                  </div>
+                  <div style="margin-left: 955px; margin-top: -30px;">
+                  <a href="{% url 'getLabelById' id=l.id %}" class="link" style="color: black;" >Edit</a>
+                  </div>
+                  <div style="margin-top: -25px; margin-left: 1000px;">
+                  <a href="{% url 'deleteLabel' id=l.id %}" class="link" style=" color: black;">Delete</a>
+                  </div>
                 </li>
                 {% endfor %}
             </ul>
