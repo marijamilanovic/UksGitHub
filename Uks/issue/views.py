@@ -9,11 +9,8 @@ from user.models import User
 from project.models import Project
 from milestone.models import Milestone
 from pullrequest.models import Pullrequest
-<<<<<<< HEAD
 from label.models import Label
-=======
 from datetime import datetime
->>>>>>> develop
 
 from django.contrib import messages
 
