@@ -2,6 +2,8 @@ from django.shortcuts import render, get_object_or_404, redirect
 from repository.models import Repository
 from .models import Label
 
+from django.contrib import messages
+
 def labels(request,id):
     repository = get_object_or_404(Repository, id=id)
     labels = Label.objects.all().filter(repository = repository)
@@ -22,7 +24,8 @@ def addLabel(request):
             errorName = "Please enter name!"
             return render(request, "newLabel.html", {"errorName": errorName, "repository":repository})
         newLabel = Label(name = name, description = description, color = color, repository = repository)
-        newLabel.save()    
+        newLabel.save()
+        messages.success(request, 'Label has been created.')
     return redirect('/label/labels/'+ str(repository.id))
 
 def getLabelById(request, id):
@@ -44,7 +47,7 @@ def editLabel(request, id):
                 repository = r
         label.save()
         labelsUpdated = labels(request, repository.id)
-        
+        messages.success(request, 'Label has been updated.')
     return redirect('/label/labels/'+ str(repository.id))
 
 def deleteLabel(request, id):
@@ -55,5 +58,5 @@ def deleteLabel(request, id):
             repository = r
     label.delete()
     labelsUpdated = Label.objects.all().filter(repository=label.repository)
-    
+    messages.success(request, 'Label has been deleted.')
     return redirect('/label/labels/'+ str(repository.id))
