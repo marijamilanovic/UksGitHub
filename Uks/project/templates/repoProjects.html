@@ -1,0 +1,52 @@
+{% extends 'repository/index.html' %}
+{% load static %}
+{% load bootstrap_icons %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+
+    {% block navCode %}
+    <li class="nav-item">
+      <a class="nav-link active" style=" color: black;" id="code" href="{% url 'repository' id=repository.id %}" aria-current="page">{% bs_icon 'code' size='1em' %} Code</a>
+    </li>
+    {% endblock %}
+
+    {% block navProjects %}
+    <li class="nav-item">
+      <a class="nav-link" style="border-bottom:3px solid darkviolet;color: black;" href="{% url 'project:projects' id=repository.id  %}">{% bs_icon 'layout-text-window-reverse' size='1.3em' %} Projects</a>
+    </li>
+    {% endblock %}
+
+    {%block page_content%}
+        <div class="tab-pane container active" id="milestones" style="margin-right: 60px;">
+            <a href="{% url 'project:newProject' id=repository.id %}" style="margin-left: 763px; margin-top: -25px;" type="button" class="btn btn-success" >New project</a>
+        {% if projects %}
+        {% for p in projects %}
+        <div class="card" style="max-width: 900px; margin-top: 20px; margin-left: -20px;">
+          <div class="card-header" style="background-color: #d7f0db;">
+            Opened
+          </div>
+          <div class="card-body">
+            <h5 class="card-title">{{p.name}}</h5>
+            <p class="card-text">{{p.description}}</p>
+            <a href="#" class="link-primary">Edit</a>
+            <a href="#" class="link-primary" style="margin-left: 10px;">Close</a>
+            <a href="#" class="link-primary" style="margin-left: 10px;">Delete</a>
+          </div>
+        </div>
+        {% endfor %}
+        {% else %}
+        <p>There are no projects yet.</p>
+        {% endif %}
+        </div>
+        {%endblock%}
+</body>
+</html>
