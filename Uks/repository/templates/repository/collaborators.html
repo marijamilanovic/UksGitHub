@@ -45,14 +45,14 @@
                             <div class="card-body">
                               <div class="row">
                                 <h5 class="card-title">{{collaborator.username}}</h5>
-                                <a class="btn btn-primary btn-sm" href="{% url 'remove_collaborator' id=repository.id developer_id=collaborator.id %}" onclick="return confirm('Are you sure you want to remove this collaborator?');" style="margin-left: 65%; border: 0ch; background-color: #A5A4A4 ;" >Remove</a>
+                                <a class="btn btn-primary btn-sm" href="{% url 'remove_collaborator' id=repository.id developer_id=collaborator.id %}" onclick="return confirm('Are you sure you want to remove this collaborator?');" style="margin-left: auto; border: 0ch; background-color: #A5A4A4 ;" >Remove</a>
                                   </script>
                               </div>
                             </div>
                         </div>
                     {% endfor %}
                 {%else %}
-                    <p style="font-size: 20;">No collaborators</p>
+                    <p style="font-size: 20; margin-left: -10; margin-top: 50%;">No collaborators</p>
                 {% endif %}
           </div>
           <div style="margin-right: 300; margin-top: 30;">

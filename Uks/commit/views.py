@@ -67,6 +67,10 @@ def deleteCommit(request, id):
     Commit.objects.get(pk=id).delete()
     return redirect('commit:commitList', id=commit.branch.id)
 
+def get_current_repository(repo_id):
+    return get_object_or_404(Repository, id = repo_id)
+
 def viewFoundCommit(request, id):
     commit = get_object_or_404(Commit, id = id)
-    return render(request, 'commit/viewFoundCommit.html', {'commit':commit})
+    branch = get_object_or_404(Branch, commit = commit)
+    return render(request, 'commit/viewFoundCommit.html', {'commit':commit, 'repository': get_current_repository(branch.repository.id), 'branch':branch})

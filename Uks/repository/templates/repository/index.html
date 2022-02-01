@@ -11,6 +11,31 @@
 </head>
 
 <body>
+
+  {% block searchBar %}
+  <form id="searchRepo" name="searchForm" method="POST" action="{% url 'search_in_this_repo' id=repository.id %}" class="form-inline my-3 my-lg-0" style="margin-left:20px;display:inline-block;">
+    {% csrf_token %}
+    <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" name="search" value="{{search}}" >
+    <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">Search</button>
+  </form>  
+
+  <!--All git search-->
+  <form id="searchAll" name="searchForm2" method="POST" action="{% url 'search' %}" class="form-inline my-3 my-lg-0" style="margin-left:20px;display:inline-block;">
+    {% csrf_token %}
+    <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" name="search" value="{{search}}" >
+    <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">Search</button>
+  </form>  
+
+  <!--Radio buttons-->
+  <div class="form-check" style="margin-left: 10px; margin-top: -15px;">
+    <input  type="radio" class="form-check-input" id="radio1" name="optradio" value="option1" checked> <span style="color: antiquewhite;">Search in this repository</span>
+    <label class="form-check-label" for="radio1"></label> 
+  </div>
+  <div class="form-check" style="margin-top: 25px; margin-left: -194px;" >
+    <input  type="radio" class="form-check-input" id="radio2" onchange="searchAll()" name="optradio" value="option2"> <span style="color: antiquewhite;">Search all UksGitHub</span>
+    <label class="form-check-label" for="radio1"></label> 
+  </div>
+  {% endblock %}
     {% block content %}
 
     <head>
@@ -116,11 +141,13 @@
         <a class="nav-link" id="insights" style="color: black;" href="{% url 'insights:pulse' id=repository.id days=1  %}">{% bs_icon 'graph-up' size='1.3em' %} Insights</a>
       </li>
       {% endblock %}
-      {% block navCollaborator %}
-      <li class="nav-item">
-        <a class="nav-link" id="collaborators" style="color: black;" href="{% url 'collaborators' id=repository.id  %}">{% bs_icon 'gear' size='1.3em' %} Collaborators</a>
-      </li>
-      {% endblock %}
+      {% if logged_user_id == repository.creator_id %}
+        {% block navCollaborator %}
+        <li class="nav-item">
+          <a class="nav-link" id="collaborators" style="color: black;" href="{% url 'collaborators' id=repository.id  %}">{% bs_icon 'gear' size='1.3em' %} Collaborators</a>
+        </li>
+        {% endblock %}
+      {% endif %}
     </ul>
 
     {% block page_content %}
@@ -197,6 +224,13 @@
 
     {% block javascript %}
     <script> 
+      document.getElementById('searchAll').style.display = 'none';
+
+      function searchAll(){
+        document.getElementById('searchAll').style.display = 'block';
+        document.getElementById('searchRepo').style.display = 'none';
+      }
+
       function showModal() {
         $('#myModal').modal('show')
       }
