@@ -14,6 +14,9 @@ urlpatterns = [
     path('update-issue/<int:id>', views.update_issue, name='update_issue'),
     path('delete-issue/<int:id>', views.delete_issue, name='delete_issue'),
     path('view-found-issue/<int:id>', views.view_found_issue, name='view_found_issue'),
+    path('filter_issues/<int:repo_id>/<str:pk>/', views.filter_issues, name='filter_issues'),
+    path('filter_issues/<int:repo_id>/<str:pk>/<int:object_id>', views.filter_issues_for_multiple_objects, name='filter_issues'),
     path('all_issues', views.all_issues, name = 'all_issues'),
+    path('load-assignees/<int:repo_id>', views.load_assignees, name='load_assignees'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
