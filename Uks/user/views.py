@@ -7,6 +7,8 @@ from issue.models import Issue
 from commit.models import Commit
 from branch.models import Branch
 
+from django.contrib import messages
+
 # Create your views here.
 def welcome(request):
     return render(request, 'welcome.html', {})
@@ -225,6 +227,7 @@ def edit_user(request, id):
     if password != "":
         user.set_password(request.POST.get('password'))
     user.save()
+    messages.success(request, 'User has been updated.')
     return redirect("../home/profile")
    
 def go_to_edit_user(request, id):
@@ -234,7 +237,8 @@ def go_to_edit_user(request, id):
 def delete_user(request, id):
     user = User.objects.get(id = id)
     user.delete()
-    return redirect("../home/profile")
+    messages.success(request, 'User has been deleted.')
+    return redirect("/all_users")
 
 def all_users(request):
     users = User.objects.all()
