@@ -20,6 +20,7 @@ from django.core.exceptions import ValidationError
 
 def createBranch(request, id):
     form = BranchForm()
+    print('FORM DATA:', id) 
     repository = get_object_or_404(Repository, id=id)
     error_name = False
     error_name_message = "Branch with same name already exist in repository"

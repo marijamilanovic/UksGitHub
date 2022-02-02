@@ -11,6 +11,8 @@
     <title>{% block title %} UksGithub {% endblock %}</title>
 </head>
 <body>
+
+  
   {% block searchBar %}
         <form name="searchForm" method="POST" action="{% url 'search' %}" class="form-inline my-3 my-lg-0" style="margin-left:20px;display:inline-block;">
           {% csrf_token %}
@@ -23,11 +25,12 @@
   <li class="nav-item" style="border-style: outset; ">
     <form name="repositoriesForm" id="repositoriesForm" method="POST" action="{% url 'searchedRepositories' %}">
       {% csrf_token %}
-      <input class="form-control mr-sm-2" hidden  aria-label="Search" name="foundRepositories" value="{{foundRepositories}}" >
+      <input class="form-control mr-sm-2" hidden aria-label="Search" name="foundCommits" value="{{foundCommits}}" >
       <input class="form-control mr-sm-2" hidden  aria-label="Search" name="foundIssues" value="{{foundIssues}}" >
-      <input class="form-control mr-sm-2" hidden  aria-label="Search" name="foundCommits" value="{{foundCommits}}" >
+      <input class="form-control mr-sm-2" hidden  aria-label="Search" name="foundRepositories" value="{{foundRepositories}}" >
+      <input class="form-control mr-sm-2" hidden  aria-label="Search" name="foundUsers" value="{{foundUsers}}" >
       <input class="form-control mr-sm-2" hidden  name="searchedWords" value="{{searchedWords}}" >
-    <a class="nav-link active" onclick="submitRepositoriesForm()">Repositories<span class="badge badge-success" style="margin-left: 10px;">{{foundRepositoriesNumber}}</span></a>
+    <a class="nav-link active" onclick="submitRepositoriesForm()">Repositories<span class="badge badge-success" style="margin-left: 10px;">{{repositories|length}}</span></a>
     </form>
   </li>
   {% endblock %}
@@ -39,22 +42,23 @@
             <input class="form-control mr-sm-2" hidden aria-label="Search" name="foundCommits" value="{{foundCommits}}" >
             <input class="form-control mr-sm-2" hidden  aria-label="Search" name="foundIssues" value="{{foundIssues}}" >
             <input class="form-control mr-sm-2" hidden  aria-label="Search" name="foundRepositories" value="{{foundRepositories}}" >
+            <input class="form-control mr-sm-2" hidden  aria-label="Search" name="foundUsers" value="{{foundUsers}}" >
             <input class="form-control mr-sm-2" hidden  name="searchedWords" value="{{searchedWords}}" >
-          <a class="nav-link" onclick="submitCommitsForm()">Commits<span class="badge badge-success" style="margin-left: 43px;">{{foundCommitsNumber}}</span></a>
+          <a class="nav-link" onclick="submitCommitsForm()">Commits<span class="badge badge-success" style="margin-left: 43px;">{{commits|length}}</span></a>
           </form>
          
         </li>   
         {% endblock %}
 
         {% block page_content %} 
-    <div class="tab-pane container active" id="milestones" style="margin-right: -190px; margin-top: -190px;">
-        <h5 style="margin-left: -99px;">{{foundCommitsNumber}} commits results</h5>
+    <div class="tab-pane container active" id="milestones" style="margin-right: -190px; margin-top: -250px;">
+        <h5 style="margin-left: -99px;">{{commits|length}} commits results</h5>
     {% if commits %}
         {% for c in commits %}
         <div class="card border-secondary mb-3" style="margin-top: 15px; margin-left: -95px; max-width: 730px;">
-            <div class="card-header" style="background-color: #d7f0db;">
-                {% bs_icon 'code-square' size='1.2em' color='green' %} <span style="padding-left:15px">{{c.message}}</span>  
-            </div>
+          <div class="card-header" style="background-color: #d7f0db;">
+            <span style="color: green;" class="iconify" data-icon="si-glyph:time-reload" data-width="22" data-height="20"></span> <span style="padding-left:5px">{{c.message}}</span>  
+        </div>
             <div class="card-body">
             <p>Commited on {{c.date_time}}</p>
             <a href="{% url 'commit:viewFoundCommit' id=c.id %}" class="link-primary">Visit</a>

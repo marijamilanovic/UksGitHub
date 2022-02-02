@@ -32,4 +32,5 @@ urlpatterns = [
     path('pullrequest/', include('pullrequest.urls')),
     path('history/', include('history.urls')),
     path('admin/', admin.site.urls),
+    path('insights/', include('insights.urls')),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

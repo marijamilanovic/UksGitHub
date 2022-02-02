@@ -23,11 +23,12 @@
   <li class="nav-item" style="border-style: outset; border-left-color: darkviolet; border-left-width: 8px;">
     <form name="repositoriesForm" id="repositoriesForm" method="POST" action="{% url 'searchedRepositories' %}">
       {% csrf_token %}
-      <input class="form-control mr-sm-2" hidden  aria-label="Search" name="foundRepositories" value="{{foundRepositories}}" >
+      <input class="form-control mr-sm-2" hidden aria-label="Search" name="foundCommits" value="{{foundCommits}}" >
       <input class="form-control mr-sm-2" hidden  aria-label="Search" name="foundIssues" value="{{foundIssues}}" >
-      <input class="form-control mr-sm-2" hidden  aria-label="Search" name="foundCommits" value="{{foundCommits}}" >
+      <input class="form-control mr-sm-2" hidden  aria-label="Search" name="foundRepositories" value="{{foundRepositories}}" >
+      <input class="form-control mr-sm-2" hidden  aria-label="Search" name="foundUsers" value="{{foundUsers}}" >
       <input class="form-control mr-sm-2" hidden  name="searchedWords" value="{{searchedWords}}" >
-    <a class="nav-link active" onclick="submitRepositoriesForm()">Repositories<span class="badge badge-success" style="margin-left: 10px;">{{foundRepositoriesNumber}}</span></a>
+    <a class="nav-link active" onclick="submitRepositoriesForm()">Repositories<span class="badge badge-success" style="margin-left: 10px;">{{repositories|length}}</span></a>
     </form>
   </li>
   {% endblock %}
@@ -36,18 +37,19 @@
     
     <form name="issuesForm" id="issuesForm" method="POST" action="{% url 'searchedIssues' %}">
       {% csrf_token %}
-      <input class="form-control mr-sm-2" hidden  aria-label="Search" name="foundIssues" value="{{foundIssues}}" >
-      <input class="form-control mr-sm-2" hidden  aria-label="Search" name="foundCommits" value="{{foundCommits}}" >
-      <input class="form-control mr-sm-2" hidden  aria-label="Search" name="foundRepositories" value="{{foundRepositories}}" >
-      <input class="form-control mr-sm-2" hidden  name="searchedWords" value="{{searchedWords}}" >
-    <a class="nav-link" onclick="submitForm()">Issues<span class="badge badge-success" style="margin-left: 64px;">{{foundIssuesNumber}}</span></a>
+      <input class="form-control mr-sm-2" hidden aria-label="Search" name="foundCommits" value="{{foundCommits}}" >
+            <input class="form-control mr-sm-2" hidden  aria-label="Search" name="foundIssues" value="{{foundIssues}}" >
+            <input class="form-control mr-sm-2" hidden  aria-label="Search" name="foundRepositories" value="{{foundRepositories}}" >
+            <input class="form-control mr-sm-2" hidden  aria-label="Search" name="foundUsers" value="{{foundUsers}}" >
+            <input class="form-control mr-sm-2" hidden  name="searchedWords" value="{{searchedWords}}" >
+    <a class="nav-link" onclick="submitForm()">Issues<span class="badge badge-success" style="margin-left: 64px;">{{issues|length}}</span></a>
     </form>
     
   </li>
   {% endblock %}
     {% block page_content %} 
-    <div class="tab-pane container active" id="milestones" style="margin-right: -190px; margin-top: -190px;">
-        <h5 style="margin-left: -99px;">{{foundRepositoriesNumber}} repositories results</h5>
+    <div class="tab-pane container active" id="milestones" style="margin-right: -190px; margin-top: -250px;">
+        <h5 style="margin-left: -99px;">{{repositories|length}} repositories results</h5>
     {% if repositories %}
         {% for r in repositories %}
         <div class="card border-secondary mb-3" style="margin-top: 15px; margin-left: -95px; max-width: 730px;">

@@ -1,0 +1,156 @@
+{% extends 'repository/index.html' %}
+{% load static %}
+{% load bootstrap_icons %}
+
+
+{% block navCode %}
+    <li class="nav-item">
+      <a class="nav-link active" style=" color: black;" id="code" href="{% url 'repository' id=repository.id %}" aria-current="page">{% bs_icon 'code' size='1em' %} Code</a>
+    </li>
+{% endblock %}
+
+{% block navInsights %}
+      <li class="nav-item">
+        <a class="nav-link" id="insights" style="border-bottom:3px solid darkviolet;color: black;" href="{% url 'insights:pulse' id=repository.id  days=1 %}">{% bs_icon 'graph-up' size='1em' %} Insights</a>
+      </li>
+{% endblock %}
+
+{% block page_content %}
+
+{% block sidebar %}
+
+<div class="insights-tab">
+
+    <div class="sidebar">
+        {% block side-pulse %}
+        <a class="active" style="border-left:3px solid darkviolet; border-bottom: 2px solid black;" href="{% url 'insights:pulse' id=repository.id days=1 %}">Pulse</a>
+        {% endblock %}
+
+        {% block side-contributors %}
+        <a href="{% url 'insights:contributors' id=repository.id days=3 %}">Contributors</a>
+        {% endblock %}
+
+        {% block side-community %}
+        <a href="#contact">Community</a>
+        {% endblock %}
+
+        {% block side-communityStandards %}
+        <a href="#about">Community Standards</a>
+        {% endblock %}
+
+        {% block side-traffic %}
+        <a href="#about">Traffic</a>
+        {% endblock %}
+
+        {% block side-commits %}
+        <a href="#about">Commits</a>
+        {% endblock %}
+
+        {% block side-frequency %}
+        <a href="#about">Code frequency</a>
+        {% endblock %}
+
+        {% block side-dependency %}
+        <a href="#about">Dependency graph</a>
+        {% endblock %}
+
+        {% block side-networks %}
+        <a href="#about">Network</a>
+        {% endblock %}
+
+        {% block side-forks %}
+        <a href="#about">Forks</a>
+        {% endblock %}
+      </div>
+
+</div>
+
+{% endblock %}
+
+{% block chart_block %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+
+<div class="chart">
+
+  <div class="info">
+    {% if days == 1 %} <h2>Last 24 hours</h2>{% endif %}
+    {% if days == 3 %} <h2>Last 3 days</h2> {% endif %}
+    {% if days == 7 %} <h2>Last week</h2> {% endif %}
+    {% if days == 30 %} <h2>Last month</h2> {% endif %}
+
+  </div>
+
+<div class="chart_up">
+    <select class="selectpicker" data-live-search="true" data-size="5" onchange="location = this.value">
+          <option value="{% url 'insights:pulse' id=repository.id days=1 %}" {% if days == 1 %} selected {% endif %}  >24 hours</option>
+          <option value="{% url 'insights:pulse' id=repository.id days=3 %}" {% if days == 3 %} selected {% endif %} >3 days</option>
+          <option value="{% url 'insights:pulse' id=repository.id days=7 %}" {% if days == 7 %} selected {% endif %} >1 week</option>
+          <option value="{% url 'insights:pulse' id=repository.id days=30 %}" {% if days == 30 %} selected {% endif %} >1 month</option>
+        </a>
+
+      </select>
+</div>
+
+<div class="chart_data1">
+
+    <canvas id="pie-chart"></canvas>
+
+</div>
+
+<div class="chart_data2">
+
+  <canvas id="pie-chart2"></canvas>
+
+
+</div>
+
+</div>
+
+
+<script>
+var config = {
+      type: 'pie',
+      data: {
+        datasets: [{
+          data: ["{{open_pr}}", "{{closed_pr}}"],
+          backgroundColor: [
+            '#8a78cd', '#17a800',
+          ],
+        }],
+        labels: ["Open pull requests", "Closed pull requests"]
+      },
+      options: {
+        responsive: true,
+      }
+    };
+
+    var config2 = {
+    type: 'pie',
+    data: {
+      datasets: [{
+        data: ["{{open_is}}", "{{closed_is}}"],
+        backgroundColor: [
+          '#17a800', '#e60c00',
+        ],
+      }],
+      labels: ["Open issues", "Closed issues"]
+    },
+    options: {
+      responsive: true,
+    }
+  };
+
+  window.onload = function() {
+          var ctx = document.getElementById('pie-chart').getContext('2d');
+          window.myPie = new Chart(ctx, config);
+
+          var ctx2 = document.getElementById('pie-chart2').getContext('2d');
+          window.myPie2 = new Chart(ctx2, config2);
+        };
+
+
+</script>
+
+{% endblock %}
+
+{% endblock %}

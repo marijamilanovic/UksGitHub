@@ -1,4 +1,4 @@
-
+{% extends 'repository/index.html' %}
 {% load static %}
 {% load bootstrap_icons %}
 
@@ -19,10 +19,12 @@
     <div class="card border-secondary mb-3" style="margin-top: 15px; margin-left: 125px; max-width: 730px;">
         {% if commit %}
         <div class="card-header" style="background-color: #d7f0db;">
-            {% bs_icon 'code-square' size='1.2em' color='green' %} <span style="padding-left:15px">{{commit.message}}</span>  
+            <span style="color: green;" class="iconify" data-icon="si-glyph:time-reload" data-width="22" data-height="20"></span> <span style="padding-left:5px">{{commit.message}}</span>  
         </div>
         <div class="card-body">
-        <p># {{commit.hash_id}}</p><span class="badge badge-success" >{{commit.date_time}}</span><span style="margin-left: 350px;">Commited by : </span><b>{{commit.author}}</b>
+        <span  class="iconify" data-icon="fa-solid:code-branch"></span>
+        <p style="margin-top: -22px; margin-left: 20px;">{{branch.name}}</p>
+        <p># {{commit.hash_id}}</p><span class="badge badge-success" >{{commit.date_time}}</span><span style="margin-left: 370px;">Commited by : </span><b>{{commit.author}}</b>
         </div>
         {% else %}
     <p>There are no commits.</p>

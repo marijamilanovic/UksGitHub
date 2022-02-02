@@ -60,7 +60,7 @@
                         <div class="card border-secondary mb-3" style="margin-top: 15px;  max-width: 1000px; background-color: #cde9e9;">
                             <p style="margin-top: 10px; margin-left: 10px;">  {% bs_icon 'person-circle' size='1.5em'%} <b>{{c.author.username}}</b> commented {{c.created_date}}</p>
                                 {% if pullrequest.creator.username == c.author.username %}
-                                    <span style="margin-top: -42px; margin-left: 650px;">
+                                    <span style="margin-top: -42px; margin-left: 770px;">
                                     <p style="border:1px; 
                                         border-style:solid; 
                                         border-color:#53adad; 
@@ -138,11 +138,11 @@
                                                     {{c.get_emoji_happy}}
                                                 {% elif e.name == '128077' %}
                                                     {{c.get_emoji_like}}
-                                                {% elif e.name == '128077' %}
+                                                {% elif e.name == '128078' %}
                                                     {{c.get_emoji_dislike}}
                                                 {% elif e.name == '128064' %}
                                                     {{c.get_emoji_eyes}}
-                                                {% else %}
+                                                {% elif e.name == '127881' %}
                                                     {{c.get_emoji_party}}
                                                 {% endif %}
                                                 </span></button></th>
@@ -211,14 +211,14 @@
                     
                 </form>
             {% else %}
-            <p>There are no milestone with that id.</p>
+            <p>There are no pullrequest with that id.</p>
             {% endif %}
             </div>  
             <div style="margin-right: auto; margin-top: 80px;">
                 <form style="margin-top: 20px;" method="POST" action="{% url 'add_reviewers_on_pull_request' pullrequest.id %}"> 
                     {% csrf_token %}
-                    <h4>add reviewers</h4>
-                    <div style="margin-top: 30;">
+                    <h5>Add reviewers</h5>
+                    <div style="margin-top: 20;">
                         <div style="position: absolute; ">
                             <select name="developers" style="width: 250; border-radius: 6px;border: 2px solid #AAA;box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.1);" multiple>
                                 {% for dev in not_assigned_collaborators_on_repository %}
@@ -235,18 +235,174 @@
                 </form>
                 <hr style="margin-top: 20;"/>
                 <div style="margin-top: 10;">
-                    <h4> reviewers</h4>
+                    <h5> Reviewers</h5>
                     {% if reviewers %}
                     {% for reviewer in reviewers %}
                         <div class="row" style="width: 200; margin-left: 5;" >
-                            <li style="font-size: 20;">{{reviewer.username}}</li>                            
+                            <li style="font-size: 14;">{{reviewer.username}}</li>                            
                             <a class="btn btn-primary btn-sm" href="{% url 'remove_reviewer_from_pullrequest' pullrequest_id=pullrequest.id reviewer_id=reviewer.id %}" onclick="return confirm('Are you sure you want to remove reviewer?');" style="margin-left: auto; margin-top: 3; border: 0ch; background-color: #A5A4A4 ;" >Remove</a>               
                         </div>
                     {% endfor %}
                 {%else %}
-                    <p style="font-size: 20;">No reviewers</p>
+                    <p style="font-size: 14;">No reviewers</p>
                 {% endif %}
                 </div>
+                <hr style="margin-top: 20;"/>
+                <h5>Assignees</h5>
+                <form style="margin-top: 20px;" method="POST" action="{% url 'add_assignes_on_pull_request' pullrequest.id %}"> 
+                    {% csrf_token %}
+                    <select class="selectpicker" multiple data-live-search="true" name="assignees">
+                        <option disabled style="text-align: left;">Suggestions</option>
+                        {% for a in assignees.all %}
+                            {% if a in pullrequest.assignees.all %}
+                            <option disabled selected>{{a.username}}</option>
+                            {% else %}
+                            <option value="{{a.username}}">{{a.username}}</option>
+                            {% endif %}
+                        {%endfor%}
+                    </select>
+                    <input type="submit"  class="btn btn-success" value="Add">
+                </form>
+                <div style="margin-top: 10;">
+                    {% if pullrequest.assignees.all %}
+                        {% for assignee in pullrequest.assignees.all %}
+                            <div class="row" style="width: 200; margin-left: 5;" >
+                                {% bs_icon 'person-circle' size='1.5em'%} 
+                                <p style="margin-left: 8px; font-size: 14;">{{assignee.username}}</p>
+                                <a style="margin-left: 50px;" href="{% url 'delete_assignees_on_pull_request' id=pullrequest.id assignee_id=assignee.id %}" type="button">{% bs_icon 'x-circle' size='1.5em'%} </a>                            
+                            </div>
+                        {% endfor %}
+                    {%else %}
+                        <p style="font-size: 14;">No assignees</p>
+                    {% endif %}
+                </div>
+                <hr style="margin-top: 20;"/>
+                <h5>Labels</h5>
+                <form style="margin-top: 20px;" method="POST" action="{% url 'add_labels_on_pull_request' pullrequest.id %}"> 
+                    {% csrf_token %}
+                    <select class="selectpicker" multiple data-live-search="true" name="labels">
+                        <option disabled style="text-align: left;">Suggestions</option>
+                        {% for l in labels %}   
+                            {% if l in pullrequest.labels.all %}
+                                <option disabled selected value="{{l.id}}" class="badge badge-pill d-inline-flex align-items-center justify-content-center  "
+                                style="margin-top: 5px; margin-left: 20px; font-size: 0.9em;  height: 30px; width: auto;
+                                background-color:{{l.color}}">{{l.name}}</option>
+                            {% else %}
+                                <option value="{{l.id}}" class="badge badge-pill d-inline-flex align-items-center justify-content-center  "
+                                style="margin-top: 5px; margin-left: 20px; font-size: 0.9em; align-content: center; height: 30px; width: auto;
+                                background-color:{{l.color}}">{{l.name}}</option>
+                            {% endif %}
+                        {%endfor%}
+                    </select>
+                    <input type="submit"  class="btn btn-success" value="Add">
+                </form>
+                <div style="margin-top: 10;">
+                    <p style="color: #A5A4A4; font-size: 0.8em; ">Click on label to remove</p>
+                    {% if pullrequest.labels.all %}
+                        {% for label in pullrequest.labels.all %}
+                                <a style="color: black;" href="{% url 'delete_labels_on_pull_request' id=pullrequest.id label_id=label.id %}" type="button"><span  class="badge badge-pill d-inline-flex align-items-center justify-content-center  "
+                                    style="margin-left: 5px; margin-top: 3px; font-size: 0.9em;  height: 30px; width: auto;
+                                    background-color:{{label.color}}">{{label.name}}
+                                    </span> </a>        
+                        {% endfor %}
+                    {%else %}
+                        <p style="font-size: 14;">No labels</p>
+                    {% endif %}
+                </div>
+                <!--Project -->
+                <hr style="margin-top: 20;"/>
+                <h5>Projects</h5>
+                <form style="margin-top: 20px;" method="POST" action="{% url 'add_projects_in_pull_request' pullrequest.id %}"> 
+                    {% csrf_token %}
+                    <select class="selectpicker" multiple data-live-search="true" name="projects">
+                        <option disabled style="text-align: left;">Suggestions</option>
+                        {% for p in projects %}  
+                            {% if p in pullrequest.projects.all %}
+                                <option  selected disabled>{{p.name}}</option>
+                            {% else %}
+                                <option value="{{p.id}}">{{p.name}}</option>
+                            {% endif %}
+                        {%endfor%}
+                    </select>
+                    <input type="submit"  class="btn btn-success" value="Add">
+                </form>
+                <div style="margin-top: 10;">
+                    {% if pullrequest.projects.all %}
+                        {% for p in pullrequest.projects.all %}
+                            <div class="row" style="width: 200; margin-left: 5; border-color: #A5A4A4;" > 
+                                   <a href="{% url 'getProjectById' id=p.id %}">{{p.name}}</a> <a style="margin-left: 50px;" href="{% url 'delete_projects_on_pull_request' id=pullrequest.id project_id=p.id %}" type="button">{% bs_icon 'x-circle' size='1.5em'%} </a>
+                            </div>       
+                        {% endfor %}
+                    {%else %}
+                        <p style="font-size: 14;">No projects</p>
+                    {% endif %}
+                </div>
+
+                <!--Project -->
+                <!--Milestone -->
+                <hr style="margin-top: 20;"/>
+                <h5>Milestone</h5>
+                <form style="margin-top: 20px;" method="POST" action="{% url 'add_milestones_on_pull_request' pullrequest.id %}"> 
+                    {% csrf_token %}
+                    <select class="selectpicker" data-live-search="true" name="milestones">
+                        <option disabled style="text-align: left;">Suggestions</option>
+                        {% for m in milestones %}   
+                            {% if m in pullrequest.milestone.all %}
+                                <option selected>{{m.title}}</option>
+                            {% else %}
+                                <option value="{{m.id}}">{{m.title}} - {{m.status}}</option>
+                            {% endif %}
+                        {%endfor%}
+                    </select>
+                    <input type="submit"  class="btn btn-success" value="Add">
+                </form>
+                <div style="margin-top: 10;">
+                    {% if pullrequest.milestone.all %}
+                        {% for m in pullrequest.milestone.all %}
+                            <div class="row" style="width: 200; margin-left: 5;" > 
+                                <div class="progress" style="width: 200px; margin-top: 10px;">
+                                    <div class="progress-bar bg-success" role="progressbar" style="width: {{m.get_completed_percentage}}%" aria-valuenow="{{m.get_completed_percentage}}" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                                <a href="{% url 'seeMilestone' id=m.id%}" style="margin-left: 8px; font-size: 14;">{{m.title}}</a> 
+                            </div>       
+                        {% endfor %}
+                    {%else %}
+                        <p style="font-size: 14;">No milestones</p>
+                    {% endif %}
+                </div>
+
+                 <!--Issues -->
+                 <hr style="margin-top: 20;"/>
+                 <h5>Linked issues</h5>
+                 <form style="margin-top: 20px;" method="POST" action="{% url 'add_issues_on_pull_request' pullrequest.id %}"> 
+                     {% csrf_token %}
+                     <select class="selectpicker" multiple data-live-search="true" name="issues">
+                         <option disabled style="text-align: left;">Suggestions</option>
+                         {% for i in issues %}   
+                             {% if i in connected_issues %}
+                                <option disabled selected >{{i.issue_title}}</option>
+                             {% else %}
+                                <option value="{{i.id}}"> {{i.issue_title}} </option>
+                             {% endif %}
+                         {%endfor%}
+                     </select>
+                     <input type="submit"  class="btn btn-success" value="Add">
+                 </form>
+                 <div style="margin-top: 10;">
+                     {% if connected_issues %}
+                         {% for c in connected_issues %}
+                            <div class="row" style="width: 250; margin-left: 5;" > 
+                                {% if c.state == 'Close' %}
+                                   <a href="{% url 'view_issue' id=c.id%}"  style=" font-size: 14; margin-right: 10px;"> {% bs_icon 'check-circle' color='purple' size='1em'%} {{c.issue_title}}</a> <a  href="{% url 'delete_issues_on_pull_request' id=c.id pr_id=pullrequest.id%}" type="button">{% bs_icon 'x-circle' size='1.5em'%} </a>
+                                {% else %}
+                                   <a href="{% url 'view_issue' id=c.id%}"  style="font-size: 14; margin-right: 10px;"> {% bs_icon 'record-circle' color='green' size='1em'%}  {{c.issue_title}}</a><a  href="{% url 'delete_issues_on_pull_request' id=c.id pr_id=pullrequest.id%}" type="button">{% bs_icon 'x-circle' size='1.5em'%} </a>
+                                {% endif %} 
+                            </div>       
+                         {% endfor %}
+                     {%else %}
+                         <p style="font-size: 14;">No linked issues</p>
+                     {% endif %}
+                 </div>
             </div>
         </div>
     {% endblock %}
@@ -275,5 +431,6 @@
         document.getElementById("comment_content_edit").style.backgroundColor = "#E5E8E8";
         document.getElementById("update_comment").hidden=false;
     }
+
 </script>
 {% endblock %}

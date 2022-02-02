@@ -4,6 +4,8 @@ from repository.models import Repository
 from issue.models import Issue
 from datetime import date
 
+from django.contrib import messages
+
 def newMilestone(request, id):
     repository = get_object_or_404(Repository, id=id)
     return render(request, 'newMilestone.html', { "repository":repository, "logged_user_id": request.user.id})
@@ -30,7 +32,7 @@ def deleteMilestone(request, id):
             repository = r
     milestone.delete()
     milestonesUpdated = Milestone.objects.all().filter(repository=milestone.repository)
-    
+    messages.success(request, 'Milestone has been deleted.')
     return redirect('/milestone/milestones/'+ str(repository.id))
 
 def addMilestone(request):
@@ -49,7 +51,7 @@ def addMilestone(request):
             else:
                 newMilestone = Milestone(title = title, due_date = dueDate, description = description, repository = repository)
             newMilestone.save()
-    
+            messages.success(request, 'Milestone has been created.')
     return redirect('/milestone/milestones/'+ str(repository.id))
 
 def getMilestoneById(request, id):
@@ -69,7 +71,7 @@ def updateMilestone(request, id):
             if(r.id == milestone.repository.id):
                 repository = r
         milestone.save()
-        
+        messages.success(request, 'Milestone has been updated.')
     return redirect('/milestone/milestones/'+ str(repository.id))
 
 def seeMilestone(request, id):

@@ -11,6 +11,31 @@
 </head>
 
 <body>
+
+  {% block searchBar %}
+  <form id="searchRepo" name="searchForm" method="POST" action="{% url 'search_in_this_repo' id=repository.id %}" class="form-inline my-3 my-lg-0" style="margin-left:20px;display:inline-block;">
+    {% csrf_token %}
+    <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" name="search" value="{{search}}" >
+    <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">Search</button>
+  </form>  
+
+  <!--All git search-->
+  <form id="searchAll" name="searchForm2" method="POST" action="{% url 'search' %}" class="form-inline my-3 my-lg-0" style="margin-left:20px;display:inline-block;">
+    {% csrf_token %}
+    <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" name="search" value="{{search}}" >
+    <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">Search</button>
+  </form>  
+
+  <!--Radio buttons-->
+  <div class="form-check" style="margin-left: 10px; margin-top: -15px;">
+    <input  type="radio" class="form-check-input" id="radio1" name="optradio" value="option1" checked> <span style="color: antiquewhite;">Search in this repository</span>
+    <label class="form-check-label" for="radio1"></label> 
+  </div>
+  <div class="form-check" style="margin-top: 25px; margin-left: -194px;" >
+    <input  type="radio" class="form-check-input" id="radio2" onchange="searchAll()" name="optradio" value="option2"> <span style="color: antiquewhite;">Search all UksGitHub</span>
+    <label class="form-check-label" for="radio1"></label> 
+  </div>
+  {% endblock %}
     {% block content %}
 
     <head>
@@ -39,12 +64,12 @@
     </div>
 
     <div style="margin-left: 1150px; margin-top: -50px;">
-      <a href="{% url 'watchRepository' id=repository.id  %}" class="btn btn-outline-secondary btn-sm" style="width: 100px;  color: black;"><span style="margin-left: -4px;  ">{% bs_icon 'eye' size='1.1em' %}</span> Watch <span class="badge badge-success">{{watchers|length}}</span></a>
-      <a href="#"  onclick="showModal()" class="btn btn-outline-secondary btn-sm" style="width: 100px; margin-left: 10px; color: black;"><span style="margin-left: -4px; ">{% bs_icon 'diagram-2' size='1.1em' %} </span> Fork <span class="badge badge-success">{{forks|length}}</span></a>
+      <a href="{% url 'watchRepository' id=repository.id  %}" class="btn btn-outline-secondary btn-sm" style="width: 100px;  color: black;"><span style="margin-left: -4px;  ">{% bs_icon 'eye' size='1.1em' %}</span> Watch <span class="badge badge-success">{{repository.get_watchers_number}}</span></a>
+      <a href="#"  onclick="showModal()" class="btn btn-outline-secondary btn-sm" style="width: 100px; margin-left: 10px; color: black;"><span style="margin-left: -4px; ">{% bs_icon 'diagram-2' size='1.1em' %} </span> Fork <span class="badge badge-success">{{repository.get_forks_number}}</span></a>
       {% if stargazers %}
-      <a href="{% url 'starRepository' id=repository.id  %}"  class="btn btn-outline-secondary btn-sm" style="width: 100px;margin-left: 10px;color: black;"><span style="margin-left: -4px; color:orange">{% bs_icon 'star-fill' size='1.1em' %} </span>  Star <span class="badge badge-success">{{stargazers|length}}</span></a>
+      <a href="{% url 'starRepository' id=repository.id  %}"  class="btn btn-outline-secondary btn-sm" style="width: 100px;margin-left: 10px;color: black;"><span style="margin-left: -4px; color:orange">{% bs_icon 'star-fill' size='1.1em' %} </span>  Star <span class="badge badge-success">{{repository.get_stars_number}}</span></a>
       {% else %}
-      <a href="{% url 'starRepository' id=repository.id  %}"  class="btn btn-outline-secondary btn-sm" style="width: 100px;margin-left: 10px;color: black;"><span style="margin-left: -4px; color: grey;">{% bs_icon 'star-fill' size='1.1em' %} </span>  Star <span class="badge badge-success">{{stargazers|length}}</span></a>
+      <a href="{% url 'starRepository' id=repository.id  %}"  class="btn btn-outline-secondary btn-sm" style="width: 100px;margin-left: 10px;color: black;"><span style="margin-left: -4px; color: grey;">{% bs_icon 'star-fill' size='1.1em' %} </span>  Star <span class="badge badge-success">{{repository.get_stars_number}}</span></a>
       {% endif %}
       </div>
     </div>
@@ -61,12 +86,12 @@
    
 
     <div style="margin-left: 1150px; margin-top: -30px;">
-      <a href="{% url 'watchRepository' id=repository.id  %}" class="btn btn-outline-secondary btn-sm" style="width: 100px;  color: black;"><span style="margin-left: -4px;  ">{% bs_icon 'eye' size='1.1em' %}</span> Watch <span class="badge badge-success">{{watchers|length}}</span></a>
-      <a href="#"  onclick="showModal()" class="btn btn-outline-secondary btn-sm" style="width: 100px; margin-left: 10px; color: black;"><span style="margin-left: -4px; ">{% bs_icon 'diagram-2' size='1.1em' %} </span> Fork <span class="badge badge-success">{{forks|length}}</span></a>
+      <a href="{% url 'watchRepository' id=repository.id  %}" class="btn btn-outline-secondary btn-sm" style="width: 100px;  color: black;"><span style="margin-left: -4px;  ">{% bs_icon 'eye' size='1.1em' %}</span> Watch <span class="badge badge-success">{{repository.get_watchers_number}}</span></a>
+      <a href="#"  onclick="showModal()" class="btn btn-outline-secondary btn-sm" style="width: 100px; margin-left: 10px; color: black;"><span style="margin-left: -4px; ">{% bs_icon 'diagram-2' size='1.1em' %} </span> Fork <span class="badge badge-success">{{repository.get_forks_number}}</span></a>
       {% if stargazers %}
-      <a href="{% url 'starRepository' id=repository.id  %}"  class="btn btn-outline-secondary btn-sm" style="width: 100px;margin-left: 10px;color: black;"><span style="margin-left: -4px; color:orange">{% bs_icon 'star-fill' size='1.1em' %} </span>  Star <span class="badge badge-success">{{stargazers|length}}</span></a>
+      <a href="{% url 'starRepository' id=repository.id  %}"  class="btn btn-outline-secondary btn-sm" style="width: 100px;margin-left: 10px;color: black;"><span style="margin-left: -4px; color:orange">{% bs_icon 'star-fill' size='1.1em' %} </span>  Star <span class="badge badge-success">{{repository.get_stargazers_number}}</span></a>
       {% else %}
-      <a href="{% url 'starRepository' id=repository.id  %}"  class="btn btn-outline-secondary btn-sm" style="width: 100px;margin-left: 10px;color: black;"><span style="margin-left: -4px; color: grey;">{% bs_icon 'star-fill' size='1.1em' %} </span>  Star <span class="badge badge-success">{{stargazers|length}}</span></a>
+      <a href="{% url 'starRepository' id=repository.id  %}"  class="btn btn-outline-secondary btn-sm" style="width: 100px;margin-left: 10px;color: black;"><span style="margin-left: -4px; color: grey;">{% bs_icon 'star-fill' size='1.1em' %} </span>  Star <span class="badge badge-success">{{repository.get_stargazers_number}}</span></a>
       {% endif %}
     </div>
     
@@ -111,6 +136,17 @@
       </li>
       {% endblock %}
 
+      {% block navProjects %}
+          <li class="nav-item">
+            <a class="nav-link" style="color: black;" href="{% url 'project:projects' id=repository.id  %}">{% bs_icon 'layout-text-window-reverse' size='1.3em' %} Projects</a>
+          </li>
+       {% endblock %}
+
+      {% block navInsights %}
+      <li class="nav-item">
+        <a class="nav-link" id="insights" style="color: black;" href="{% url 'insights:pulse' id=repository.id days=1  %}">{% bs_icon 'graph-up' size='1.3em' %} Insights</a>
+      </li>
+      {% endblock %}
       {% if logged_user_id == repository.creator_id %}
         {% block navCollaborator %}
         <li class="nav-item">
@@ -194,6 +230,13 @@
 
     {% block javascript %}
     <script> 
+      document.getElementById('searchAll').style.display = 'none';
+
+      function searchAll(){
+        document.getElementById('searchAll').style.display = 'block';
+        document.getElementById('searchRepo').style.display = 'none';
+      }
+
       function showModal() {
         $('#myModal').modal('show')
       }

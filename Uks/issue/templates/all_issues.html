@@ -32,13 +32,24 @@
                         <div class="card-body">
                             {% for issue in my_issues %}
                                 {% if issue.state == 'Opened' %}
-                                    <a  class="nav-link" href="{% url 'view_issue' id=issue.id %}">
+                                    <div>
+                                      <a  class="nav-link" href="{% url 'view_issue' id=issue.id %}" style="display: inline-block;">
                                             <img src="https://img.icons8.com/external-vitaliy-gorbachev-flat-vitaly-gorbachev/58/000000/external-open-sales-vitaliy-gorbachev-flat-vitaly-gorbachev.png" style="width: 30px;height: 30px;"/>
                                         &nbsp;&nbsp;&nbsp;{{issue.issue_title}}
                                         <small style="color: gray;">
                                             / {{issue.repository.name}}
                                         </small>
-                                    </a>
+                                      </a>
+                                      <span>
+                                        {% for lab in issue.labels.all %}
+                                        <span class="badge badge-pill d-inline-flex align-items-center justify-content-center  "
+                                        style="margin-top: 5px; margin-left: 5px; font-size: 0.9em;  height: 30px;display: inline-block;  
+                                        background-color: {{ lab.color }}">{{lab.name}}
+                                        </span>
+                                        {% endfor %}
+                                      </span>
+                                    </div>
+                                    
                                     <small style="margin-left: 60px;color: gray;">
                                         opened by <b>{{issue.opened_by}}</b>
                                         {% if issue.assignees.all %}
@@ -70,13 +81,24 @@
                         <div class="card-body">
                             {% for issue in my_issues %}
                                 {% if issue.state == 'Close' %}
-                                    <a  class="nav-link" href="{% url 'view_issue' id=issue.id %}">
+                                    <div>
+                                      <a  class="nav-link" href="{% url 'view_issue' id=issue.id %}" style="display: inline-block;">
                                         <img src="https://img.icons8.com/color/48/000000/checkmark--v1.png" style="width: 30px;height: 30px;"/>
                                         &nbsp;&nbsp;&nbsp;{{issue.issue_title}}
                                         <small style="color: gray;">
                                             / {{issue.repository.name}}
                                         </small>
-                                    </a>
+                                      </a>
+                                      <span>
+                                        {% for lab in issue.labels.all %}
+                                        <span class="badge badge-pill d-inline-flex align-items-center justify-content-center  "
+                                        style="margin-top: 5px; margin-left: 5px; font-size: 0.9em;  height: 30px;display: inline-block;  
+                                        background-color: {{ lab.color }}">{{lab.name}}
+                                        </span>
+                                        {% endfor %}
+                                      </span>
+                                    </div>
+                                    
                                     <small style="margin-left: 60px;color: gray;">
                                         opened by <b>{{issue.opened_by}}</b>
                                         {% if issue.assignees.all %}

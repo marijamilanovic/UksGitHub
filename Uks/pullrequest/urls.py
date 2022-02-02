@@ -2,6 +2,9 @@ from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
 import comment.views
+import milestone.views
+import issue.views
+import project.views
 
 from . import views
 
@@ -21,5 +24,17 @@ urlpatterns = [
      path('delete_comment/<int:id>/<int:pr_id>', comment.views.delete_comment, name='delete_comment'),
      path('add_reviewers_on_pull_request/<int:id>', views.add_reviewers_on_pull_request, name='add_reviewers_on_pull_request'),
      path('remove_reviewer_from_pullrequest/<int:pullrequest_id>/<int:reviewer_id>', views.remove_reviewer_from_pullrequest, name='remove_reviewer_from_pullrequest'),
+     path('add_assignes_on_pull_request/<int:id>', views.add_assignees_on_pull_request, name='add_assignes_on_pull_request'),
+     path('delete_assignees_on_pull_request/<int:id>/<int:assignee_id>', views.delete_assignees_on_pull_request, name='delete_assignees_on_pull_request'),
+     path('add_labels_on_pull_request/<int:id>', views.add_labels_on_pull_request, name='add_labels_on_pull_request'),
+     path('delete_labels_on_pull_request/<int:id>/<int:label_id>', views.delete_labels_on_pull_request, name='delete_labels_on_pull_request'),
+     path('add_milestones_on_pull_request/<int:id>', views.add_milestones_on_pull_request, name='add_milestones_on_pull_request'),
+     path('seeMilestone/<int:id>', milestone.views.seeMilestone, name='seeMilestone'),
+     path('add_issues_on_pull_request/<int:id>', views.add_issues_on_pull_request, name='add_issues_on_pull_request'),
+     path('view_issue/<int:id>', issue.views.view_issue, name='view_issue'),
+     path('delete_issues_on_pull_request/<int:id>/<int:pr_id>', views.delete_issues_on_pull_request, name='delete_issues_on_pull_request'),
+     path('add_projects_in_pull_request/<int:id>', views.add_projects_in_pull_request, name='add_projects_in_pull_request'),
+     path('delete_projects_on_pull_request/<int:id>/<int:project_id>', views.delete_projects_on_pull_request, name='delete_projects_on_pull_request'),
+     path('getProjectById/<int:id>', project.views.getProjectById, name='getProjectById'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 

@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'commit.apps.CommitConfig',
     'user.apps.UserConfig',
     'pullrequest.apps.PullrequestConfig',
+    'insights.apps.InsightsConfig',
     'comment.apps.CommentConfig',
     'history.apps.HistoryConfig',
     'django.contrib.admin',
@@ -107,7 +108,7 @@ if local_mode == True:
             'ENGINE': 'django.db.backends.postgresql_psycopg2',
             'NAME': 'uks',
             'USER': 'postgres',
-            'PASSWORD': '1111',
+            'PASSWORD': 'root',
             'HOST': 'localhost',
             'PORT': 5432,
         }
