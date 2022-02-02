@@ -415,6 +415,54 @@ def contributors(request, id, days):
     return render(request, "insights/contributors.html", context)
 
 
+def commits(request, id):
+    repository = get_object_or_404(Repository, id=id)
+
+    now = datetime.now()
+
+    today = now.strftime("%Y/%m/%d")
+    today_date = datetime.strptime(today, "%Y/%m/%d")
+
+
+    labels7 = []
+    data7 = []
+
+    labels18 = []
+    data18 = []
+
+    all_commits = []
+
+    for x in range(0, 7):
+        commits = list(Commit.objects.all().filter(repository = repository, date_time__range = [today_date, (today_date + timedelta(days=1))]))
+        data7.append(len(commits))
+        date = (now - timedelta(x)).strftime("%m/%d")
+        labels7.append(date)
+        today_date = today_date - timedelta(days=1)
+        
+    for x in range(0, 18):
+        commits = list(Commit.objects.all().filter(repository = repository, date_time__range = [today_date, (today_date + timedelta(days=10))]))
+        data18.append(len(commits))
+        date = (now - timedelta(x*10)).strftime("%m/%d")
+        labels18.append(date)
+        today_date = today_date - timedelta(days=30)
+
+
+    print(labels18)
+    print(data18)
+
+
+    
+    context = {
+        'repository': repository,
+        'labels7': labels7,
+        'data7': data7,
+        'labels18': labels18,
+        'data18': data18,
+    }
+
+    return render(request, "insights/commits.html", context)
+
+
 
 
 

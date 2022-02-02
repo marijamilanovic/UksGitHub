@@ -1,0 +1,91 @@
+{% extends 'insights/base_insights.html' %}
+
+
+
+{% block side-pulse %}
+    <a class="active" style="border-bottom: 2px solid black;" href="{% url 'insights:pulse' id=repository.id days=1 %}">Pulse</a>
+{% endblock %}
+
+{% block side-commits %}
+        <a style="border-left:3px solid darkviolet;" href="{% url 'insights:commits' id=repository.id %}">Commits</a>
+{% endblock %}
+
+{% block chart_block %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+
+<div class="chart">
+
+    <div style="margin-top: 2%;" class="commit_chart">
+
+        <canvas id="myChart"></canvas>
+
+    </div>
+
+    <div class="commit_chart2">
+
+        <canvas id="myChart2"></canvas>
+
+    </div>
+
+</div>
+
+<Script type="text/javascript">
+
+    var config2 = {
+        type: 'bar',
+        data: {
+          datasets: [{
+            label: 'Commits',
+            data: ["{{data18.17}}", "{{data18.16}}", "{{data18.15}}", "{{data18.14}}", "{{data18.13}}", "{{data18.12}}", "{{data18.11}}", "{{data18.10}}",
+            "{{data18.9}}", "{{data18.8}}", "{{data18.7}}", "{{data18.6}}", "{{data18.5}}", "{{data18.4}}", "{{data18.3}}",
+            "{{data18.2}}", "{{data18.1}}", "{{data18.0}}"],
+            backgroundColor: [
+              '#17a800','#17a800','#17a800','#17a800','#17a800','#17a800','#17a800','#17a800','#17a800','#17a800','#17a800','#17a800','#17a800','#17a800','#17a800','#17a800','#17a800','#17a800',
+            ],
+            fill: true,
+            color: '#17a800',
+          }],
+          labels: ["{{labels18.17}}", "{{labels18.16}}", "{{labels18.15}}", "{{labels18.14}}", "{{labels18.13}}", "{{labels18.12}}", "{{labels18.11}}", "{{labels18.10}}", "{{labels18.9}}", "{{labels18.8}}",
+          "{{labels18.7}}", "{{labels18.6}}", "{{labels18.5}}", "{{labels18.4}}", "{{labels18.3}}", "{{labels18.2}}", "{{labels18.1}}", "{{labels18.0}}"]
+        },
+        options: {
+          responsive: true,
+        }
+      };
+
+    var config = {
+        type: 'line',
+        data: {
+        datasets: [{
+            label: 'Commits',
+            data: ["{{data7.0}}", "{{data7.1}}", "{{data7.2}}", "{{data7.3}}", "{{data7.4}}", "{{data7.5}}", "{{data7.6}}"],
+            backgroundColor: [
+            '#17a800', '#17a800', '#17a800', '#17a800', '#17a800', '#17a800',
+            ],
+            fill: false,
+            borderColor: '#17a800',
+        }],
+        labels: ["{{labels7.0}}", "{{labels7.1}}", "{{labels7.2}}", "{{labels7.3}}", "{{labels7.4}}", "{{labels7.5}}", "{{labels7.6}}"]
+        },
+        options: {
+        responsive: true,
+        }
+    };
+    
+      window.onload = function() {
+    
+              var ctx2 = document.getElementById('myChart').getContext('2d');
+              window.myPie2 = new Chart(ctx2, config2);
+
+              var ctx = document.getElementById('myChart2').getContext('2d');
+              window.myPie = new Chart(ctx, config);
+            };
+    
+    
+    
+    </Script>
+
+
+
+
+{% endblock %}

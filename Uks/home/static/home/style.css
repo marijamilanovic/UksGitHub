@@ -314,7 +314,23 @@ nav .navbar-nav li a{
     margin-top: -14%;
   }
 
+  .commit_chart{
+    width: 55%;
+    height: 10%;
+    grid-column-start: 10;
+    grid-column-end: 16;
+    grid-row-start: 1;
+    grid-row-end: 6;
+  }
 
+  .commit_chart2{
+    width: 55%;
+    height: 10%;
+    grid-column-start: 10;
+    grid-column-end: 16;
+    grid-row-start: 8;
+    grid-row-end: 13;
+  }
 
 
 

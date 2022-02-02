@@ -43,7 +43,7 @@
         {% endblock %}
 
         {% block side-commits %}
-        <a href="#about">Commits</a>
+        <a href="{% url 'insights:commits' id=repository.id %}">Commits</a>
         {% endblock %}
 
         {% block side-frequency %}
