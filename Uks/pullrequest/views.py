@@ -88,7 +88,7 @@ def pull_request_page_data(request,id):
     milestones = Milestone.objects.all().filter(repository = repository)
     projects = Project.objects.all().filter(repository = repository)
     issues = Issue.objects.all().filter(repository = repository)
-    connected_issues = get_connected_issues_to_pull_request(request,id, issues)
+    connected_issues = get_connected_issues_to_pull_request(id, issues)
     assignees =  repository.developers
     return pullrequest, repository, comments, emojis, not_assigned_collaborators_on_repository, reviewers, labels, milestones, projects, issues, connected_issues, assignees
 
@@ -182,7 +182,7 @@ def add_assignees_on_pull_request(request, id):
                 pullrequest.assignees.remove(e.id)
                 pullrequest.save()
                 assignees.remove(a)
-    
+    print(pullrequest.prRepository.id)
     for a in assignees:
         user = get_object_or_404(User, username=a)
         pullrequest.assignees.add(user)
@@ -247,7 +247,7 @@ def add_issues_on_pull_request(request, id):
 
     return redirect('/pullrequest/updatePullrequestPage/'+ str(id))
 
-def get_connected_issues_to_pull_request(request, id, issues):
+def get_connected_issues_to_pull_request(id, issues):
     connected_issues = list()
 
     for i in issues:
