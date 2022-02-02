@@ -3,7 +3,6 @@ from hashlib import new
 from imp import reload
 from operator import contains
 from django.shortcuts import render, get_object_or_404, redirect
-from matplotlib.pyplot import title
 from home.views import repository
 from label.models import Label
 
