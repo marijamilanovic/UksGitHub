@@ -107,7 +107,7 @@ if local_mode == True:
             'ENGINE': 'django.db.backends.postgresql_psycopg2',
             'NAME': 'uks',
             'USER': 'postgres',
-            'PASSWORD': 'root',
+            'PASSWORD': '1111',
             'HOST': 'localhost',
             'PORT': 5432,
         }
