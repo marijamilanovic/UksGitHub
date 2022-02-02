@@ -30,36 +30,9 @@
         <a href="{% url 'insights:contributors' id=repository.id days=3 %}">Contributors</a>
         {% endblock %}
 
-        {% block side-community %}
-        <a href="#contact">Community</a>
-        {% endblock %}
-
-        {% block side-communityStandards %}
-        <a href="#about">Community Standards</a>
-        {% endblock %}
-
-        {% block side-traffic %}
-        <a href="#about">Traffic</a>
-        {% endblock %}
 
         {% block side-commits %}
         <a href="{% url 'insights:commits' id=repository.id %}">Commits</a>
-        {% endblock %}
-
-        {% block side-frequency %}
-        <a href="#about">Code frequency</a>
-        {% endblock %}
-
-        {% block side-dependency %}
-        <a href="#about">Dependency graph</a>
-        {% endblock %}
-
-        {% block side-networks %}
-        <a href="#about">Network</a>
-        {% endblock %}
-
-        {% block side-forks %}
-        <a href="#about">Forks</a>
         {% endblock %}
       </div>
 
