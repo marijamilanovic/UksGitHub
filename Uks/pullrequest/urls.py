@@ -4,6 +4,7 @@ from django.conf.urls.static import static
 import comment.views
 import milestone.views
 import issue.views
+import project.views
 
 from . import views
 
@@ -32,5 +33,8 @@ urlpatterns = [
      path('add_issues_on_pull_request/<int:id>', views.add_issues_on_pull_request, name='add_issues_on_pull_request'),
      path('view_issue/<int:id>', issue.views.view_issue, name='view_issue'),
      path('delete_issues_on_pull_request/<int:id>/<int:pr_id>', views.delete_issues_on_pull_request, name='delete_issues_on_pull_request'),
+     path('add_projects_in_pull_request/<int:id>', views.add_projects_in_pull_request, name='add_projects_in_pull_request'),
+     path('delete_projects_on_pull_request/<int:id>/<int:project_id>', views.delete_projects_on_pull_request, name='delete_projects_on_pull_request'),
+     path('getProjectById/<int:id>', project.views.getProjectById, name='getProjectById'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 

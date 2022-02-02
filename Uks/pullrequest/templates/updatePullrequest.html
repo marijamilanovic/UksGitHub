@@ -310,6 +310,34 @@
                     {% endif %}
                 </div>
                 <!--Project -->
+                <hr style="margin-top: 20;"/>
+                <h5>Projects</h5>
+                <form style="margin-top: 20px;" method="POST" action="{% url 'add_projects_in_pull_request' pullrequest.id %}"> 
+                    {% csrf_token %}
+                    <select class="selectpicker" multiple data-live-search="true" name="projects">
+                        <option disabled style="text-align: left;">Suggestions</option>
+                        {% for p in projects %}  
+                            {% if p in pullrequest.projects.all %}
+                                <option  selected disabled>{{p.name}}</option>
+                            {% else %}
+                                <option value="{{p.id}}">{{p.name}}</option>
+                            {% endif %}
+                        {%endfor%}
+                    </select>
+                    <input type="submit"  class="btn btn-success" value="Add">
+                </form>
+                <div style="margin-top: 10;">
+                    {% if pullrequest.projects.all %}
+                        {% for p in pullrequest.projects.all %}
+                            <div class="row" style="width: 200; margin-left: 5; border-color: #A5A4A4;" > 
+                                   <a href="{% url 'getProjectById' id=p.id %}">{{p.name}}</a> <a style="margin-left: 50px;" href="{% url 'delete_projects_on_pull_request' id=pullrequest.id project_id=p.id %}" type="button">{% bs_icon 'x-circle' size='1.5em'%} </a>
+                            </div>       
+                        {% endfor %}
+                    {%else %}
+                        <p style="font-size: 14;">No projects</p>
+                    {% endif %}
+                </div>
+
                 <!--Project -->
                 <!--Milestone -->
                 <hr style="margin-top: 20;"/>

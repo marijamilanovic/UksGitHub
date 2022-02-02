@@ -4,6 +4,7 @@ from sqlite3 import connect
 from xml.etree.ElementTree import Comment
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.models import User
+from project.models import Project
 from repository.views import collaborators
 from .models import MERGED, PULL_REQUEST_STATE, Pullrequest, Repository, Branch
 from comment.models import EMOJI_PICKER
@@ -47,14 +48,10 @@ def addPullrequest(request):
         newPullrequest.save()
         reviewers = add_reviewrs(request, newPullrequest)
         not_assigned_collaborators_on_repository = get_not_assigned_collaborators_on_pull_request(request, reviewers, prRepository)
-        return render(request, "updatePullrequest.html", {
-            'reviewers': reviewers, 
-            'not_assigned_collaborators_on_repository': not_assigned_collaborators_on_repository,
-            'pullrequest': newPullrequest, 
-            'repository': prRepository})
+    return redirect('/pullrequest/updatePullrequestPage/'+ str(newPullrequest.id))
 
 def updatePullrequestPage(request, id):
-    pullrequest, repository, comments, emojis, not_assigned_collaborators_on_repository, reviewers, labels, milestones, issues, connected_issues, assignees = pull_request_page_data(request, id)
+    pullrequest, repository, comments, emojis, not_assigned_collaborators_on_repository, reviewers, labels, milestones, projects, issues, connected_issues, assignees = pull_request_page_data(request, id)
     return render(request, "updatePullrequest.html", {
         'reviewers': reviewers, 
         'not_assigned_collaborators_on_repository': not_assigned_collaborators_on_repository,
@@ -64,6 +61,7 @@ def updatePullrequestPage(request, id):
         "emojis": emojis,
         "labels": labels,
         "milestones": milestones,
+        "projects": projects,
         "issues": issues,
         "connected_issues": connected_issues,
         "assignees": assignees,
@@ -88,10 +86,11 @@ def pull_request_page_data(request,id):
     not_assigned_collaborators_on_repository = get_not_assigned_collaborators_on_pull_request(request, reviewers.all(),repository)
     labels = Label.objects.all().filter(repository = repository)
     milestones = Milestone.objects.all().filter(repository = repository)
+    projects = Project.objects.all().filter(repository = repository)
     issues = Issue.objects.all().filter(repository = repository)
     connected_issues = get_connected_issues_to_pull_request(request,id, issues)
     assignees =  repository.developers
-    return pullrequest, repository, comments, emojis, not_assigned_collaborators_on_repository, reviewers, labels, milestones, issues, connected_issues, assignees
+    return pullrequest, repository, comments, emojis, not_assigned_collaborators_on_repository, reviewers, labels, milestones, projects, issues, connected_issues, assignees
 
 def changeStatusPullrequest(request, id):
     pullrequest = get_object_or_404(Pullrequest, id = id)
@@ -122,7 +121,7 @@ def remove_reviewer_from_pullrequest(request, pullrequest_id, reviewer_id):
     reviewer = User.objects.get(id = reviewer_id)
     if reviewer in pull_request.reviewers.all():
         pull_request.reviewers.remove(reviewer)
-    pullrequest, repository, comments, emojis, not_assigned_collaborators_on_repository, reviewers, labels, milestones, issues, connected_issues, assignees = pull_request_page_data(request, pullrequest_id)
+    pullrequest, repository, comments, emojis, not_assigned_collaborators_on_repository, reviewers, labels, milestones, projects, issues, connected_issues, assignees = pull_request_page_data(request, pullrequest_id)
     return render(request, "updatePullrequest.html", {
         'reviewers': reviewers, 
         'not_assigned_collaborators_on_repository': not_assigned_collaborators_on_repository,
@@ -132,6 +131,7 @@ def remove_reviewer_from_pullrequest(request, pullrequest_id, reviewer_id):
         "emojis": emojis,
         "labels": labels,
         "milestones": milestones,
+        "projects": projects,
         "issues": issues,
         "connected_issues": connected_issues,
         "assignees": assignees})
@@ -204,7 +204,6 @@ def add_labels_on_pull_request(request, id):
     labels = request.POST.getlist('labels')
 
     for label in labels:
-        print(label)
         for l in pullrequest.labels.all():
             if label == l.id:
                 pullrequest.assignees.remove(l.id)
@@ -219,8 +218,6 @@ def add_labels_on_pull_request(request, id):
 
 
 def delete_labels_on_pull_request(request, id, label_id):
-    print(id)
-    print(label_id)
     pullrequest = get_object_or_404(Pullrequest, id=id)
     pullrequest.labels.remove(label_id)
     pullrequest.save()
@@ -267,3 +264,27 @@ def delete_issues_on_pull_request(request, id, pr_id):
     issue.save()
 
     return redirect('/pullrequest/updatePullrequestPage/'+ str(pr_id))
+
+def add_projects_in_pull_request(request, id):
+    pullrequest = get_object_or_404(Pullrequest, id=id)
+    projects = request.POST.getlist('projects')
+
+    for project in projects:
+        for p in pullrequest.projects.all():
+            if project == p.id:
+                pullrequest.assignees.remove(p.id)
+                pullrequest.save()
+                projects.remove(p)
+    
+    for project in projects:
+        pullrequest.projects.add(project)
+        pullrequest.save()
+
+    return redirect('/pullrequest/updatePullrequestPage/'+ str(id))
+
+def delete_projects_on_pull_request(request, id, project_id):
+    pullrequest = get_object_or_404(Pullrequest, id=id)
+    pullrequest.projects.remove(project_id)
+    pullrequest.save()
+
+    return redirect('/pullrequest/updatePullrequestPage/'+ str(id))
