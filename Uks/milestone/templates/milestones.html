@@ -56,8 +56,10 @@
             <p class="card-text" style="margin-top: -40px;">{{m.description}}</p>
             {% if m.due_date_passed %}
             <p class="card-text">{% bs_icon 'exclamation-triangle' size='1em' %} Passed due: {{m.passed_days_count}} days ago</p>
-            {% else %}
+            {% elif m.due_date != None %}
             <p class="card-text">{% bs_icon 'calendar-check' size='1em' %} Due by: {{m.due_date}}</p>
+            {% else %}
+            <p class="card-text">{% bs_icon 'calendar-check' size='1em' %} No due date</p>
             {% endif %}
             <a href="{% url 'getMilestoneById' id=m.id %}" class="link-primary">Edit</a>
             <a href="#" id="{{m.id}}" onclick="askToDeleteMilestoneModal(this.id)" class="link-primary" style="margin-left: 10px;">Delete</a>
@@ -91,6 +93,12 @@
         {%endblock%}
         {% block javascript %}
         <script>
+          document.getElementById('searchAll').style.display = 'none';
+
+          function searchAll(){
+            document.getElementById('searchAll').style.display = 'block';
+            document.getElementById('searchRepo').style.display = 'none';
+          }
           setTimeout(function(){
             if ($('#msg').length > 0) {
               $('#msg').remove();

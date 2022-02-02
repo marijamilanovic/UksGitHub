@@ -80,6 +80,12 @@
     {% endblock %}
     {% block javascript %}
     <script>
+      document.getElementById('searchAll').style.display = 'none';
+
+      function searchAll(){
+        document.getElementById('searchAll').style.display = 'block';
+        document.getElementById('searchRepo').style.display = 'none';
+      }
       setTimeout(function(){
         if ($('#msg').length > 0) {
           $('#msg').remove();
