@@ -15,10 +15,7 @@ from issue.models import Issue
 from branch.models import Branch
 from commit.models import Commit
 from label.models import Label
-
 from django.contrib import messages
-
-
 
 
 @login_required(login_url="login")
@@ -56,7 +53,6 @@ def get_repo_infos(request,id):
     watchers = User.objects.all().filter(user_watchers = repository)
     stargazers = User.objects.all().filter(user_stargazers = repository)
     forks = User.objects.all().filter(user_forks = repository)
-    #to do trebalo bi dodati kreiranje nekih labela 
     forkers,forked_from, forked_repo, repo_copy = find_forkers_info(request,id, repository)
 
     return my_milestones, my_pullrequests,issues,branch_list,default_branch,commit_list,watchers,stargazers,forks,forked_from
@@ -139,12 +135,26 @@ def editRepository(request):
 
 def deleteRepository(request,id):
     repo = Repository.objects.get(id=id)
-    pullrequests = Pullrequest.objects.all()
-    for pr in pullrequests:
-        if pr.prRepository == repo:
-            pr.prRepository = None
+    forks = User.objects.all().filter(user_forks = repo)
+    forkers,forked_from, forked_repo, repo_copy = find_forkers_info(request,id, repo)
     
-    repo.delete()
+    if (forked_repo is not None and forked_repo.id == repo.id):
+        forked_repo.forks.clear()
+        repo_copy.forks.clear()
+        forked_repo.delete()
+    elif (repo_copy is not None and repo_copy.id == repo.id):
+        user = User.objects.get(id=repo_copy.creator.id)
+        forked_repo.forks.remove(user) 
+        repo_copy.forks.clear()
+        repo_copy.delete()
+
+    else:  # ovaj deo je za obican repo
+        pullrequests = Pullrequest.objects.all()
+        for pr in pullrequests:
+            if pr.prRepository == repo:
+                pr.prRepository = None
+        
+        repo.delete()
     messages.success(request, 'Repository has been deleted.')
     return redirect("/repository/all_repositories")
 
@@ -236,9 +246,8 @@ def forkRepository(request,id):
     if request.user not in forks:
         newRepository = Repository(name = repository.name, status = repository.status, creator = request.user)
         newRepository.save()
+        add_initial_labels(newRepository)
         newRepository.developers.add(request.user)
-        #to do dodati i grane i komite od forkovanog u novi
-        #dobavi sve grane od repoa koji se forkuje
         repo_branches = Branch.objects.all().filter(repository = repository)
         for branch in repo_branches:
             if (branch.is_default):
