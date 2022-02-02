@@ -46,7 +46,12 @@ def repository(request, id):
 # def deleteRepository(request, id):
 #     return redirect('/deleteRepository/' + id)
 def get_my_repos(request):
-    return Repository.objects.filter(Q(creator_id=request.user.id) | Q(developers=request.user))
+    repos_creator = Repository.objects.filter(Q(creator_id = request.user.id))
+    repos_collaborators = Repository.objects.filter(Q(developers=request.user))
+    if repos_collaborators:
+        repos_collaborators.union(repos_creator)
+        return repos_collaborators
+    return repos_creator
 
 def get_my_milestones(request):
     return Milestone.objects.all()
