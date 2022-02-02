@@ -2,11 +2,14 @@ from django.db import models
 from django.utils import timezone
 
 from datetime import datetime, timezone
-from task.models import Task
+
 from branch.models import Branch
 from comment.models import Comment
 from repository.models import Repository
 from django.contrib.auth.models import User
+from project.models import Project
+from milestone.models import Milestone
+from label.models import Label
 
 OPENED = "Opened"
 CLOSED = "Closed"
@@ -29,5 +32,11 @@ class Pullrequest(models.Model):
     creator = models.ForeignKey(to=User, null=True, on_delete=models.CASCADE)
     reviewers = models.ManyToManyField(User,related_name='pullrequest_reviewers')
     reviewed = models.BooleanField(default=False)
+    assignees = models.ManyToManyField(User, related_name='pullrequest_assignees')
+    projects = models.ManyToManyField(Project)
+    milestone =models.ManyToManyField(Milestone)
+    labels = models.ManyToManyField(Label)
+
+
     def __str__(self):
         return self.name

@@ -90,7 +90,7 @@ nav .navbar-nav li a{
   margin-left: 15%;
   padding: 0;
   width: 200px;
-  position: fixed;
+  position: absolute;
   height: auto;
   background-color: #f1f1f1;
   
@@ -129,6 +129,7 @@ nav .navbar-nav li a{
   grid-column-end: 7;
   grid-row-start: 5;
   grid-row-end: 8;
+  margin-top: -10%;
 }
 
 .chart_data2{
@@ -138,6 +139,7 @@ nav .navbar-nav li a{
   grid-column-end: 9;
   grid-row-start: 5;
   grid-row-end: 8;
+  margin-top: -10%;
 }
 
 
@@ -290,61 +292,6 @@ nav .navbar-nav li a{
     box-shadow: 0 6px 12px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
   }
 
-  .chart{
-    display: grid;
-    grid-template-rows: repeat(10, 10%);
-    grid-template-rows: repeat(20, 10%);
-  }
-  
-  .info{
-    grid-column-start: 5;
-    grid-row-start: 2;
-  }
-  
-  .chart_up{
-    grid-column-start: 7;
-    grid-row-start: 2;
-  }
-  
-  .chart_data1{
-    width: 70%;
-    height: 70%;
-    margin-left: 15%;
-    grid-column-start: 4;
-    grid-column-end: 7;
-    grid-row-start: 5;
-    grid-row-end: 8;
-  }
-  
-  .chart_data2{
-    width: 70%;
-    height: 70%;
-    grid-column-start: 6;
-    grid-column-end: 9;
-    grid-row-start: 5;
-    grid-row-end: 8;
-  }
-  
-  
-  
-    .code{
-      display: grid;
-      grid-template-columns: repeat(10, auto);
-      padding: 2%;
-  }
-  
-  
-  .code-item1{
-      color: brown;
-      grid-column-start: 2;
-  
-  }
-  
-  
-  .code-item2{
-      grid-column-start: 4;
-      margin-top: 3%;
-  }
 
   .contributors_chart{
     width: 70%;
@@ -354,6 +301,39 @@ nav .navbar-nav li a{
     grid-row-start: 5;
     grid-row-end: 8;
   }
+
+  .reports a{
+    display: block;
+  }
+
+  .reports{
+    grid-column-start: 5;
+    grid-column-end: 9;
+    grid-row-start: 14;
+    grid-row-end: 18;
+    margin-top: -14%;
+  }
+
+  .commit_chart{
+    width: 55%;
+    height: 10%;
+    grid-column-start: 10;
+    grid-column-end: 16;
+    grid-row-start: 1;
+    grid-row-end: 6;
+  }
+
+  .commit_chart2{
+    width: 55%;
+    height: 10%;
+    grid-column-start: 10;
+    grid-column-end: 16;
+    grid-row-start: 8;
+    grid-row-end: 13;
+  }
+
+
+
 
 
 

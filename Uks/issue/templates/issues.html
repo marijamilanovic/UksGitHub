@@ -28,9 +28,114 @@
 
 
     {% block page_content %}
-        <div class="tab-pane container active" id="milestones">
+    <div class="row">
+        <div class="tab-pane container active" id="milestones" style="margin-right: auto;">
           {% include 'messages.html' %}
-          <a href="{% url 'new_issue' repo_id=repository.id %}" style="margin-left: 900px; margin-top: -25px;" type="button" class="btn btn-success" >New issue</a>
+          <div class="row">
+                {% csrf_token %}
+              <select id="assignees" >
+                <option value=>Assignee</option>
+                {% for assignee in assignees %}
+                <option id= "{{assignee.id}}" value="{{assignee}}" >{{ assignee.username }}</option>
+                {% endfor %}
+                <script>
+                  document.getElementById('assignees').addEventListener("change", function() {
+                    var username = this.value;
+                    console.log(username);
+                    var data_to_send = "assigned:"+username
+                    var url_mask = "{% url 'filter_issues' repo_id=repository.id pk=12345 %}".replace(/12345/, data_to_send.toString());
+                    window.location.href = url_mask
+                  });
+                </script>
+            </select>
+            <select id="author" >
+              <option value=>Author</option>
+              {% for assignee in assignees %}
+              <option id= "{{assignee.id}}" value="{{assignee}}" >{{ assignee.username }}</option>
+              {% endfor %}
+              <script>
+                document.getElementById('author').addEventListener("change", function() {
+                  var username = this.value;
+                  console.log(username);
+                  var data_to_send = "author:"+username
+                  var url_mask = "{% url 'filter_issues' repo_id=repository.id pk=12345 %}".replace(/12345/, data_to_send.toString());
+                  window.location.href = url_mask
+                });
+              </script>
+            </select>
+            <select id="milestone" >
+              <option value=>Milestones</option>
+              {% for milestone in milestones %}
+              <option id= "{{milestones.id}}" value="{{milestone.title}}" >{{ milestone.title }}</option>
+              {% endfor %}
+              <script>
+                document.getElementById('milestone').addEventListener("change", function() {
+                  var username = this.value;
+                  console.log(username);
+                  var data_to_send = "milestone:"+username
+                  var url_mask = "{% url 'filter_issues' repo_id=repository.id pk=12345 %}".replace(/12345/, data_to_send.toString());
+                  window.location.href = url_mask
+                });
+              </script>
+            </select>
+            <select id="projects" >
+              <option value=>Projects</option>
+              {% for project in projects %}
+              <option id= "{{project.id}}" value="{{project.name}}" >{{ project.name }}</option>
+              {% endfor %}
+              <script>
+                document.getElementById('projects').addEventListener("change", function() {
+                  var username = this.value;
+                  console.log(username);
+                  var data_to_send = "project:"+username
+                  var url_mask = "{% url 'filter_issues' repo_id=repository.id pk=12345 %}".replace(/12345/, data_to_send.toString());
+                  window.location.href = url_mask
+                });
+              </script>
+            </select>
+            <select id="labels2" >
+                  <option value=>Labels</option>
+                  {% for label in labels %}
+                  <option id= "{{label.id}}" value="{{label.name}}" >{{ label.name }}</option>
+                  {% endfor %}
+                  <script>
+                    document.getElementById('labels2').addEventListener("change", function() {
+                      var username = this.value;
+                      console.log(username);
+                      var data_to_send = "label:"+username
+                      var url_mask = "{% url 'filter_issues' repo_id=repository.id pk=12345 %}".replace(/12345/, data_to_send.toString());
+                      window.location.href = url_mask
+                    });
+                  </script>
+              </select>
+            <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search for names..">
+            <a href="{% url 'new_issue' repo_id=repository.id %}" style="margin-left: 900px; margin-top: -25px; margin-bottom: 3;" type="button" class="btn btn-success" >New issue</a>
+          </div>
+          <script>
+            var input = document.getElementById("myInput");
+            input.addEventListener("keydown", function (e) {
+             if (e.key === "Enter") {  
+               validate(e);
+             }
+           });
+            
+            function validate(e) {
+              var text_value
+              console.log("fjdsklj")
+              console.log(e.target.value)
+              if(e.target.value === ""){
+                text_value = 'pocetak';
+              }else{
+                
+                text_value = e.target.value;
+              }
+              text_value = e.target.value;
+              var url_mask = "{% url 'filter_issues' repo_id=repository.id pk=12345 %}".replace(/12345/, text_value.toString());
+             window.location.href = url_mask
+             alert(text);
+           }
+         </script>
+          
         {% if issues %}
         <div class="accordion" id="accordionExample">
             <div class="card">

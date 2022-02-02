@@ -13,7 +13,7 @@ class IssueModelTest(TestCase):
     def setUp(self):
         user = User.objects.create(username='testuser1')
         repository = Repository.objects.create(id= 1, name='Repo1', status='public', creator = user)
-        collaborator1 = User.objects.create(id=1, username='collaborator1')
+        collaborator1 = User.objects.create(id=15, username='collaborator1')
         repository.developers.add(collaborator1)
         Iss.objects.create(id='1', issue_title='Issue', description = 'TestIssue', repository = repository)
         Milestone.objects.create(id = 1, title = 'Milestone1', description = 'first milestone', status = 'Opened', created=date.today(), due_date=date.today(), repository = repository)
