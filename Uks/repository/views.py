@@ -121,10 +121,13 @@ def add_initial_labels(newRepository):
     invalid_label = Label(name = 'invalid', description = "This doesn't seem right", color = '#7efa19', repository = newRepository)
     invalid_label.save()  
 
-
+@login_required(login_url="login")
 def transferToEditRepository(request,id):
     repo = Repository.objects.get(id = id)
-    return render(request, "repository/editRepository.html", {'repository':repo})
+    if request.user.id == repo.creator_id:
+        return render(request, "repository/editRepository.html", {'repository':repo})
+    else:
+        return HttpResponse('401 Unauthorized', status=401)
 
 def editRepository(request):
     id = request.POST['id']
@@ -137,22 +140,26 @@ def editRepository(request):
     messages.success(request, 'Repository has been updated.')
     return redirect("/repository/all_repositories")
 
+@login_required(login_url="login")
 def deleteRepository(request,id):
     repo = Repository.objects.get(id=id)
-    pullrequests = Pullrequest.objects.all()
-    for pr in pullrequests:
-        if pr.prRepository == repo:
-            pr.prRepository = None
-    
-    repo.delete()
-    messages.success(request, 'Repository has been deleted.')
-    return redirect("/repository/all_repositories")
+    if request.user.id == repo.creator_id:
+        pullrequests = Pullrequest.objects.all()
+        for pr in pullrequests:
+            if pr.prRepository == repo:
+                pr.prRepository = None
+        repo.delete()
+        messages.success(request, 'Repository has been deleted.')
+        return redirect("/repository/all_repositories")
+    else:
+        return HttpResponse('401 Unauthorized', status=401)
 
 def get_my_pullrequests(request, id):
     repository = get_object_or_404(Repository, id=id)
     pullrequests = Pullrequest.objects.all().filter(prRepository=repository)
     return pullrequests
 
+@login_required(login_url="login")
 def all_repositories(request):
     #prikazuju se samo koje je kreirao
     #koristi se na profilnoj stranici

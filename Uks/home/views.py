@@ -38,6 +38,7 @@ def get_all_users():
     return User.objects.all()
 
 def repository(request, id):
+    print(id)
     return redirect('/repository/' + id)
 
 # def editRepository(request, id):
@@ -55,4 +56,11 @@ def get_my_repos(request):
 
 def get_my_milestones(request):
     return Milestone.objects.all()
+
+def can_user_access_private_repo(request, repository):
+    if request.user.id == repository.creator_id or Repository.objects.filter(developers=request.user.id).exists():
+        print(Repository.objects.filter(developers=request.user.id))
+        return True
+    else:
+        return False
 
