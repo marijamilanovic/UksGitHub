@@ -14,8 +14,10 @@ from milestone.models import Milestone
 from issue.models import Issue
 from branch.models import Branch
 from commit.models import Commit
-from django.contrib import messages
 from label.models import Label
+
+from django.contrib import messages
+
 
 
 
@@ -51,6 +53,7 @@ def get_repo_infos(request,id):
     branch_list = Branch.objects.all().filter(repository = id)
     default_branch = Branch.objects.all().filter(is_default = True, repository = repository)[0]  
     commit_list = Commit.objects.all().filter(branch = default_branch)
+    print(commit_list)
     watchers = User.objects.all().filter(user_watchers = repository)
     stargazers = User.objects.all().filter(user_stargazers = repository)
     forks = User.objects.all().filter(user_forks = repository)
@@ -355,6 +358,7 @@ def add_collaborator(request, id, developer_id):
          'collaborators': only_collaborators, 'developers':not_added_developers})
 
 def add_collaborator_on_repository(repository, developer):
+    repository.save()
     repository.developers.add(developer)
     collaborators = User.objects.all().filter(user_developers = repository)
     return collaborators

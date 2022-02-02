@@ -63,51 +63,51 @@
                 });
               </script>
             </select>
-              <select id="milestone" >
-                <option value=>Milestones</option>
-                {% for milestone in milestones %}
-                <option id= "{{milestones.id}}" value="{{milestone.id}}" >{{ milestone.title }}</option>
-                {% endfor %}
-                <script>
-                  document.getElementById('milestone').addEventListener("change", function() {
-                    var username = this.value;
-                    console.log(username);
-                    var data_to_send = "milestone:"+username
-                    var url_mask = "{% url 'filter_issues' repo_id=repository.id pk=12345 %}".replace(/12345/, data_to_send.toString());
-                    window.location.href = url_mask
-                  });
-                </script>
-          </select>
-          <select id="projects" >
-            <option value=>Projects</option>
-            {% for project in milestones %}
-            <option id= "{{project.id}}" value="{{project}}" >{{ projects.name }}</option>
-            {% endfor %}
-            <script>
-              document.getElementById('milestones').addEventListener("change", function() {
-                var username = this.id;
-                console.log(username);
-                var data_to_send = "project:"+username
-                var url_mask = "{% url 'filter_issues' repo_id=repository.id pk=12345 %}".replace(/12345/, data_to_send.toString());
-                window.location.href = url_mask
-              });
-            </script>
-          </select>
-            <select id="labels" >
-              <option value=>Labels</option>
-              {% for label in labels %}
-              <option id= "{{label.id}}" value="{{label}}" >{{ label.name }}</option>
+            <select id="milestone" >
+              <option value=>Milestones</option>
+              {% for milestone in milestones %}
+              <option id= "{{milestones.id}}" value="{{milestone.title}}" >{{ milestone.title }}</option>
               {% endfor %}
               <script>
-                document.getElementById('labels').addEventListener("change", function() {
-                  var username = this.id;
+                document.getElementById('milestone').addEventListener("change", function() {
+                  var username = this.value;
                   console.log(username);
-                  var data_to_send = "label:"+username
+                  var data_to_send = "milestone:"+username
                   var url_mask = "{% url 'filter_issues' repo_id=repository.id pk=12345 %}".replace(/12345/, data_to_send.toString());
                   window.location.href = url_mask
                 });
               </script>
-          </select>
+            </select>
+            <select id="projects" >
+              <option value=>Projects</option>
+              {% for project in projects %}
+              <option id= "{{project.id}}" value="{{project.name}}" >{{ project.name }}</option>
+              {% endfor %}
+              <script>
+                document.getElementById('projects').addEventListener("change", function() {
+                  var username = this.value;
+                  console.log(username);
+                  var data_to_send = "project:"+username
+                  var url_mask = "{% url 'filter_issues' repo_id=repository.id pk=12345 %}".replace(/12345/, data_to_send.toString());
+                  window.location.href = url_mask
+                });
+              </script>
+            </select>
+            <select id="labels2" >
+                  <option value=>Labels</option>
+                  {% for label in labels %}
+                  <option id= "{{label.id}}" value="{{label.name}}" >{{ label.name }}</option>
+                  {% endfor %}
+                  <script>
+                    document.getElementById('labels2').addEventListener("change", function() {
+                      var username = this.value;
+                      console.log(username);
+                      var data_to_send = "label:"+username
+                      var url_mask = "{% url 'filter_issues' repo_id=repository.id pk=12345 %}".replace(/12345/, data_to_send.toString());
+                      window.location.href = url_mask
+                    });
+                  </script>
+              </select>
             <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search for names..">
             <a href="{% url 'new_issue' repo_id=repository.id %}" style="margin-left: 900px; margin-top: -25px; margin-bottom: 3;" type="button" class="btn btn-success" >New issue</a>
           </div>
@@ -121,7 +121,9 @@
             
             function validate(e) {
               var text_value
-              if(e.target.value === ''){
+              console.log("fjdsklj")
+              console.log(e.target.value)
+              if(e.target.value === ""){
                 text_value = 'pocetak';
               }else{
                 
@@ -148,11 +150,41 @@
                 <div class="card-body">
                     {% for issue in issues %}
                         {% if issue.state == 'Opened' %}
-                            <a href="{% url 'delete_issue' id=issue.id %}" class="link-primary" style="position:absolute; margin-left: 900px;">❌</a>
-                            <a  class="nav-link" href="{% url 'view_issue' id=issue.id %}">
-                                    <img src="https://img.icons8.com/external-vitaliy-gorbachev-flat-vitaly-gorbachev/58/000000/external-open-sales-vitaliy-gorbachev-flat-vitaly-gorbachev.png" style="width: 30px;height: 30px;"/>
-                                &nbsp;&nbsp;&nbsp;{{issue.issue_title}}
-                            </a>
+                            <a href="#" id="{{issue.id}}" onclick="askToDeleteIssueModal(this.id)" class="link-primary" style="position:absolute; margin-left: 900px;">❌</a>
+                            <!-- DELETE MODAL -->
+                            <div class="modal" id="delete_{{issue.id}}" tabindex="-1" role="dialog">
+                              <div class="modal-dialog modal-dialog-centered" role="document">
+                                <div class="modal-content">
+                                  <div class="modal-header">
+                                    <h5 class="modal-title">Delete</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                      <span aria-hidden="true">&times;</span>
+                                    </button>
+                                  </div>
+                                  <div class="modal-body">
+                                    <p>Do you want to delete issue ({{issue.issue_title}}) ?</p>
+                                  </div>
+                                  <div class="modal-footer">
+                                    <a class="btn btn-primary" href="{% url 'delete_issue' id=issue.id %}" role="button">Yes</a>
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                            <div >
+                              <a  class="nav-link" href="{% url 'view_issue' id=issue.id %}" style="display: inline-block;">
+                                <img src="https://img.icons8.com/external-vitaliy-gorbachev-flat-vitaly-gorbachev/58/000000/external-open-sales-vitaliy-gorbachev-flat-vitaly-gorbachev.png" style="width: 30px;height: 30px;"/>
+                                &nbsp;&nbsp;&nbsp;{{issue.issue_title}}&nbsp;&nbsp;&nbsp; 
+                              </a>
+                              <span>
+                                {% for lab in issue.labels.all %}
+                                <span class="badge badge-pill d-inline-flex align-items-center justify-content-center  "
+                                style="margin-top: 5px; margin-left: 5px; font-size: 0.9em;  height: 30px;display: inline-block;  
+                                background-color: {{ lab.color }}">{{lab.name}}
+                                </span>
+                                {% endfor %}
+                              </span>
+                            </div>
                             <small style="margin-left: 60px;color: gray;">
                                 opened by <b>{{issue.opened_by}}</b>
                                 {% if issue.assignees.all %}
@@ -184,14 +216,42 @@
                 <div class="card-body">
                     {% for issue in issues %}
                         {% if issue.state == 'Close' %}
-                            <a href="{% url 'delete_issue' id=issue.id %}" class="link-primary" style="position:absolute; margin-left: 900px;">❌</a>
-                            <a  class="nav-link" href="{% url 'view_issue' id=issue.id %}">
+                            <a href="#" id="{{issue.id}}" onclick="askToDeleteClosedIssueModal(this.id)" class="link-primary" style="position:absolute; margin-left: 900px;">❌</a>
+                            <!-- DELETE MODAL -->
+                            <div class="modal" id="delete_{{issue.id}}" tabindex="-1" role="dialog">
+                              <div class="modal-dialog modal-dialog-centered" role="document">
+                                <div class="modal-content">
+                                  <div class="modal-header">
+                                    <h5 class="modal-title">Delete</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                      <span aria-hidden="true">&times;</span>
+                                    </button>
+                                  </div>
+                                  <div class="modal-body">
+                                    <p>Do you want to delete issue ({{issue.issue_title}}) ?</p>
+                                  </div>
+                                  <div class="modal-footer">
+                                    <a class="btn btn-primary" href="{% url 'delete_issue' id=issue.id %}" role="button">Yes</a>
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                            <div>
+                              <a  class="nav-link" href="{% url 'view_issue' id=issue.id %}" style="display: inline-block;">
                                 <img src="https://img.icons8.com/color/48/000000/checkmark--v1.png" style="width: 30px;height: 30px;"/>
                                 &nbsp;&nbsp;&nbsp;{{issue.issue_title}}
-                                <small style="color: gray;">
-                                    / {{issue.repository.name}}
-                                </small>
-                            </a>
+                              </a>
+                              <span>
+                                {% for lab in issue.labels.all %}
+                                <span class="badge badge-pill d-inline-flex align-items-center justify-content-center  "
+                                style="margin-top: 5px; margin-left: 5px; font-size: 0.9em;  height: 30px;display: inline-block;  
+                                background-color: {{ lab.color }}">{{lab.name}}
+                                </span>
+                                {% endfor %}
+                              </span>
+                            </div>
+                            
                             <small style="margin-left: 60px;color: gray;">
                                 opened by <b>{{issue.opened_by}}</b>
                                 {% if issue.assignees.all %}
@@ -211,21 +271,27 @@
                 </div>
               </div>
             </div>
+            
         </div>
         {% else %}
         <p>There are no issues yet.</p>
         {% endif %}
         </div>
         {%endblock%}
-    {% block javascript %}
-      <script>
-        setTimeout(function(){
-          if ($('#msg').length > 0) {
-            $('#msg').remove();
-          }
-        }, 2000)
-      </script>
-    </div>
+  {% block javascript %}
+  <script>
+    setTimeout(function(){
+      if ($('#msg').length > 0) {
+        $('#msg').remove();
+      }
+    }, 2000)
+    function askToDeleteIssueModal(id) {
+        $('#delete_' + id).modal('show')
+    }
+    function askToDeleteClosedIssueModal(id) {
+        $('#delete_' + id).modal('show')
+    }
+  </script>
   {% endblock %}
 </body>
 </html>
