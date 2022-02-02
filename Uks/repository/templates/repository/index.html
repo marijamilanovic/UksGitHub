@@ -48,7 +48,7 @@
     <div style="background-color:  rgb(243, 243, 243); height: 65px;">
 
     <!--Style if forked repo-->
-    {% if repository.is_repo_forked and  repository.is_repo_forked != request.user.id %}
+    {% if repository.is_repo_forked|first and  repository.is_repo_forked|first != request.user.id %}
     <span style="margin-left: 20px;">{% bs_icon 'diagram-2' size='1.4em' %}</span>
     <a href="{% url 'profile' %}" style="font-size: large; margin-left: 5px; margin-top: 15px; display:inline-block;"> {{repository.creator}} </a>
     <span style="font-size: large;">/</span>
@@ -57,7 +57,7 @@
     style="font-size: 0.8em; margin-left: 10px; height: 22px;" >{{repository.status}}
     </span>
     <div style=" margin-left: 50px; margin-top: 1px;">
-    <small >forked from {{forked_from}}/{{repository.name}}</small>
+    <small >forked from {{repository.is_repo_forked|first}}/{{repository.is_repo_forked|last}}</small>
     {% if message %}
     <small style="margin-left: 990px; color: red;" >{{message}}</small>
     {% endif %}

@@ -30,7 +30,6 @@
                     <a href="{% url 'visit_profile' id=forker.id %}" data-toggle="tooltip" title="Forker" style="font-size: large;"> <span style="color: black;"> {% bs_icon 'person-circle' size='1.7em' %}</span>  {{forker}}</a>
                     <a href="{% url 'repository' id=repo_copy.id  %}" style="font-size: large;">/{{repo_copy.name}}</a>
                     </div>
-                </div>
                 </li>
                   {% endfor %}
                 </ul>

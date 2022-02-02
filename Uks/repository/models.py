@@ -37,16 +37,15 @@ class Repository(models.Model):
         return self.stargazers.count()
 
     def is_repo_forked(self):
-        forks = self.forks.count()
-        forkers = self.forks.get()
         repos_with_same_name = Repository.objects.all().filter(name = self.name)
-        user = get_object_or_404(User, username=forkers)
         forkersRepo = User.objects.all().filter(user_forks = self)
         forked_from = None
+        forked_repo = None
         for f in forkersRepo:
             if (f.id == self.creator.id):
                 for r in repos_with_same_name:
                     if (r.creator.id != self.creator.id):
+                        forked_repo = r
                         forked_from = get_object_or_404(User, id=r.creator.id)
                         break
                     else:
@@ -56,11 +55,13 @@ class Repository(models.Model):
                     for r in repos_with_same_name:
                         if (r.creator.id != self.creator.id): 
                             forked_from = get_object_or_404(User, id=r.creator.id)
-                        else:
-                            forked_from = get_object_or_404(User, id=repo.creator.id)
+                            forked_repo = r
+                        else: 
+                            forked_from = get_object_or_404(User, id=r.creator.id)
+                            forked_repo = repository
                             break
-        
-        return forked_from
+
+        return forked_from, forked_repo
 
 
     

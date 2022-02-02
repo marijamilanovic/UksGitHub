@@ -27,4 +27,17 @@ jobs:
         pip install -r requirements.txt
     - name: Run Tests
       run: |
-        python ./Uks/manage.py test
+        cd Uks
+        python manage.py test branch.tests --noinput
+        python manage.py test comment.tests --noinput
+        python manage.py test commit.tests --noinput
+        python manage.py test home.tests --noinput
+        python manage.py test insights.tests --noinput
+        python manage.py test issue.tests --noinput
+        python manage.py test label.tests --noinput
+        python manage.py test milestone.tests --noinput
+        python manage.py test project.tests --noinput
+        python manage.py test pullrequest.tests --noinput
+        python manage.py test repository.tests --noinput
+        python manage.py test user.tests --noinput
+
