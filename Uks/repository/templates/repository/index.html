@@ -113,15 +113,9 @@
       {% endblock %}
 
       {% block navIssues %}
-      {% if repository.is_repo_forked and  repository.is_repo_forked != request.user.id %}
-      <li class="nav-item" hidden>
-        <a class="nav-link"  id="issues" style="color: black;" href="{% url 'issues' id=repository.id  %}">{% bs_icon 'record-circle' size='1em' %} Issues</a>
-      </li>
-      {% else %}
       <li class="nav-item" >
         <a class="nav-link"  id="issues" style="color: black;" href="{% url 'issues' id=repository.id  %}">{% bs_icon 'record-circle' size='1em' %} Issues</a>
       </li>
-      {% endif %}
       {% endblock %}
 
       {% block navMilestones %}
@@ -153,7 +147,7 @@
         <a class="nav-link" id="insights" style="color: black;" href="{% url 'insights:pulse' id=repository.id days=1  %}">{% bs_icon 'graph-up' size='1.3em' %} Insights</a>
       </li>
       {% endblock %}
-      {% if logged_user_id == repository.creator_id %}
+      {% if request.user.id == repository.creator_id %}
         {% block navCollaborator %}
         <li class="nav-item">
           <a class="nav-link" id="collaborators" style="color: black;" href="{% url 'collaborators' id=repository.id  %}">{% bs_icon 'gear' size='1.3em' %} Collaborators</a>

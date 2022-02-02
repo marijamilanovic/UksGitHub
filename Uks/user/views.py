@@ -8,12 +8,16 @@ from commit.models import Commit
 from branch.models import Branch
 
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.http import HttpResponse
 
 # Create your views here.
 def welcome(request):
     return render(request, 'welcome.html', {})
 
 def loginUser(request):
+
+    ok_login = False
 
     if request.method == 'POST':
         username = request.POST.get('username')
@@ -23,11 +27,13 @@ def loginUser(request):
 
         if user is not None:
             login(request, user)
+            ok_login = True
             return redirect('/home/')
         else:
+            ok_login = False
             messages.info(request, "Invalid username or password")
 
-    context = {}
+    context = {'ok_login': ok_login}
     return render(request, 'login.html', context)
 
 def logoutUser(request):
@@ -225,20 +231,32 @@ def edit_user(request, id):
     user.save()
     messages.success(request, 'User has been updated.')
     return redirect("../home/profile")
-   
+
+@login_required(login_url="login")
 def go_to_edit_user(request, id):
-    user = User.objects.get(id = id)
-    return render(request, 'edit_user.html',{"user_to_edit" : user})
+    if request.user.is_superuser:
+        user = User.objects.get(id = id)
+        return render(request, 'edit_user.html',{"user_to_edit" : user})
+    else:
+        return HttpResponse('401 Unauthorized', status=401)
 
+@login_required(login_url="login")
 def delete_user(request, id):
-    user = User.objects.get(id = id)
-    user.delete()
-    messages.success(request, 'User has been deleted.')
-    return redirect("/all_users")
+    if request.user.is_superuser:
+        user = User.objects.get(id = id)
+        user.delete()
+        messages.success(request, 'User has been deleted.')
+        return redirect("/all_users")
+    else:
+        return HttpResponse('401 Unauthorized', status=401)
 
+@login_required(login_url="login")
 def all_users(request):
-    users = User.objects.all()
-    return render(request, "all_users.html",{"all_users":users})
+    if request.user.is_superuser:
+        users = User.objects.all()
+        return render(request, "all_users.html",{"all_users":users})
+    else:
+        return HttpResponse('401 Unauthorized', status=401)
 
 def checkUsers(words):
     users = []

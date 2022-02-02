@@ -50,6 +50,7 @@ def get_repo_infos(request,id):
     branch_list = Branch.objects.all().filter(repository = id)
     default_branch = Branch.objects.all().filter(is_default = True, repository = repository)[0]  
     commit_list = Commit.objects.all().filter(branch = default_branch)
+    print(commit_list)
     watchers = User.objects.all().filter(user_watchers = repository)
     stargazers = User.objects.all().filter(user_stargazers = repository)
     forks = User.objects.all().filter(user_forks = repository)
@@ -117,10 +118,13 @@ def add_initial_labels(newRepository):
     invalid_label = Label(name = 'invalid', description = "This doesn't seem right", color = '#7efa19', repository = newRepository)
     invalid_label.save()  
 
-
+@login_required(login_url="login")
 def transferToEditRepository(request,id):
     repo = Repository.objects.get(id = id)
-    return render(request, "repository/editRepository.html", {'repository':repo})
+    if request.user.id == repo.creator_id:
+        return render(request, "repository/editRepository.html", {'repository':repo})
+    else:
+        return HttpResponse('401 Unauthorized', status=401)
 
 def editRepository(request):
     id = request.POST['id']
@@ -133,36 +137,42 @@ def editRepository(request):
     messages.success(request, 'Repository has been updated.')
     return redirect("/repository/all_repositories")
 
+@login_required(login_url="login")
 def deleteRepository(request,id):
     repo = Repository.objects.get(id=id)
     forks = User.objects.all().filter(user_forks = repo)
     forkers,forked_from, forked_repo, repo_copy = find_forkers_info(request,id, repo)
-    
-    if (forked_repo is not None and forked_repo.id == repo.id):
-        forked_repo.forks.clear()
-        repo_copy.forks.clear()
-        forked_repo.delete()
-    elif (repo_copy is not None and repo_copy.id == repo.id):
-        user = User.objects.get(id=repo_copy.creator.id)
-        forked_repo.forks.remove(user) 
-        repo_copy.forks.clear()
-        repo_copy.delete()
 
-    else:  # ovaj deo je za obican repo
-        pullrequests = Pullrequest.objects.all()
-        for pr in pullrequests:
-            if pr.prRepository == repo:
-                pr.prRepository = None
+    if request.user.id == repo.creator_id:
+    
+        if (forked_repo is not None and forked_repo.id == repo.id):
+            forked_repo.forks.clear()
+            repo_copy.forks.clear()
+            forked_repo.delete()
+        elif (repo_copy is not None and repo_copy.id == repo.id):
+            user = User.objects.get(id=repo_copy.creator.id)
+            forked_repo.forks.remove(user) 
+            repo_copy.forks.clear()
+            repo_copy.delete()
+
+        else:  # ovaj deo je za obican repo
+            pullrequests = Pullrequest.objects.all()
+            for pr in pullrequests:
+                if pr.prRepository == repo:
+                    pr.prRepository = None
         
-        repo.delete()
-    messages.success(request, 'Repository has been deleted.')
-    return redirect("/repository/all_repositories")
+            repo.delete()
+        messages.success(request, 'Repository has been deleted.')
+        return redirect("/repository/all_repositories")
+    else:
+        return HttpResponse('401 Unauthorized', status=401)
 
 def get_my_pullrequests(request, id):
     repository = get_object_or_404(Repository, id=id)
     pullrequests = Pullrequest.objects.all().filter(prRepository=repository)
     return pullrequests
 
+@login_required(login_url="login")
 def all_repositories(request):
     #prikazuju se samo koje je kreirao
     #koristi se na profilnoj stranici
@@ -180,7 +190,6 @@ def repo_branch(request, id, branch_id):
     branch_list = Branch.objects.all().filter(repository = id)
     branch = get_object_or_404(Branch, id = branch_id)
     commit_list = Commit.objects.all().filter(branch = branch)
-    print(commit_list)
     return render(request, "repository/index.html", {
         'repository':repository,
         'milestones': my_milestones,
@@ -334,8 +343,6 @@ def collaborators(request, id):
     return render(request, "repository/collaborators.html",{'repository':repository, 'collaborators':only_collaborators,'selected_developer': selected_developer, 'developers':not_added_developers, 'logged_user_id': request.user.id})
 
 def repo_developer(request, id, developer_id):
-    print("repo developer")
-    print(developer_id)
     template = loader.get_template('repository/collaborators.html')
     repository = Repository.objects.get(id=id)
     developers = User.objects.all()
@@ -356,11 +363,10 @@ def repo_developer(request, id, developer_id):
         'collaborators':only_collaborators, 'developers':not_added_developers})
 
 def add_collaborator(request, id, developer_id):
-    print(developer_id)
     repository = Repository.objects.get(id = id)
     developer = User.objects.get(id = developer_id)
     developers = User.objects.all()
-    collaborators =add_collaborator_on_repository(repository, developer)    
+    collaborators = add_collaborator_on_repository(repository, developer)    
     only_collaborators = []
     for collab in collaborators:
         if collab.id != repository.creator.id:
@@ -373,20 +379,18 @@ def add_collaborator(request, id, developer_id):
         selected_developer = not_added_developers[0]
     else:
         selected_developer = User.objects.first()
-    print('id narednog posle dodavanja je ')
-    print(selected_developer)
     return render(request,"repository/collaborators.html",{
          'repository':repository,
          'selected_developer': selected_developer,
          'collaborators': only_collaborators, 'developers':not_added_developers})
 
 def add_collaborator_on_repository(repository, developer):
+    repository.save()
     repository.developers.add(developer)
     collaborators = User.objects.all().filter(user_developers = repository)
     return collaborators
 
 def remove_collaborator(request, id, developer_id):
-    print(developer_id)
     repository = Repository.objects.get(id = id)
     developer = User.objects.get(id = developer_id)
     remove_collaborato_from_repository(repository, developer)
@@ -435,7 +439,6 @@ def search_in_this_repo(request, id):
 def checkIssues(words, repository):
     issues = []
     all_repo_issues = Issue.objects.all().filter(repository = repository)
-    print(len(all_repo_issues))
     for issue in all_repo_issues:
             for word in words:
                 if (word.lower() in issue.issue_title.lower() or word.lower() in issue.description.lower() ):

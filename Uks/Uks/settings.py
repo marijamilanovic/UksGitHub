@@ -98,7 +98,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'Uks.wsgi.application'
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
-
+CSRF_TRUSTED_ORIGINS = ['http://localhost:8083/', 'http://localhost:8080/', 'http://127.0.0.1:8080/', 'http://127.0.0.1:8083/']
 
 
 if local_mode == True:
