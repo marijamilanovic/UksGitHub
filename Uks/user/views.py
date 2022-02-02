@@ -15,6 +15,8 @@ def welcome(request):
 
 def loginUser(request):
 
+    ok_login = False
+
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
@@ -23,11 +25,13 @@ def loginUser(request):
 
         if user is not None:
             login(request, user)
+            ok_login = True
             return redirect('/home/')
         else:
+            ok_login = False
             messages.info(request, "Invalid username or password")
 
-    context = {}
+    context = {'ok_login': ok_login}
     return render(request, 'login.html', context)
 
 def logoutUser(request):
