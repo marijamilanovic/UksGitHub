@@ -35,8 +35,10 @@
                     <div class="card-body">
                     <h5 class="card-title">{{repo.name}}</h5>
                     <a href="{% url 'repository' id=repo.id %}">Open</a>
-                    <a href="{% url 'transferToEditRepository' id=repo.id %}" style="margin-left: 10px;">Edit</a>
-                    <a href="{% url 'deleteRepository' id=repo.id %}" style="margin-left: 10px;">Delete</a>
+                    {% if request.user.id == repo.creator_id %}
+                        <a href="{% url 'transferToEditRepository' id=repo.id %}" style="margin-left: 10px;">Edit</a>
+                        <a href="{% url 'deleteRepository' id=repo.id %}" style="margin-left: 10px;">Delete</a>
+                    {% endif %}
                     </div>
                 </div>
                 {% endfor %}
