@@ -17,7 +17,7 @@ from .models import Branch
 from django.core.exceptions import ValidationError
 
 
-
+@login_required(login_url="login")
 def createBranch(request, id):
     form = BranchForm()
     print('FORM DATA:', id) 
@@ -58,7 +58,7 @@ def createBranch(request, id):
     return render(request, "branch/createBranch.html", context)
     
 
-
+@login_required(login_url="login")
 def branchList(request):
     branch_list = Branch.objects.all() 
     context = {

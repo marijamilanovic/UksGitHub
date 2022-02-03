@@ -18,7 +18,6 @@ from label.models import Label
 from django.contrib import messages
 
 
-@login_required(login_url="login")
 def index(request, id):
     template = loader.get_template('repository/index.html')
     repository = Repository.objects.get(id=id)
@@ -50,7 +49,6 @@ def get_repo_infos(request,id):
     branch_list = Branch.objects.all().filter(repository = id)
     default_branch = Branch.objects.all().filter(is_default = True, repository = repository)[0]  
     commit_list = Commit.objects.all().filter(branch = default_branch)
-    print(commit_list)
     watchers = User.objects.all().filter(user_watchers = repository)
     stargazers = User.objects.all().filter(user_stargazers = repository)
     forks = User.objects.all().filter(user_forks = repository)
@@ -76,9 +74,13 @@ def get_issues_by_repo(request, id):
     issues = Issue.objects.filter(repository = repository)
     return issues
 
+
+@login_required(login_url="login")
 def newRepository(request):
     return render(request, "repository/newRepository.html")
 
+
+@login_required(login_url="login")
 def addRepository(request):
     errorTitle = None
     if request.method == 'POST':
@@ -126,6 +128,8 @@ def transferToEditRepository(request,id):
     else:
         return HttpResponse('401 Unauthorized', status=401)
 
+
+@login_required(login_url="login")
 def editRepository(request):
     id = request.POST['id']
     name = request.POST['name']
@@ -199,6 +203,8 @@ def repo_branch(request, id, branch_id):
         'commit_list': commit_list,
         'selected_branch': branch,})
 
+
+@login_required(login_url="login")
 def watchRepository(request,id):
     repository = Repository.objects.get(id=id)
     watchers = User.objects.all().filter(user_watchers = repository)
@@ -210,6 +216,8 @@ def watchRepository(request,id):
     
     return redirect('/repository/'+ str(repository.id))
 
+
+@login_required(login_url="login")
 def watchers(request,id):
     repository = Repository.objects.get(id=id)
     watchers = User.objects.all().filter(user_watchers = repository)
@@ -219,6 +227,8 @@ def watchers(request,id):
     return render(request, 'repository/watchers.html',{"repository": repository,"watchers":watchers,"stargazers":stargazers,
         "forkers":forkers})
 
+
+@login_required(login_url="login")
 def starRepository(request,id):
     repository = Repository.objects.get(id=id)
     stargazers = User.objects.all().filter(user_stargazers = repository)
@@ -230,6 +240,8 @@ def starRepository(request,id):
 
     return redirect('/repository/'+ str(repository.id))
 
+
+@login_required(login_url="login")
 def stargazers(request,id):
     repository = Repository.objects.get(id=id)
     stargazers = User.objects.all().filter(user_stargazers = repository)
@@ -239,6 +251,8 @@ def stargazers(request,id):
     return render(request, 'repository/stargazers.html',{"repository": repository,"stargazers":stargazers,"watchers": watchers,
         "forkers": forkers})
 
+
+@login_required(login_url="login")
 def forkRepository(request,id):
     repository = Repository.objects.get(id=id)
     repositories = Repository.objects.all().filter(creator=request.user)
@@ -281,6 +295,8 @@ def forkRepository(request,id):
 
     return redirect('/repository/'+ str(newRepository.id))
 
+
+@login_required(login_url="login")
 def forkers(request,id):
     repository = Repository.objects.get(id=id)
     watchers = User.objects.all().filter(user_watchers = repository)
@@ -292,6 +308,7 @@ def forkers(request,id):
     
     return render(request, 'repository/forkers.html',{"repository": repository,"watchers":watchers,"stargazers":stargazers,"forks": forkers,
         "forked_from":forked_from,"forked_repo":forked_repo,"repo_copy":repo_copy, "show":show})
+
 
 def find_forkers_info(request,id,repository):
     forkers = User.objects.all().filter(user_forks = repository)
@@ -327,6 +344,7 @@ def find_forkers_info(request,id,repository):
     
     return forkers, forked_from, forked_repo, repo_copy
 
+@login_required(login_url="login")
 def collaborators(request, id):
     repository = Repository.objects.get(id = id)
     collaborators = User.objects.all().filter(user_developers = repository)
@@ -342,6 +360,8 @@ def collaborators(request, id):
     selected_developer = User.objects.first()
     return render(request, "repository/collaborators.html",{'repository':repository, 'collaborators':only_collaborators,'selected_developer': selected_developer, 'developers':not_added_developers, 'logged_user_id': request.user.id})
 
+
+@login_required(login_url="login")
 def repo_developer(request, id, developer_id):
     template = loader.get_template('repository/collaborators.html')
     repository = Repository.objects.get(id=id)
@@ -362,6 +382,8 @@ def repo_developer(request, id, developer_id):
         'selected_developer': selected_developer,
         'collaborators':only_collaborators, 'developers':not_added_developers})
 
+
+@login_required(login_url="login")
 def add_collaborator(request, id, developer_id):
     repository = Repository.objects.get(id = id)
     developer = User.objects.get(id = developer_id)
@@ -384,12 +406,15 @@ def add_collaborator(request, id, developer_id):
          'selected_developer': selected_developer,
          'collaborators': only_collaborators, 'developers':not_added_developers})
 
+
 def add_collaborator_on_repository(repository, developer):
     repository.save()
     repository.developers.add(developer)
     collaborators = User.objects.all().filter(user_developers = repository)
     return collaborators
 
+
+@login_required(login_url="login")
 def remove_collaborator(request, id, developer_id):
     repository = Repository.objects.get(id = id)
     developer = User.objects.get(id = developer_id)
@@ -411,10 +436,12 @@ def remove_collaborator(request, id, developer_id):
          'selected_developer': selected_developer,
          'collaborators': only_collaborators, 'developers':not_added_developers})
 
+
 def remove_collaborato_from_repository(repository, developer):
     repository.developers.remove(developer)
     collaborators = User.objects.all().filter(user_developers = repository)
     return collaborators
+
 
 def search_in_this_repo(request, id):
     if request.method == 'POST':

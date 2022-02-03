@@ -25,7 +25,6 @@ from datetime import datetime
 from django.contrib import messages
 from django.db.models import Q
 
-@login_required(login_url="login")
 def issues(request, id):
     repository = get_current_repository(id)
     issues = Issue.objects.filter(repository = repository)
@@ -42,6 +41,7 @@ def issues(request, id):
         "labels" : labels,
         "projects":projects
         })
+
 
 def empty_filter_issues(request, repo_id):
     repository = Repository.objects.get(id = repo_id)
@@ -62,8 +62,6 @@ def empty_filter_issues(request, repo_id):
     })
 
 def filter_issues(request,repo_id,pk):
-    print("print")
-    print(pk)
     repository = Repository.objects.get(id = repo_id)
     assignees = load_assignees(request, repo_id)
     pk = pk.strip()
@@ -170,7 +168,6 @@ def load_assignees(request, repo_id):
     assignees.add(reposiotry.creator)
     return assignees.all()
 
-@login_required(login_url="login")
 def all_issues(request):
     return render(request,"all_issues.html",{
         'my_issues': get_my_issues(request)
@@ -204,6 +201,8 @@ def new_issue(request, repo_id):
         'labels': get_labels_by_repo(repository),
         })
 
+
+@login_required(login_url="login")
 def add_issue(request):
     if request.method == 'POST':
         repository = get_object_or_404(Repository, id = request.POST['repository'])
@@ -238,6 +237,8 @@ def view_issue(request, id):
         'labels': get_labels_by_repo(repository)
         })
 
+
+@login_required(login_url="login")
 def update_issue(request, id):
     if request.method == 'POST':
         issue = get_issue_by_id(id)
@@ -253,6 +254,8 @@ def update_issue(request, id):
         messages.success(request, 'Issue has been updated.')
         return issues(request, issue.repository.id)
 
+
+@login_required(login_url="login")
 def delete_issue(request, id):
     issue = get_object_or_404(Issue, id=id)
     all_repos = Repository.objects.all()

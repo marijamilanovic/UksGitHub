@@ -43,6 +43,7 @@ def logoutUser(request):
 def home(request):
     return redirect('/home/')
 
+@login_required(login_url="login")
 def profile(request):
     return redirect('/home/profile')
 
@@ -219,6 +220,8 @@ def registrate(request):
         user.save()
     return redirect('login')
 
+
+@login_required(login_url="login")
 def edit_user(request, id):
     user = User.objects.get(id = id)
     user.first_name = request.POST.get('first_name')

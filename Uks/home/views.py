@@ -38,7 +38,6 @@ def get_all_users():
     return User.objects.all()
 
 def repository(request, id):
-    print(id)
     return redirect('/repository/' + id)
 
 # def editRepository(request, id):
