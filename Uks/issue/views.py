@@ -20,7 +20,8 @@ from project.models import Project
 from milestone.models import Milestone
 from pullrequest.models import Pullrequest
 from label.models import Label
-from datetime import datetime
+from datetime import datetime, timedelta
+from history.models import History
 
 from django.contrib import messages
 from django.db.models import Q
@@ -207,6 +208,7 @@ def new_issue(request, repo_id):
         })
 
 def add_issue(request):
+    d = datetime.today() - timedelta(hours=1)
     if request.method == 'POST':
         repository = get_object_or_404(Repository, id = request.POST['repository'])
         new_issue = Issue(
@@ -214,7 +216,13 @@ def add_issue(request):
             description = request.POST['description'], 
             repository = repository, 
             opened_by = request.user.username,
-            created = datetime.now())
+            created = d)
+        # history changes - title  and description
+        message = 'added title and description'
+        history = History(user = request.user,message = message, created_date = d, changed_object_id = request.user.id, object_type= 'Issue_changes')
+        history.save()
+        new_issue.save()
+        new_issue.history.add(history)
         new_issue = add_milestone_in_issue(request, new_issue)
         new_issue.save()
         messages.success(request, 'Issue has been created.')
@@ -243,9 +251,31 @@ def view_issue(request, id):
 def update_issue(request, id):
     if request.method == 'POST':
         issue = get_issue_by_id(id)
-        issue.issue_title = request.POST['title']
-        issue.description = request.POST['description']
-        issue.state = request.POST['state']
+        d = datetime.today() - timedelta(hours=1)
+        if issue.issue_title != request.POST['title']:
+            # history changes - title
+            message = 'changed title'
+            history = History(user = request.user,message = message, created_date = d, changed_object_id = request.user.id, object_type= 'Issue_changes')
+            history.save()
+            issue.save()
+            issue.history.add(history)
+            issue.issue_title = request.POST['title']
+        if issue.description != request.POST['description']:
+            # history changes - description
+            message = 'changed description'
+            history = History(user = request.user,message = message, created_date = d, changed_object_id = request.user.id, object_type= 'Issue_changes')
+            history.save()
+            issue.save()
+            issue.history.add(history)
+            issue.description = request.POST['description']
+        if issue.state != request.POST['state']:
+            # history changes - state
+            message = 'changed state to ' + str(request.POST['state'])
+            history = History(user = request.user,message = message, created_date = d, changed_object_id = request.user.id, object_type= 'Issue_changes')
+            history.save()
+            issue.save()
+            issue.history.add(history)
+            issue.state = request.POST['state']
         issue = add_milestone_in_issue(request, issue)
         issue.save()
         issue = add_projects_in_issue(request, issue)
@@ -282,16 +312,38 @@ def get_users_by_repo(repository):
 
 def add_assignees_in_issue(request, issue):
     usernames = request.POST.getlist('developers')
+    d = datetime.today() - timedelta(hours=1)
     if usernames:
         for old_username in issue.assignees.all():
-            if not old_username in usernames:      # obrisan element
+            if not str(old_username) in usernames:      # obrisan element
                 old_user = get_object_or_404(User, username = old_username)
                 issue.assignees.remove(old_user.id)
+                message = 'unassigned'
+                # history changed
+                print("ne treba")
+                history = History(user = request.user,message= message, created_date = d, changed_object_id = old_user.id, object_type= 'Issue_assignee')
+                history.save()
+                issue.save()
+                issue.history.add(history)
         for username in usernames:                 # novi element
             new_developer = get_object_or_404(User, username = username)
+            message = 'assigned'
             if not new_developer in issue.assignees.all():
+                # history changed
+                history = History(user = request.user,message = message, created_date = d, changed_object_id = new_developer.id, object_type= 'Issue_assignee')
+                history.save()
+                issue.save()
+                issue.history.add(history)
                 issue.assignees.add(new_developer)
-    else:
+    elif issue.assignees.all() and len(usernames) == 0:
+        for old_username in issue.assignees.all():
+            old_user = get_object_or_404(User, username = old_username)
+            message = 'unassigned'
+            # history changed
+            history = History(user = request.user,message = message, created_date = d, changed_object_id = old_user.id, object_type= 'Issue_assignee')
+            history.save()
+            issue.history.add(history)
+            issue.save()
         issue.assignees.clear()
     return issue
 
@@ -311,17 +363,37 @@ def get_projects_by_repo(repository):
     return Project.objects.filter(Q(repository = repository) and Q(status = 'Opened'))
 
 def add_projects_in_issue(request, issue):
+    d = datetime.today() - timedelta(hours=1)
     projects_ids = request.POST.getlist('projects_ids')
     projects_ids = [ int(x) for x in projects_ids ]
     if projects_ids:
         for old_project in issue.projects.all():
             if not old_project.id in projects_ids:      # obrisan element
+                message = 'removed issue from project'
+                # history changed
+                history = History(user = request.user,message = message, created_date = d, changed_object_id = old_project.id, object_type= 'Issue_project')
+                history.save()
+                issue.history.add(history)
+                issue.save()
                 issue.projects.remove(old_project.id)
         for project_id in projects_ids:                 # novi element
             new_project = get_object_or_404(Project, id = project_id)
             if not new_project in issue.projects.all():
+                message = 'added issue to project'
+                # history changed
+                history = History(user = request.user,message = message, created_date = d, changed_object_id = new_project.id, object_type= 'Issue_project')
+                history.save()
+                issue.history.add(history)
+                issue.save()
                 issue.projects.add(new_project)
-    else:
+    elif issue.projects.all() and not projects_ids:
+        for old_project in issue.projects.all():
+            message = 'removed issue from project'
+            # history changed
+            history = History(user = request.user,message = message, created_date = d, changed_object_id = old_project.id, object_type= 'Issue_project')
+            history.save()
+            issue.history.add(history)
+            issue.save()
         issue.projects.clear()
     return issue
 
@@ -332,13 +404,28 @@ def get_milestones_by_issue_repo(id):
     return Milestone.objects.all().filter(repository=repository)
 
 def add_milestone_in_issue(request, issue):
+    d = datetime.today() - timedelta(hours=1)
     if not request.POST.getlist('milestone_id'):
-        issue.milestone = None
+        if issue.milestone != None:
+            message = 'removed this from the milestone'
+            # history changed
+            history = History(user = request.user,message = message, created_date = d, changed_object_id = issue.milestone.id, object_type= 'Issue_milestone')
+            history.save()
+            issue.history.add(history)
+            issue.milestone = None
+            issue.save()
         return issue
     elif issue.milestone != None:
         if issue.milestone.id == request.POST.getlist('milestone_id')[0]:
             return issue
-    issue.milestone = Milestone.objects.get(id = request.POST.getlist('milestone_id')[0])
+    elif not issue.milestone.id == Milestone.objects.get(id = request.POST.getlist('milestone_id')[0]):
+        issue.milestone = Milestone.objects.get(id = request.POST.getlist('milestone_id')[0])
+        message = 'added this from the milestone'
+        # history changed
+        history = History(user = request.user,message = message, created_date = d, changed_object_id = issue.milestone.id, object_type= 'Issue_milestone')
+        history.save()
+        issue.history.add(history)
+        issue.save()
     return issue
 
 # pullrequests methods
@@ -346,17 +433,37 @@ def get_pullrequests_by_repo(repository):
     return Pullrequest.objects.filter(prRepository = repository)
 
 def add_pullrequests_in_issue(request, issue):
+    d = datetime.today() - timedelta(hours=1)
     pullrequests_ids = request.POST.getlist('pullrequests_ids')
     pullrequests_ids = [ int(x) for x in pullrequests_ids ]
     if pullrequests_ids:
         for old_pullrequest in issue.pullrequests.all():
             if not old_pullrequest.id in pullrequests_ids:      # obrisan element
+                message = 'removed pullrequest'
+                # history changed
+                history = History(user = request.user,message = message, created_date = d, changed_object_id = old_pullrequest.id, object_type= 'Issue_pullrequest')
+                history.save()
+                issue.history.add(history)
+                issue.save()
                 issue.pullrequest.remove(old_pullrequest.id)
         for pullrequest_id in pullrequests_ids:                 # novi element
             new_pullrequest = get_object_or_404(Pullrequest, id = pullrequest_id)
             if not new_pullrequest in issue.pullrequests.all():
+                message = 'added pullrequest'
+                # history changed
+                history = History(user = request.user,message = message, created_date = d, changed_object_id = new_pullrequest.id, object_type= 'Issue_pullrequest')
+                history.save()
+                issue.history.add(history)
+                issue.save()
                 issue.pullrequests.add(new_pullrequest)
-    else:
+    elif issue.pullrequests.all() and not pullrequests_ids:
+        for old_pullrequest in issue.pullrequests.all():
+            message = 'removed pullrequest'
+            # history changed
+            history = History(user = request.user,message = message, created_date = d, changed_object_id = old_pullrequest.id, object_type= 'Issue_pullrequest')
+            history.save()
+            issue.history.add(history)
+            issue.save()
         issue.pullrequests.clear()
     return issue
 
@@ -365,17 +472,37 @@ def get_labels_by_repo(repository):
     return Label.objects.filter(repository = repository)
 
 def add_labels_in_issue(request, issue):
+    d = datetime.today() - timedelta(hours=1)
     labels_ids = request.POST.getlist('labels_ids')
     labels_ids = [ int(x) for x in labels_ids ]
     if labels_ids:
         for old_label in issue.labels.all():
             if not old_label.id in labels_ids:      # obrisan element
+                message = 'removed label'
+                # history changed
+                history = History(user = request.user,message = message, created_date = d, changed_object_id = old_label.id, object_type= 'Issue_label')
+                history.save()
+                issue.history.add(history)
+                issue.save()
                 issue.labels.remove(old_label.id)
         for label_id in labels_ids:                 # novi element
             new_label = get_object_or_404(Label, id = label_id)
             if not new_label in issue.labels.all():
+                message = 'added label'
+                # history changed
+                history = History(user = request.user,message = message, created_date = d, changed_object_id = new_label.id, object_type= 'Issue_label')
+                history.save()
+                issue.history.add(history)
+                issue.save()
                 issue.labels.add(new_label)
-    else:
+    elif issue.labels.all() and not labels_ids:
+        for old_label in issue.labels.all():
+            message = 'removed label'
+            # history changed
+            history = History(user = request.user,message = message, created_date = d, changed_object_id = old_label.id, object_type= 'Issue_label')
+            history.save()
+            issue.history.add(history)
+            issue.save()
         issue.labels.clear()
     return issue
 
