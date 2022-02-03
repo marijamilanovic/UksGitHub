@@ -15,6 +15,8 @@ class CommitTestCase(TestCase):
         user.set_password('user1')
         user.save()
         repo = Repository.objects.create(name="repo", status=PRIVATE, creator=user)
+        repo.developers.add(user)
+        repo.save()
         master = Branch.objects.create(name="master", is_default=True, repository=repo)
         develop = Branch.objects.create(name="develop", is_default=False, repository=repo)
         Commit.objects.create(message="First commit", date_time=datetime(2022,1,27), hash_id="ds7fgs4", branch=develop, author=user)

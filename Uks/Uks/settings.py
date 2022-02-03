@@ -29,7 +29,7 @@ SECRET_KEY = 'django-insecure-340*9mga*v__&njl88q4jkr+y#3%*jnnf@ab(d*h7*si!ryrd(
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
-local_mode = False  #Za razvoj aplikacije lokalno! 
+local_mode = True  #Za razvoj aplikacije lokalno! 
 
 
 # Application definition
