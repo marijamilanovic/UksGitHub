@@ -6,6 +6,8 @@ from django.shortcuts import render, get_object_or_404, redirect
 
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
+from comment.models import EMOJI_PICKER, Emoji
+from pickle import FALSE, TRUE
 
 from home.views import repository
 from label.models import Label
@@ -20,7 +22,9 @@ from project.models import Project
 from milestone.models import Milestone
 from pullrequest.models import Pullrequest
 from label.models import Label
-from datetime import datetime
+from datetime import datetime, timedelta
+from history.models import History
+from comment.models import Comment
 
 from django.contrib import messages
 from django.db.models import Q
@@ -204,6 +208,7 @@ def new_issue(request, repo_id):
 
 @login_required(login_url="login")
 def add_issue(request):
+    d = datetime.today() - timedelta(hours=1)
     if request.method == 'POST':
         repository = get_object_or_404(Repository, id = request.POST['repository'])
         new_issue = Issue(
@@ -211,7 +216,13 @@ def add_issue(request):
             description = request.POST['description'], 
             repository = repository, 
             opened_by = request.user.username,
-            created = datetime.now())
+            created = d)
+        # history changes - title  and description
+        message = 'added title and description'
+        history = History(user = request.user,message = message, created_date = d, changed_object_id = request.user.id, object_type= 'Issue_changes')
+        history.save()
+        new_issue.save()
+        new_issue.history.add(history)
         new_issue = add_milestone_in_issue(request, new_issue)
         new_issue.save()
         messages.success(request, 'Issue has been created.')
@@ -224,6 +235,9 @@ def add_issue(request):
 def view_issue(request, id):
     issue = get_issue_by_id(id)
     repository = get_current_repository(issue.repository.id)
+    emojis = list()
+    for e in EMOJI_PICKER:
+        emojis.append(e[0])
     if repository.status == 'private':
         if not can_user_access_private_repo(request, repository):
             return HttpResponse('401 Unauthorized', status=401)
@@ -234,7 +248,9 @@ def view_issue(request, id):
         'developers':get_users_by_repo(repository),
         'projects': get_projects_by_repo(repository),
         'pullrequests': get_pullrequests_by_repo(repository),
-        'labels': get_labels_by_repo(repository)
+        'labels': get_labels_by_repo(repository),
+        'comments': issue.comments.all().order_by('created_date'),
+        'emojis': emojis
         })
 
 
@@ -242,9 +258,31 @@ def view_issue(request, id):
 def update_issue(request, id):
     if request.method == 'POST':
         issue = get_issue_by_id(id)
-        issue.issue_title = request.POST['title']
-        issue.description = request.POST['description']
-        issue.state = request.POST['state']
+        d = datetime.today() - timedelta(hours=1)
+        if issue.issue_title != request.POST['title']:
+            # history changes - title
+            message = 'changed title'
+            history = History(user = request.user,message = message, created_date = d, changed_object_id = request.user.id, object_type= 'Issue_changes')
+            history.save()
+            issue.save()
+            issue.history.add(history)
+            issue.issue_title = request.POST['title']
+        if issue.description != request.POST['description']:
+            # history changes - description
+            message = 'changed description'
+            history = History(user = request.user,message = message, created_date = d, changed_object_id = request.user.id, object_type= 'Issue_changes')
+            history.save()
+            issue.save()
+            issue.history.add(history)
+            issue.description = request.POST['description']
+        if issue.state != request.POST['state']:
+            # history changes - state
+            message = 'changed state to ' + str(request.POST['state'])
+            history = History(user = request.user,message = message, created_date = d, changed_object_id = request.user.id, object_type= 'Issue_changes')
+            history.save()
+            issue.save()
+            issue.history.add(history)
+            issue.state = request.POST['state']
         issue = add_milestone_in_issue(request, issue)
         issue.save()
         issue = add_projects_in_issue(request, issue)
@@ -258,6 +296,8 @@ def update_issue(request, id):
 @login_required(login_url="login")
 def delete_issue(request, id):
     issue = get_object_or_404(Issue, id=id)
+    if not issue.repository.developers.all().filter(id=request.user.id):
+        return HttpResponse('401 Unauthorized', status=401)
     all_repos = Repository.objects.all()
     for r in all_repos:
         if(r.id == issue.repository.id):
@@ -283,16 +323,38 @@ def get_users_by_repo(repository):
 
 def add_assignees_in_issue(request, issue):
     usernames = request.POST.getlist('developers')
+    d = datetime.today() - timedelta(hours=1)
     if usernames:
         for old_username in issue.assignees.all():
-            if not old_username in usernames:      # obrisan element
+            if not str(old_username) in usernames:      # obrisan element
                 old_user = get_object_or_404(User, username = old_username)
                 issue.assignees.remove(old_user.id)
+                message = 'unassigned'
+                # history changed
+                print("ne treba")
+                history = History(user = request.user,message= message, created_date = d, changed_object_id = old_user.id, object_type= 'Issue_assignee')
+                history.save()
+                issue.save()
+                issue.history.add(history)
         for username in usernames:                 # novi element
             new_developer = get_object_or_404(User, username = username)
+            message = 'assigned'
             if not new_developer in issue.assignees.all():
+                # history changed
+                history = History(user = request.user,message = message, created_date = d, changed_object_id = new_developer.id, object_type= 'Issue_assignee')
+                history.save()
+                issue.save()
+                issue.history.add(history)
                 issue.assignees.add(new_developer)
-    else:
+    elif issue.assignees.all() and len(usernames) == 0:
+        for old_username in issue.assignees.all():
+            old_user = get_object_or_404(User, username = old_username)
+            message = 'unassigned'
+            # history changed
+            history = History(user = request.user,message = message, created_date = d, changed_object_id = old_user.id, object_type= 'Issue_assignee')
+            history.save()
+            issue.history.add(history)
+            issue.save()
         issue.assignees.clear()
     return issue
 
@@ -309,20 +371,40 @@ def get_issue_by_id(id):
 
 # project methods
 def get_projects_by_repo(repository):
-    return Project.objects.filter(repository = repository)
+    return Project.objects.filter(Q(repository = repository) and Q(status = 'Opened'))
 
 def add_projects_in_issue(request, issue):
+    d = datetime.today() - timedelta(hours=1)
     projects_ids = request.POST.getlist('projects_ids')
     projects_ids = [ int(x) for x in projects_ids ]
     if projects_ids:
         for old_project in issue.projects.all():
             if not old_project.id in projects_ids:      # obrisan element
+                message = 'removed issue from project'
+                # history changed
+                history = History(user = request.user,message = message, created_date = d, changed_object_id = old_project.id, object_type= 'Issue_project')
+                history.save()
+                issue.history.add(history)
+                issue.save()
                 issue.projects.remove(old_project.id)
         for project_id in projects_ids:                 # novi element
             new_project = get_object_or_404(Project, id = project_id)
             if not new_project in issue.projects.all():
+                message = 'added issue to project'
+                # history changed
+                history = History(user = request.user,message = message, created_date = d, changed_object_id = new_project.id, object_type= 'Issue_project')
+                history.save()
+                issue.history.add(history)
+                issue.save()
                 issue.projects.add(new_project)
-    else:
+    elif issue.projects.all() and not projects_ids:
+        for old_project in issue.projects.all():
+            message = 'removed issue from project'
+            # history changed
+            history = History(user = request.user,message = message, created_date = d, changed_object_id = old_project.id, object_type= 'Issue_project')
+            history.save()
+            issue.history.add(history)
+            issue.save()
         issue.projects.clear()
     return issue
 
@@ -333,13 +415,30 @@ def get_milestones_by_issue_repo(id):
     return Milestone.objects.all().filter(repository=repository)
 
 def add_milestone_in_issue(request, issue):
+    d = datetime.today() - timedelta(hours=1)
     if not request.POST.getlist('milestone_id'):
-        issue.milestone = None
+        if issue.milestone != None:
+            message = 'removed this from the milestone'
+            # history changed
+            history = History(user = request.user,message = message, created_date = d, changed_object_id = issue.milestone.id, object_type= 'Issue_milestone')
+            history.save()
+            issue.history.add(history)
+            issue.milestone = None
+            issue.save()
         return issue
     elif issue.milestone != None:
         if issue.milestone.id == request.POST.getlist('milestone_id')[0]:
             return issue
-    issue.milestone = Milestone.objects.get(id = request.POST.getlist('milestone_id')[0])
+    elif issue.milestone == None:
+        return issue
+    elif issue.milestone.id != Milestone.objects.get(id = request.POST.getlist('milestone_id')[0]):
+        issue.milestone = Milestone.objects.get(id = request.POST.getlist('milestone_id')[0])
+        message = 'added this from the milestone'
+        # history changed
+        history = History(user = request.user,message = message, created_date = d, changed_object_id = issue.milestone.id, object_type= 'Issue_milestone')
+        history.save()
+        issue.history.add(history)
+        issue.save()
     return issue
 
 # pullrequests methods
@@ -347,17 +446,37 @@ def get_pullrequests_by_repo(repository):
     return Pullrequest.objects.filter(prRepository = repository)
 
 def add_pullrequests_in_issue(request, issue):
+    d = datetime.today() - timedelta(hours=1)
     pullrequests_ids = request.POST.getlist('pullrequests_ids')
     pullrequests_ids = [ int(x) for x in pullrequests_ids ]
     if pullrequests_ids:
         for old_pullrequest in issue.pullrequests.all():
             if not old_pullrequest.id in pullrequests_ids:      # obrisan element
+                message = 'removed pullrequest'
+                # history changed
+                history = History(user = request.user,message = message, created_date = d, changed_object_id = old_pullrequest.id, object_type= 'Issue_pullrequest')
+                history.save()
+                issue.history.add(history)
+                issue.save()
                 issue.pullrequest.remove(old_pullrequest.id)
         for pullrequest_id in pullrequests_ids:                 # novi element
             new_pullrequest = get_object_or_404(Pullrequest, id = pullrequest_id)
             if not new_pullrequest in issue.pullrequests.all():
+                message = 'added pullrequest'
+                # history changed
+                history = History(user = request.user,message = message, created_date = d, changed_object_id = new_pullrequest.id, object_type= 'Issue_pullrequest')
+                history.save()
+                issue.history.add(history)
+                issue.save()
                 issue.pullrequests.add(new_pullrequest)
-    else:
+    elif issue.pullrequests.all() and not pullrequests_ids:
+        for old_pullrequest in issue.pullrequests.all():
+            message = 'removed pullrequest'
+            # history changed
+            history = History(user = request.user,message = message, created_date = d, changed_object_id = old_pullrequest.id, object_type= 'Issue_pullrequest')
+            history.save()
+            issue.history.add(history)
+            issue.save()
         issue.pullrequests.clear()
     return issue
 
@@ -366,17 +485,37 @@ def get_labels_by_repo(repository):
     return Label.objects.filter(repository = repository)
 
 def add_labels_in_issue(request, issue):
+    d = datetime.today() - timedelta(hours=1)
     labels_ids = request.POST.getlist('labels_ids')
     labels_ids = [ int(x) for x in labels_ids ]
     if labels_ids:
         for old_label in issue.labels.all():
             if not old_label.id in labels_ids:      # obrisan element
+                message = 'removed label'
+                # history changed
+                history = History(user = request.user,message = message, created_date = d, changed_object_id = old_label.id, object_type= 'Issue_label')
+                history.save()
+                issue.history.add(history)
+                issue.save()
                 issue.labels.remove(old_label.id)
         for label_id in labels_ids:                 # novi element
             new_label = get_object_or_404(Label, id = label_id)
             if not new_label in issue.labels.all():
+                message = 'added label'
+                # history changed
+                history = History(user = request.user,message = message, created_date = d, changed_object_id = new_label.id, object_type= 'Issue_label')
+                history.save()
+                issue.history.add(history)
+                issue.save()
                 issue.labels.add(new_label)
-    else:
+    elif issue.labels.all() and not labels_ids:
+        for old_label in issue.labels.all():
+            message = 'removed label'
+            # history changed
+            history = History(user = request.user,message = message, created_date = d, changed_object_id = old_label.id, object_type= 'Issue_label')
+            history.save()
+            issue.history.add(history)
+            issue.save()
         issue.labels.clear()
     return issue
 
@@ -384,3 +523,77 @@ def add_labels_in_issue(request, issue):
 def can_user_access_private_repo(request, repository):
     if request.user.id == repository.creator_id  or repository.developers.all().filter(id=request.user.id):
         return True
+
+def add_comment_issue(request, id):
+    d = datetime.today() - timedelta(hours=1)
+    content = request.POST.get('comment')
+    issue = get_object_or_404(Issue, id=id)
+    errorTitle = None
+    emojis = list()
+    for e in EMOJI_PICKER:
+        emojis.append(e[0])
+    if content is None:
+        errorTitle = "You must enter comment content."
+        return view_issue(request, id)
+    else:     
+        if request.method == 'POST':
+            comment = Comment(author = request.user, content = content, created_date = d)
+            comment.save()
+            issue.comments.add(comment)
+            issue.save()
+            return view_issue(request, id)
+
+
+def add_emoji_issue(request, id, pr_id):
+    if request.method == 'POST':
+        have_emoji = FALSE
+        emoji = Emoji()
+        comment = get_object_or_404(Comment, id=id)
+        emojis = comment.emojis.all()
+        
+        for e in emojis:
+            if e.name == request.POST.get('emoji'):
+                have_emoji = TRUE
+                emoji = e
+                
+        if have_emoji == TRUE:
+            add_reaction_creator(request, comment, emoji)
+        else:
+            create_new_emoji(request, comment)
+
+        return view_issue(request, pr_id)
+
+def add_reaction_creator(request, comment, emoji):
+    reaction_creators = emoji.reaction_creators.all()
+    for r in reaction_creators:
+        if r.id == request.user.id:
+            emoji.reaction_creators.remove(request.user.id)
+            if len( emoji.reaction_creators.all()) == 0:
+                comment.emojis.remove(emoji.id)
+                comment.save()
+        else:
+            emoji.reaction_creators.add(request.user)
+
+def delete_comment_issue(request, id, pr_id):
+    comment = get_object_or_404(Comment, id=id)
+    issue = get_object_or_404(Issue, id=pr_id)
+
+    issue.comments.remove(comment.id)
+    issue.save()
+    emojis = comment.emojis.all()
+    for e in emojis:
+        emoji = get_object_or_404(Emoji, id=e.id)
+        emoji.delete()
+    comment.delete()
+
+    return view_issue(request, issue.id)
+
+def create_new_emoji(request, comment):
+    emoji = Emoji()
+    emoji.name = request.POST.get('emoji')
+    emoji.save()
+    user = request.user
+    emoji.reaction_creators.add(user)
+    emoji.save()
+    comment.emojis.add(emoji)
+    comment.save()
