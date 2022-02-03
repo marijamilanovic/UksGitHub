@@ -16,36 +16,40 @@ from repository.models import Repository
 def createCommit(request, id):
     form = CommitForm()
     branch = get_object_or_404(Branch, id=id)
+    repository = get_object_or_404(Repository, id=branch.repository.id)
 
-    if request.method == 'POST':                            
-        #print('FORM DATA:', request.POST)                   
-        form = CommitForm(request.POST) 
-        print("Commit object: " + form.data.__str__())                    
-        if form.is_valid():
-            now = datetime.now()
+    if request.method == 'POST':
+        if request.user in list(repository.developers.all()):                            
+            #print('FORM DATA:', request.POST)                   
+            form = CommitForm(request.POST) 
+            print("Commit object: " + form.data.__str__())                    
+            if form.is_valid():
+                now = datetime.now()
 
-            commit = Commit.objects.create(
-                message = request.POST['message'],
-                branch = Branch.objects.get(pk = id),
-                date_time = datetime.now(),
-                hash_id = " ", 
-                author = User.objects.get(pk = request.user.id),
-                repository = Repository.objects.get(pk = branch.repository.id)
-            )
+                commit = Commit.objects.create(
+                    message = request.POST['message'],
+                    branch = Branch.objects.get(pk = id),
+                    date_time = datetime.now(),
+                    hash_id = " ", 
+                    author = User.objects.get(pk = request.user.id),
+                    repository = Repository.objects.get(pk = branch.repository.id)
+                )
 
-            print("commit id: ",  str(commit.pk))
+                print("commit id: ",  str(commit.pk))
 
-            hash = hashlib.sha1(str(commit.pk).encode('utf-8'))
+                hash = hashlib.sha1(str(commit.pk).encode('utf-8'))
 
-            commit.hash_id = hash.hexdigest()
+                commit.hash_id = hash.hexdigest()
 
-            commit.save()
+                commit.save()
 
-            return redirect('commit:commitList', id=branch.id)
+                return redirect('commit:commitList', id=branch.id)
+        else:
+            return HttpResponse("Authorization failed!")
         
     context = {
         'form': form,
-        'repository': branch.repository,
+        'repository': repository,
         'branch': branch,
     }
     return render(request, "commit/createCommit.html", context)
@@ -61,11 +65,16 @@ def commitList(request, id):
     }
     return render(request, "commit/commitList.html", context)
 
-
+@login_required(login_url="login")
 def deleteCommit(request, id):
     commit = get_object_or_404(Commit, id=id)
-    Commit.objects.get(pk=id).delete()
-    return redirect('commit:commitList', id=commit.branch.id)
+    branch = get_object_or_404(Branch, id=commit.branch.id)
+    repository = get_object_or_404(Repository, id=branch.repository.id)
+    if request.user in list(repository.developers.all()): 
+        Commit.objects.get(pk=id).delete()
+        return redirect('commit:commitList', id=commit.branch.id)
+    else:
+        return HttpResponse("Authorization failed!")
 
 def get_current_repository(repo_id):
     return get_object_or_404(Repository, id = repo_id)
