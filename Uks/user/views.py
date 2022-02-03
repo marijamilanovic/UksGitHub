@@ -49,7 +49,7 @@ def search(request):
     if request.method == 'POST':
         searchedWord = request.POST['search']
         words = searchedWord.split()
-        repositories = checkRepositories(words)
+        repositories = checkRepositories(words, request)
         issues = checkIssues(words)
         commits = checkCommits(words)
         #to do add users search
@@ -73,10 +73,21 @@ def search(request):
     "users":users, "foundUsers":usersIds,
     "searchedWords":searchedWord})
 
-def checkRepositories(words):
+def checkRepositories(words, request):
     repositories = []
-    all_repositories = Repository.objects.all()
+    logged_user = User.objects.get(id = request.user.id)
+    all_private_repositories = Repository.objects.all().filter(status = 'private')
     all_public_repositories = Repository.objects.all().filter(status = 'public')
+    for r in all_private_repositories:
+        developers = User.objects.all().filter(user_developers = r)
+        for d in developers:
+            if (logged_user.id == d.id):
+                for word in words:
+                    if (word.lower() in r.name.lower()):
+                        if (len(repositories) == 0):
+                            repositories.append(r)
+                        elif(r not in repositories):
+                            repositories.append(r)
     for repository in all_public_repositories:
         for word in words:
             if (word.lower() in repository.name.lower()):
