@@ -6,6 +6,8 @@ from django.shortcuts import render, get_object_or_404, redirect
 
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
+from comment.models import EMOJI_PICKER, Emoji
+from pickle import FALSE, TRUE
 
 from home.views import repository
 from label.models import Label
@@ -22,6 +24,7 @@ from pullrequest.models import Pullrequest
 from label.models import Label
 from datetime import datetime, timedelta
 from history.models import History
+from comment.models import Comment
 
 from django.contrib import messages
 from django.db.models import Q
@@ -235,6 +238,9 @@ def add_issue(request):
 def view_issue(request, id):
     issue = get_issue_by_id(id)
     repository = get_current_repository(issue.repository.id)
+    emojis = list()
+    for e in EMOJI_PICKER:
+        emojis.append(e[0])
     if repository.status == 'private':
         if not can_user_access_private_repo(request, repository):
             return HttpResponse('401 Unauthorized', status=401)
@@ -245,7 +251,9 @@ def view_issue(request, id):
         'developers':get_users_by_repo(repository),
         'projects': get_projects_by_repo(repository),
         'pullrequests': get_pullrequests_by_repo(repository),
-        'labels': get_labels_by_repo(repository)
+        'labels': get_labels_by_repo(repository),
+        'comments': issue.comments.all().order_by('created_date'),
+        'emojis': emojis
         })
 
 def update_issue(request, id):
@@ -287,6 +295,8 @@ def update_issue(request, id):
 
 def delete_issue(request, id):
     issue = get_object_or_404(Issue, id=id)
+    if not issue.repository.developers.all().filter(id=request.user.id):
+        return HttpResponse('401 Unauthorized', status=401)
     all_repos = Repository.objects.all()
     for r in all_repos:
         if(r.id == issue.repository.id):
@@ -510,3 +520,77 @@ def add_labels_in_issue(request, issue):
 def can_user_access_private_repo(request, repository):
     if request.user.id == repository.creator_id  or repository.developers.all().filter(id=request.user.id):
         return True
+
+def add_comment_issue(request, id):
+    d = datetime.today() - timedelta(hours=1)
+    content = request.POST.get('comment')
+    issue = get_object_or_404(Issue, id=id)
+    errorTitle = None
+    emojis = list()
+    for e in EMOJI_PICKER:
+        emojis.append(e[0])
+    if content is None:
+        errorTitle = "You must enter comment content."
+        return view_issue(request, id)
+    else:     
+        if request.method == 'POST':
+            comment = Comment(author = request.user, content = content, created_date = d)
+            comment.save()
+            issue.comments.add(comment)
+            issue.save()
+            return view_issue(request, id)
+
+
+def add_emoji_issue(request, id, pr_id):
+    if request.method == 'POST':
+        have_emoji = FALSE
+        emoji = Emoji()
+        comment = get_object_or_404(Comment, id=id)
+        emojis = comment.emojis.all()
+        
+        for e in emojis:
+            if e.name == request.POST.get('emoji'):
+                have_emoji = TRUE
+                emoji = e
+                
+        if have_emoji == TRUE:
+            add_reaction_creator(request, comment, emoji)
+        else:
+            create_new_emoji(request, comment)
+
+        return view_issue(request, pr_id)
+
+def add_reaction_creator(request, comment, emoji):
+    reaction_creators = emoji.reaction_creators.all()
+    for r in reaction_creators:
+        if r.id == request.user.id:
+            emoji.reaction_creators.remove(request.user.id)
+            if len( emoji.reaction_creators.all()) == 0:
+                comment.emojis.remove(emoji.id)
+                comment.save()
+        else:
+            emoji.reaction_creators.add(request.user)
+
+def delete_comment_issue(request, id, pr_id):
+    comment = get_object_or_404(Comment, id=id)
+    issue = get_object_or_404(Issue, id=pr_id)
+
+    issue.comments.remove(comment.id)
+    issue.save()
+    emojis = comment.emojis.all()
+    for e in emojis:
+        emoji = get_object_or_404(Emoji, id=e.id)
+        emoji.delete()
+    comment.delete()
+
+    return view_issue(request, issue.id)
+
+def create_new_emoji(request, comment):
+    emoji = Emoji()
+    emoji.name = request.POST.get('emoji')
+    emoji.save()
+    user = request.user
+    emoji.reaction_creators.add(user)
+    emoji.save()
+    comment.emojis.add(emoji)
+    comment.save()

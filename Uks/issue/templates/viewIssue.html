@@ -130,6 +130,100 @@
             <!-- TIMELINE -->
             <br><br>
             <div class="tab-content timeline" style="margin-top: 50px;">
+                <div class="tab-pane container active" id="conversation"> 
+                    {% for c in comments %}
+                    <div class="card border-secondary mb-3" style="margin-top: 15px;  max-width: 1000px; background-color: #cde9e9;">
+                        <p style="margin-top: 10px; margin-left: 10px;">  {% bs_icon 'person-circle' size='1.5em'%} <b>{{c.author.username}}</b> commented {{ c.created_date|naturaltime }}</p>
+                        {% if pullrequest.creator.username == c.author.username %}
+                            <span style="margin-top: -42px; margin-left: 770px;">
+                            <p style="border:1px; 
+                                border-style:solid; 
+                                border-color:#53adad; 
+                                width: 90px; height: 30px; 
+                                border-radius: 10px;
+                                text-align: center; color: gray;">Author</p>
+                            </span>
+                        {% endif %}
+                        <div class="popover__wrapper">
+                            <a href="#" style="width: 40px; margin-left: 880px; background-color: transparent; border-color: transparent;">
+                                {% bs_icon 'emoji-smile' size='1.5em' color='gray' %} 
+                            </a>
+                            <div class="popover__content">
+                                <form method="POST" action="{% url 'add_emoji_issue' id=c.id pr_id=issue.id %}">
+                                {% csrf_token %}
+                                    <p style="text-align: center;">Pick your reaction</p>
+                                    <hr>
+                                    <table>
+                                        <tr class="emoji_table">
+                                            {% for e in emojis %}
+                                                <th class="emoji_table"><button name="emoji" value={{e}} href="{% url 'add_emoji_issue' id=c.id pr_id=issue.id %}" style="color: white;" class="emoji_style">&#{{e}};</button></th>
+                                            {% endfor %}
+                                        </tr>
+                                    </table>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="popover__wrapper2" style="width: 20px; margin-left: 5px; margin-top:-25px; background-color: transparent; border-color: transparent;">
+                            <a href="#" style="width: 20px; margin-left: 920px; background-color: transparent; border-color: transparent;">
+                               {% bs_icon 'three-dots' size='1.5em' color='gray' %} 
+                            </a>
+                            <div class="popover__content2" style="width: 180px; ">
+                                <button class="functionalities_button" value="{{c.content}}" onclick="quote_comment(this.value);" >Quote replay</button>
+                                <hr>
+                                <table>
+                                    <tr>
+                                        <th><button class="functionalities_button" onclick="enable_textarea();">Edit</button></th>
+                                    </tr>
+                                    <tr>
+                                        <th><a type="button" href="{% url 'delete_comment_issue' id=c.id pr_id=issue.id %}" class="delete_button" style="text-align: left; 
+                                            border: transparent; 
+                                            background-color: transparent;
+                                            margin-left: 5px;
+                                            color: red;
+                                            width: 140px;
+                                            font-size: large;">Delete</a>
+                                        </th>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="card-header" style="background-color: white; margin-top: 5px;">
+                            <textarea id="comment_content_edit" name="comment_content_edit" aria-disabled="true"  style=" width:600px;resize: none; border-color: transparent; background-color: transparent;" disabled=true style="border-color: white;">{{c.content}}</textarea>
+                            {% for e in c.emojis.all%}
+                                <th style="width: 40px;">
+                                    <button name="emoji" value={{e.name}} href="{% url 'add_emoji_issue' id=c.id pr_id=issue.id%}" 
+                                    style="border:1px; 
+                                    border-style:solid; 
+                                    border-color:#53adad; 
+                                    width: 70px; height: 30px; 
+                                    border-radius: 10px;
+                                    background-color: #cde9e9;
+                                    text-align: center;">&#{{e.name}}; 
+                                    <span style="margin-left: 10px;">
+                                        {% if e.name == '129505' %}
+                                            {{c.get_emoji_heart}}
+                                        {% elif e.name == '128640' %}
+                                            {{c.get_emoji_rocket}}
+                                        {% elif e.name == '128577' %}
+                                            {{c.get_emoji_sad}}
+                                        {% elif e.name == '128512' %}
+                                            {{c.get_emoji_happy}}
+                                        {% elif e.name == '128077' %}
+                                            {{c.get_emoji_like}}
+                                        {% elif e.name == '128078' %}
+                                            {{c.get_emoji_dislike}}
+                                        {% elif e.name == '128064' %}
+                                            {{c.get_emoji_eyes}}
+                                        {% elif e.name == '127881' %}
+                                            {{c.get_emoji_party}}
+                                        {% endif %}
+                                        </span>
+                                    </button>
+                                </th>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endfor %}
                 {% for h in issue.history.all %}
                     {% if h.object_type == 'Issue_milestone' %}
                         <div  class="row " style="margin-left: 8px; margin-top: 8px;">
@@ -242,6 +336,7 @@
                 {% endfor %}
             </div>
             <br><br>
+            <hr>
             {% for developer in repository.developers.all %}
                 {% if developer.id == request.user.id %}
                     <input type="submit" style="margin-left: 12px; margin-top: 5px;"  class="btn btn-success" value="Update">
@@ -250,11 +345,47 @@
                 {% endif %}
             {% endfor %}
         </form>
+        <form style="margin-top: 20px; margin-left: -12px;" method="POST" action="{% url 'add_comment_issue' id=issue.id %}"> 
+            {% csrf_token %}
+            <div class="container" style="margin-left: 9px;">
+                <!-- Nav tabs -->
+                <ul class="nav nav-tabs">
+                    <li class="nav-item">
+                    <a class="nav-link active" data-toggle="tab" href="#write">Write</a>
+                    </li>
+                </ul>
+                <div class="tab-content">
+                    <div class="tab-pane container active" id="write"> 
+                        {% if error%}
+                            <h6 style="color: red;">{{error}}</h6>
+                        {%endif%}
+                        <textarea class="form-control col-md-12" id="comment" rows="4" name="comment" placeholder="Leave a comment" style="background-color: #E5E8E8;"></textarea>
+                        <hr style="border-color: white;">
+                    </div>
+                </div>
+                <input type="submit" style=" margin-left: 980px; margin-bottom: 20px;"  class="btn btn-success" value="Comment">
+            </div>
+        </form>
     </div>  
     {% endblock %}
 
     {% block javascript %}
     <script>
+        var quoted_comments = ""
+        var typed_text = ""
+        function quote_comment(c) {
+            this.typed_text = document.getElementById("comment").value.concat("\n");
+            this.quoted_comments = typed_text.concat(c + "\n")
+
+            document.getElementById("comment").value = quoted_comments;
+        }
+
+        function enable_textarea(){
+            console.log("cdscscds")
+            document.getElementById("comment_content_edit").disabled=false;
+            document.getElementById("comment_content_edit").style.backgroundColor = "#E5E8E8";
+            document.getElementById("update_comment").hidden=false;
+        }
     </script>
     {% endblock %}
 </body>
