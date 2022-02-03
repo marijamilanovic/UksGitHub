@@ -27,6 +27,12 @@ class Repository(models.Model):
     def get_opened_projects_number(self):
         return self.project_set.filter(status='Opened').count()
 
+    def get_closed_milestones_number(self):
+        return self.milestone_set.filter(status='Closed').count()
+
+    def get_opened_milestones_number(self):
+        return self.milestone_set.filter(status='Opened').count()
+
     def get_watchers_number(self):
         return self.watchers.count()
 

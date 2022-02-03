@@ -32,7 +32,12 @@
             <div class="progress-bar bg-success" role="progressbar" style="width: {{milestone.get_completed_percentage}}%" aria-valuenow="{{milestone.get_completed_percentage}}" aria-valuemin="0" aria-valuemax="100"></div>
         </div>
         {% if milestone.due_date_passed %}
-        <p style="margin-top: 10px;" class="card-text">{% bs_icon 'exclamation-triangle' size='1em' %} Passed due: {{milestone.passed_days_count}} days ago 
+        <p style="margin-top: 10px;" class="card-text"><span style="color: red;">{% bs_icon 'exclamation-triangle' size='1em' %} Passed due: {{milestone.passed_days_count}} days ago </span>
+            <span style="margin-left: 20px;"></span>
+            <b>{{milestone.get_completed_percentage}}%</b> complete
+        </p>
+        {% elif milestone.due_date == none %}
+        <p style="margin-top: 10px;" class="card-text">{% bs_icon 'calendar-check' size='1em' %} No due date 
             <span style="margin-left: 20px;"></span>
             <b>{{milestone.get_completed_percentage}}%</b> complete
         </p>
@@ -43,7 +48,7 @@
         </p>
         {% endif %}
 
-        <div class="card" style="width: 870px;">
+        <div class="card" style="width: 870px; margin-top: 30px;">
             <div class="card-header" style="background-color: #d7f0db;">
                 {% bs_icon 'record-circle' size='1em' %} <a style="color: darkgray" href="#" id="open" > {{milestone.get_opened_issues_number}} Open </a>
                 <span style="margin-left: 15px;"></span>
