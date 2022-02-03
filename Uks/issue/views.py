@@ -92,19 +92,17 @@ def filter_issues(request,repo_id,pk):
                 filter_value = filter_value.strip()
             except:
                 filter_type = ""
-            if filter_type == "title":
-                issues_match_title =  Issue.objects.filter(issue_title = filter_value)
+            if filter_type.lower() == "title":
+                issues_match_title =  Issue.objects.filter(issue_title__icontains = filter_value)
                 issues_for_return = issues_for_return.intersection(issues_match_title)
-            elif filter_type == "body":
-                issues_match_body =  Issue.objects.filter(description = filter_value)
+            elif filter_type.lower() == "body":
+                issues_match_body =  Issue.objects.filter(description__icontains = filter_value)
                 issues_for_return = issues_for_return.intersection(issues_match_body)
-            elif filter_type == "state":
-                issues_match_state =  Issue.objects.filter(state = filter_value)
-                print(len(issues_match_state))
+            elif filter_type.lower() == "state":
+                issues_match_state =  Issue.objects.filter(state__icontains = filter_value)
                 issues_for_return = issues_for_return.intersection(issues_match_state)
-                print(len(issues_for_return))
-            elif filter_type == "milestone":
-                milestones = Milestone.objects.filter(title = filter_value)
+            elif filter_type.lower() == "milestone":
+                milestones = Milestone.objects.filter(title__icontains = filter_value)
                 issues_match_milestone = list()
                 for m in milestones:
                     issues_from_m = Issue.objects.filter(milestone = m)
@@ -112,14 +110,14 @@ def filter_issues(request,repo_id,pk):
                         if ifm not in issues_match_milestone:
                             issues_match_milestone.append(ifm)            
                 issues_for_return = set(issues_for_return).intersection(issues_match_milestone)
-            elif filter_type == "assigned":
-                user = User.objects.get(username = filter_value)
+            elif filter_type.lower() == "assigned":
+                user = User.objects.get(username__icontains = filter_value)
                 issues_match_assigned =  Issue.objects.filter(assignees = user)
                 issues_for_return = issues_for_return.intersection(issues_match_assigned)
                 print("assigned")
                 print(issues_for_return)
-            elif filter_type == "project":
-                projects = Project.objects.filter(name = filter_value)
+            elif filter_type.lower() == "project":
+                projects = Project.objects.filter(name__icontains = filter_value)
                 issues_match_projects = list()
                 for p in projects:
                     issues_from_p = Issue.objects.filter(projects = p)
@@ -127,24 +125,24 @@ def filter_issues(request,repo_id,pk):
                         if ifp not in issues_match_projects:
                             issues_match_projects.append(ifp)            
                 issues_for_return = set(issues_for_return).intersection(issues_match_projects)
-            elif filter_type == "label":
+            elif filter_type.lower() == "label":
                 print(filter_value)
-                label = Label.objects.get(name = filter_value)
+                label = Label.objects.get(name__icontains = filter_value)
                 issues_match_label =  Issue.objects.filter(labels = label)
                 issues_for_return = issues_for_return.intersection(issues_match_label)
                 print("label")
                 print(issues_for_return)
-            elif filter_type == "author":
-                user = User.objects.get(username = filter_value)
+            elif filter_type.lower() == "author":
+                user = User.objects.get(username__icontains = filter_value)
                 issues_match_author =  Issue.objects.filter(opened_by = user)
                 issues_for_return = issues_for_return.intersection(issues_match_author)
-            elif filter_type == "in":
+            elif filter_type.lower() == "in":
                 if i > 1 :
-                    if filter_value == "title":
-                        issues_match_title = Issue.objects.filter(issue_title = params[i-1])
+                    if filter_value.lower() == "title":
+                        issues_match_title = Issue.objects.filter(issue_title__icontains = params[i-1])
                         issues_for_return = issues_for_return.intersection(issues_match_title)
-                    elif filter_value == "body":
-                        issues_match_body = Issue.objects.filter(description = params[i-1])
+                    elif filter_value.lower() == "body":
+                        issues_match_body = Issue.objects.filter(description__icontains = params[i-1])
                         issues_for_return = issues_for_return.intersection(issues_match_body)
                     else:
                         issues_for_return = []  
