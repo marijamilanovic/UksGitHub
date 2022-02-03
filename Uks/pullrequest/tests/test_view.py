@@ -38,8 +38,8 @@ def fill_test_db():
 
         #Pull requests
         pullrequest = Pullrequest.objects.create(id = 1, name='master', status='Opened', creator= test_user, reviewed = True)
-        pullrequest2 = Pullrequest.objects.create(id = 2, name='develop', status='Opened', creator= test_user, reviewed = True)
-        pullrequest3 = Pullrequest.objects.create(id = 3, name='develop', status='Opened', creator= test_user, reviewed = True)
+        pullrequest2 = Pullrequest.objects.create(id = 2, name='develop1', status='Opened', creator= test_user, reviewed = True)
+        pullrequest3 = Pullrequest.objects.create(id = 3, name='develop2', status='Opened', creator= test_user, reviewed = True)
         pullrequest.prRepository = test_repository
         pullrequest.reviewers.add(user)
         pullrequest3.assignees.add(test_user3)
@@ -93,6 +93,12 @@ class PullrequestViewsTest(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_add_assignees_on_pull_request(self):
+        user = User.objects.create(username='testuser')
+        user.set_password('12345')
+        user.save()
+        client = Client()
+        client.login(username='testuser', password='12345')
+
         pullrequest = Pullrequest.objects.get(id = 3)
         pullrequest.prRepository = Repository.objects.get(name='repository')
         pullrequest.save()
@@ -100,86 +106,134 @@ class PullrequestViewsTest(TestCase):
         assignees.append(User.objects.get(username='username3').username)
         assignees.append(User.objects.get(username='username4').username)
         data = {'assignees': assignees}
-        response = self.client.post(reverse('add_assignes_on_pull_request', kwargs={'id': pullrequest.id}), data, follow=True)
+        response = client.post(reverse('add_assignes_on_pull_request', kwargs={'id': pullrequest.id}), data, follow=True)
         self.assertEqual(response.status_code, 200)
 
     def test_delete_assignees_on_pull_request(self):
-        pullrequest = Pullrequest.objects.get(id = 3)
+        user = User.objects.create(username='testuser')
+        user.set_password('12345')
+        user.save()
+        client = Client()
+        client.login(username='testuser', password='12345')
+
+        pullrequest = Pullrequest.objects.get(name='develop2')
         pullrequest.prRepository = Repository.objects.get(name='repository')
         pullrequest.save()
         assignees_id = User.objects.get(username='username3').id
         
-        response = self.client.post(reverse('delete_assignees_on_pull_request', kwargs={'id': pullrequest.id, 'assignee_id': assignees_id}), follow=True)
+        response = client.post(reverse('delete_assignees_on_pull_request', kwargs={'id': pullrequest.id, 'assignee_id': assignees_id}), follow=True)
         self.assertEqual(response.status_code, 200)
 
     def test_add_labels_on_pull_request(self):
-        pullrequest = Pullrequest.objects.get(id = 3)
+        user = User.objects.create(username='testuser')
+        user.set_password('12345')
+        user.save()
+        client = Client()
+        client.login(username='testuser', password='12345')
+
+        pullrequest = Pullrequest.objects.get(name='develop2')
         pullrequest.prRepository = Repository.objects.get(name='repository')
         pullrequest.save()
         labels = []
         labels.append(Label.objects.get(name='bug').id)
         labels.append(Label.objects.get(name='duplicate').id)
         data = {'labels': labels}
-        response = self.client.post(reverse('add_labels_on_pull_request', kwargs={'id': pullrequest.id}), data, follow=True)
+        response = client.post(reverse('add_labels_on_pull_request', kwargs={'id': pullrequest.id}), data, follow=True)
         self.assertEqual(response.status_code, 200)
 
     def test_delete_labels_on_pull_request(self):
-        pullrequest = Pullrequest.objects.get(id = 3)
+        user = User.objects.create(username='testuser')
+        user.set_password('12345')
+        user.save()
+        client = Client()
+        client.login(username='testuser', password='12345')
+
+        pullrequest = Pullrequest.objects.get(name='develop2')
         pullrequest.prRepository = Repository.objects.get(name='repository')
         pullrequest.save()
         label_id = Label.objects.get(name='duplicate').id
         
-        response = self.client.post(reverse('delete_labels_on_pull_request', kwargs={'id': pullrequest.id, 'label_id': label_id}), follow=True)
+        response = client.post(reverse('delete_labels_on_pull_request', kwargs={'id': pullrequest.id, 'label_id': label_id}), follow=True)
         self.assertEqual(response.status_code, 200)
 
     def test_add_milestones_on_pull_request(self):
-        pullrequest = Pullrequest.objects.get(id = 3)
+        user = User.objects.create(username='testuser')
+        user.set_password('12345')
+        user.save()
+        client = Client()
+        client.login(username='testuser', password='12345')
+
+        pullrequest = Pullrequest.objects.get(name='develop2')
         pullrequest.prRepository = Repository.objects.get(name='repository')
         pullrequest.save()
         milestones = []
         milestones.append(Milestone.objects.get(title='Milestone').id)
         milestones.append(Milestone.objects.get(title='Milestone1').id)
         data = {'milestones': milestones}
-        response = self.client.post(reverse('add_milestones_on_pull_request', kwargs={'id': pullrequest.id}), data, follow=True)
+        response = client.post(reverse('add_milestones_on_pull_request', kwargs={'id': pullrequest.id}), data, follow=True)
         self.assertEqual(response.status_code, 200)
 
     def test_add_issues_on_pull_request(self):
-        pullrequest = Pullrequest.objects.get(id = 3)
+        user = User.objects.create(username='testuser')
+        user.set_password('12345')
+        user.save()
+        client = Client()
+        client.login(username='testuser', password='12345')
+
+        pullrequest = Pullrequest.objects.get(name='develop2')
         pullrequest.prRepository = Repository.objects.get(name='repository')
         pullrequest.save()
         issues = []
         issues.append(Issue.objects.get(issue_title='Issue').id)
         issues.append(Issue.objects.get(issue_title='Issue1').id)
         data = {'issues': issues}
-        response = self.client.post(reverse('add_issues_on_pull_request', kwargs={'id': pullrequest.id}), data, follow=True)
+        response = client.post(reverse('add_issues_on_pull_request', kwargs={'id': pullrequest.id}), data, follow=True)
         self.assertEqual(response.status_code, 200)
 
     def test_delete_issues_on_pull_request(self):
-        pullrequest = Pullrequest.objects.get(id = 3)
+        user = User.objects.create(username='testuser')
+        user.set_password('12345')
+        user.save()
+        client = Client()
+        client.login(username='testuser', password='12345')
+
+        pullrequest = Pullrequest.objects.get(name='develop2')
         pullrequest.prRepository = Repository.objects.get(name='repository')
         pullrequest.save()
         issue_id = Issue.objects.get(issue_title='Issue1').id
         
-        response = self.client.post(reverse('delete_issues_on_pull_request', kwargs={'id': issue_id, 'pr_id': pullrequest.id}), follow=True)
+        response = client.post(reverse('delete_issues_on_pull_request', kwargs={'id': issue_id, 'pr_id': pullrequest.id}), follow=True)
         self.assertEqual(response.status_code, 200)
 
     def test_add_issues_on_pull_request(self):
-        pullrequest = Pullrequest.objects.get(id = 3)
+        user = User.objects.create(username='testuser')
+        user.set_password('12345')
+        user.save()
+        client = Client()
+        client.login(username='testuser', password='12345')
+
+        pullrequest = Pullrequest.objects.get(name='develop2')
         pullrequest.prRepository = Repository.objects.get(name='repository')
         pullrequest.save()
         projects = []
         projects.append(Project.objects.get(name='Project1').id)
         projects.append(Project.objects.get(name='Project2').id)
         data = {'projects': projects}
-        response = self.client.post(reverse('add_issues_on_pull_request', kwargs={'id': pullrequest.id}), data, follow=True)
+        response = client.post(reverse('add_issues_on_pull_request', kwargs={'id': pullrequest.id}), data, follow=True)
         self.assertEqual(response.status_code, 200)
 
     def test_delete_projects_on_pull_request(self):
-        pullrequest = Pullrequest.objects.get(id = 3)
+        user = User.objects.create(username='testuser')
+        user.set_password('12345')
+        user.save()
+        client = Client()
+        client.login(username='testuser', password='12345')
+
+        pullrequest = Pullrequest.objects.get(name='develop2')
         pullrequest.prRepository = Repository.objects.get(name='repository')
         pullrequest.save()
         project_id = Project.objects.get(name='Project2').id
         
-        response = self.client.post(reverse('delete_projects_on_pull_request', kwargs={'id': pullrequest.id, 'project_id': project_id}), follow=True)
+        response = client.post(reverse('delete_projects_on_pull_request', kwargs={'id': pullrequest.id, 'project_id': project_id}), follow=True)
         self.assertEqual(response.status_code, 200)
     

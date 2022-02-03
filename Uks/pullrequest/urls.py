@@ -5,6 +5,7 @@ import comment.views
 import milestone.views
 import issue.views
 import project.views
+import user.views
 
 from . import views
 
@@ -36,5 +37,6 @@ urlpatterns = [
      path('add_projects_in_pull_request/<int:id>', views.add_projects_in_pull_request, name='add_projects_in_pull_request'),
      path('delete_projects_on_pull_request/<int:id>/<int:project_id>', views.delete_projects_on_pull_request, name='delete_projects_on_pull_request'),
      path('getProjectById/<int:id>', project.views.getProjectById, name='getProjectById'),
+     path('visit_profile/<int:id>', user.views.visit_profile, name='visit_profile'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 

@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'pullrequest.apps.PullrequestConfig',
     'insights.apps.InsightsConfig',
     'comment.apps.CommentConfig',
+    'history.apps.HistoryConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -57,6 +58,7 @@ INSTALLED_APPS = [
     'django_bootstrap_icons',
     'crispy_forms',
     'colorfield',
+    'django.contrib.humanize',
 ]
 
 MESSAGE_TAGS = {

@@ -34,7 +34,7 @@ class Emoji(models.Model):
 class Comment(models.Model):
     author = models.ForeignKey(to=User, null=True, on_delete=models.CASCADE)
     content = models.TextField(default='', blank= True)
-    created_date = models.DateField(null=True, blank=True) 
+    created_date = models.DateTimeField(null=True, blank=True) 
     emojis = models.ManyToManyField(Emoji)
 
     def get_emoji_heart(self):
