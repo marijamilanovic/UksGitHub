@@ -124,7 +124,13 @@
                 <label class="form-check-label" for="inlineRadio2">Closed</label>
             </div>
             <br><br>
-            <input type="submit" style="margin-left: 12px; margin-top: 5px;"  class="btn btn-success" value="Update">
+            {% for developer in repository.developers.all %}
+                {% if developer.id == logged_user_id %}
+                    <input type="submit" style="margin-left: 12px; margin-top: 5px;"  class="btn btn-success" value="Update">
+                {% else %}
+                    <input type="submit" style="margin-left: 12px; margin-top: 5px;"  class="btn btn-success" value="Update" disabled>
+                {% endif %}
+            {% endfor %}
         </form>
     </div>  
     {% endblock %}

@@ -150,7 +150,11 @@
                 <div class="card-body">
                     {% for issue in issues %}
                         {% if issue.state == 'Opened' %}
-                            <a href="#" id="{{issue.id}}" onclick="askToDeleteIssueModal(this.id)" class="link-primary" style="position:absolute; margin-left: 900px;">❌</a>
+                            {% for developer in issue.repository.developers.all %}
+                              {% if developer.id ==  logged_user_id %}
+                                <a href="#" id="{{issue.id}}" onclick="askToDeleteIssueModal(this.id)" class="link-primary" style="position:absolute; margin-left: 900px;">❌</a>
+                              {% endif %}
+                            {% endfor %}
                             <!-- DELETE MODAL -->
                             <div class="modal" id="delete_{{issue.id}}" tabindex="-1" role="dialog">
                               <div class="modal-dialog modal-dialog-centered" role="document">

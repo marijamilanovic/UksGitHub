@@ -308,7 +308,7 @@ def get_issue_by_id(id):
 
 # project methods
 def get_projects_by_repo(repository):
-    return Project.objects.filter(repository = repository)
+    return Project.objects.filter(Q(repository = repository) and Q(status = 'Opened'))
 
 def add_projects_in_issue(request, issue):
     projects_ids = request.POST.getlist('projects_ids')
