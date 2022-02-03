@@ -277,6 +277,23 @@
         <p>There are no issues yet.</p>
         {% endif %}
         </div>
+        <!--Modal-->
+        <div class="modal" id="myModal" tabindex="-1" role="dialog">
+          <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title">Fork {{repository.name}}</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <p>Where should we fork {{repository.name}} ?</p>
+                <a class="tooltip-test" title="Will be created as {{request.user}}/{{repository.name}}" href="{% url 'forkRepository' id=repository.id  %}"  style="font-size: large;"> {% bs_icon 'person-circle' size='1.2em' %} {{request.user}}</a>
+              </div>
+            </div>
+          </div>
+        </div>
         {%endblock%}
   {% block javascript %}
   <script>
@@ -285,6 +302,10 @@
     function searchAll(){
       document.getElementById('searchAll').style.display = 'block';
       document.getElementById('searchRepo').style.display = 'none';
+    }
+
+    function showModal() {
+        $('#myModal').modal('show')
     }
 
     setTimeout(function(){

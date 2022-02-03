@@ -39,7 +39,7 @@
 
           {% block navProjects %}
           <li class="nav-item">
-            <a class="nav-link" style="color: black;" href="#">{% bs_icon 'layout-text-window-reverse' size='1.2em' %} Projects</a>
+            <a class="nav-link" style="color: black;" href="{% url 'user_projects' id=user.id %}">{% bs_icon 'layout-text-window-reverse' size='1.2em' %} Projects</a>
           </li>
           {% endblock %}
         </ul>

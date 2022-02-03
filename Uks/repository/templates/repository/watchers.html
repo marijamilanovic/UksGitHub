@@ -21,7 +21,7 @@
                 <ul class="list-group list-group-flush">
                   {% for watcher in watchers %}
                   <li class="list-group-item">
-                  <a href="{% url 'profile' %}" style="display:inline-block;font-size: large;"> <span style="color: black;"> {% bs_icon 'person-circle' size='2.7em' %}</span>  {{watcher}}</a>
+                  <a href="{% url 'visit_profile' id=watcher.id %}" style="display:inline-block;font-size: large;"> <span style="color: black;"> {% bs_icon 'person-circle' size='2.7em' %}</span>  {{watcher}}</a>
                   <div style="color: black; margin-left: 490px; margin-top: -20px;"> {% bs_icon 'clock' size='1.0em' %} Joined on:  {{watcher.date_joined}}</div>
                 </li>
                   {% endfor %}

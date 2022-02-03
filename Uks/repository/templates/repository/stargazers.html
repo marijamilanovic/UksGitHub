@@ -21,7 +21,7 @@
                 <ul class="list-group list-group-flush">
                   {% for stargazer in stargazers %}
                   <li class="list-group-item">
-                  <a href="{% url 'profile' %}" style="display:inline-block;font-size: large;"> <span style="color: black;"> {% bs_icon 'person-circle' size='2.7em' %}</span>  {{stargazer}}</a>
+                  <a href="{% url 'visit_profile' id=stargazer.id %}" style="display:inline-block;font-size: large;"> <span style="color: black;"> {% bs_icon 'person-circle' size='2.7em' %}</span>  {{stargazer}}</a>
                   <div style="color: black; margin-left: 490px; margin-top: -20px;"> {% bs_icon 'clock' size='1.0em' %} Joined on:  {{stargazer.date_joined}}</div>
                 </li>
                   {% endfor %}

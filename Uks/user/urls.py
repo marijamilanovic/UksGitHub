@@ -23,5 +23,6 @@ urlpatterns = [
     path('searchedUsers', views.searchedUsers, name = 'searchedUsers'),
     path('/visit_profile/<int:id>', views.visit_profile, name = 'visit_profile'),
     path('user_repositories/<int:id>', views.user_repositories, name='user_repositories'),
+    path('user_projects/<int:id>', views.user_projects, name='user_projects'),
 ]
 
