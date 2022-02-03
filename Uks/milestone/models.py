@@ -40,6 +40,8 @@ class Milestone(models.Model):
         return self.issue_set.filter(state='Opened').count()
 
     def due_date_passed(self):
+        if (self.due_date == None):
+            return False
         if(date.today() >= self.due_date):
             return True
         return False

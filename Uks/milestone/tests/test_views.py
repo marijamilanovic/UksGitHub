@@ -88,6 +88,16 @@ class MilestoneViewsTest(TestCase):
         data = {'title': milestone.title, 'description':milestone.description,'dueDate':milestone.due_date,'repository':milestone.repository.id}
         response = self.client.post(reverse('addMilestone'),data, follow=True)
         self.assertEqual(response.status_code, 200)
+
+    def test_milestone_close(self):
+        milestone = Milestone.objects.get(title='Milestone2')
+        response = self.client.get(reverse('closeMilestone', kwargs={'id': milestone.id}), follow=True)
+        self.assertEqual(response.status_code, 200)
+
+    def test_milestone_reopen(self):
+        milestone = Milestone.objects.get(title='Milestone2')
+        response = self.client.get(reverse('reopenMilestone', kwargs={'id': milestone.id}), follow=True)
+        self.assertEqual(response.status_code, 200)
         
 
     

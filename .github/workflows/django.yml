@@ -39,5 +39,10 @@ jobs:
         pip install -r requirements.txt
     - name: Run Tests
       run: |
+<<<<<<< HEAD
         cd Uks
         python manage.py test
+=======
+        python ./Uks/manage.py test
+
+>>>>>>> develop

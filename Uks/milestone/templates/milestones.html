@@ -26,24 +26,21 @@
     {% endblock %}
 
     {%block page_content%}
-        <div class="tab-pane container active" id="milestones" style="margin-right: 60px;">
-          <div style="margin-top: 15px; margin-left: -95px; max-width: 1000px;">
-            {% include 'messages.html' %}
-          </div>
-          <a href="{% url 'newMilestone' id=repository.id %}" style="margin-left: 763px; margin-top: -25px;" type="button" class="btn btn-success" >New milestone</a>
+    <div class="tab-pane container active" id="milestones" style="margin-right: 120px;">
+      <a href="{% url 'newMilestone' id=repository.id %}" style="margin-left: 834px; margin-top: -25px;" type="button" class="btn btn-success" >New milestone</a>
+  
+      <div class="card" style="width: 1000px; margin-top: 15px; margin-left: -30px;">
+        <div class="card-header" style="background-color: #d7f0db;">
+            {% bs_icon 'signpost' size='1.1em' %} <a style="color: darkgray" href="#" id="open" > {{repository.get_opened_milestones_number}} Open </a>
+            <span style="margin-left: 15px;"></span>
+            {% bs_icon 'check' size='1.8em' %}<a style="color:darkgray;" href="#" id="close" >{{repository.get_closed_milestones_number}} Closed </a>
+        </div>
         {% if milestones %}
-        {% for m in milestones %}
-        <div class="card border-secondary mb-3" style="margin-top: 15px; margin-left: -95px; max-width: 1000px;">
+        <div class="opened" id="Div1">
+          <ul class="list-group list-group-flush" style="margin-top: 10px;">
+            {% for m in milestones %} 
             {% if m.status == 'Opened' %}
-            <div class="card-header" style="background-color: #d7f0db;">
-                {% bs_icon 'activity' size='1em' color='green' %} <span style="padding-left:15px">{{m.status}}</span>  <span style="padding-left:20px; color: green;"> {{pr.status}}</span>
-            </div>
-            {% else %}
-            <div class="card-header" style="background-color: #e9d7f0;">
-                {% bs_icon 'activity' size='1em' color='purple' %} <span style="padding-left:15px">{{m.status}}</span> <span style="padding-left:20px; color: purple;"> {{pr.status}}</span>
-            </div>
-            {% endif %}
-            <div class="card-body">
+            <li class="list-group-item"> 
             <a  style="color: black; font-size: x-large;" href="{% url 'seeMilestone' id=m.id %}" class="card-title">{{m.title}}</a>
             <div class="progress" style="width: 600px; margin-top: -20px; margin-left: 350px;">
               <div class="progress-bar bg-success" role="progressbar" style="width: {{m.get_completed_percentage}}%" aria-valuenow="{{m.get_completed_percentage}}" aria-valuemin="0" aria-valuemax="100"></div>
@@ -55,42 +52,95 @@
             </div>
             <p class="card-text" style="margin-top: -40px;">{{m.description}}</p>
             {% if m.due_date_passed %}
-            <p class="card-text">{% bs_icon 'exclamation-triangle' size='1em' %} Passed due: {{m.passed_days_count}} days ago</p>
-            {% else %}
+            <p class="card-text"><span style="color: red;">{% bs_icon 'exclamation-triangle' size='1em' %}  Passed due: {{m.passed_days_count}} days ago </span></p>
+            {% elif m.due_date != None %}
             <p class="card-text">{% bs_icon 'calendar-check' size='1em' %} Due by: {{m.due_date}}</p>
+            {% else %}
+            <p class="card-text">{% bs_icon 'calendar-check' size='1em' %} No due date</p>
             {% endif %}
             <a href="{% url 'getMilestoneById' id=m.id %}" class="link-primary">Edit</a>
-            <a href="#" id="{{m.id}}" onclick="askToDeleteMilestoneModal(this.id)" class="link-primary" style="margin-left: 10px;">Delete</a>
-            <!-- DELETE MODAL -->
-            <div class="modal" id="delete_milestone_{{m.id}}" tabindex="-1" role="dialog">
-              <div class="modal-dialog modal-dialog-centered" role="document">
-                <div class="modal-content">
-                  <div class="modal-header">
-                    <h5 class="modal-title">Delete</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                      <span aria-hidden="true">&times;</span>
-                    </button>
-                  </div>
-                  <div class="modal-body">
-                    <p>Do you want to delete milestone with title <i>{{m.title}}</i> ?</p>
-                  </div>
-                  <div class="modal-footer">
-                    <a class="btn btn-primary" href="{% url 'deleteMilestone' id=m.id %}" role="button">Yes</a>
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                  </div>
-                </div>
-              </div>
-            </div>
-            </div>
+            <a href="{% url 'closeMilestone' id=m.id %}" class="link-primary" style="margin-left: 10px;">Close</a>
+            <a href="#" id="{{m.id}}" onclick="askToDeleteMilestoneModal(this.id)" class="link-primary" style="margin-left: 10px;">Delete</a>     
+          </li>
+          {% endif %}
+          {% endfor %}
+
+          {% else %}
+          <p>There are no  milestones yet.</p>
+          {% endif %}
+          
+        </ul> 
+      </div>
+
+      {% if milestones %}
+      <div class="opened" id="Div2" style="display: none;">
+        <ul class="list-group list-group-flush" style="margin-top: 10px;">
+          {% for m in milestones %} 
+          {% if m.status == 'Closed' %}
+          <li class="list-group-item"> 
+          <a  style="color: black; font-size: x-large;" href="{% url 'seeMilestone' id=m.id %}" class="card-title">{{m.title}}</a>
+          <div class="progress" style="width: 600px; margin-top: -20px; margin-left: 350px;">
+            <div class="progress-bar bg-success" role="progressbar" style="width: {{m.get_completed_percentage}}%" aria-valuenow="{{m.get_completed_percentage}}" aria-valuemin="0" aria-valuemax="100"></div>
+          </div>
+          <div style="margin-left: 350px; margin-top: 10px;" class="row">
+          <p> <b>{{m.get_completed_percentage}}%</b>  complete</p>
+          <a href="#" style="margin-left: 20px; color: black;" > <b>{{m.get_opened_issues_number}}</b> open</a>
+          <a href="#" style="margin-left: 20px; color: black;"> <b>{{m.get_closed_issues_number}}</b> closed </a>
+          </div>
+          <p class="card-text" style="margin-top: -40px;">{{m.description}}</p>
+          {% if m.due_date_passed %}
+          <p class="card-text">{% bs_icon 'exclamation-triangle' size='1em' %} Passed due: {{m.passed_days_count}} days ago</p>
+          {% elif m.due_date != None %}
+          <p class="card-text">{% bs_icon 'calendar-check' size='1em' %} Due by: {{m.due_date}}</p>
+          {% else %}
+          <p class="card-text">{% bs_icon 'calendar-check' size='1em' %} No due date</p>
+          {% endif %}
+          <a href="{% url 'getMilestoneById' id=m.id %}" class="link-primary">Edit</a>
+          <a href="{% url 'reopenMilestone' id=m.id %}" class="link-primary" style="margin-left: 10px;">Reopen</a>
+          <a href="#" id="{{m.id}}" onclick="askToDeleteMilestoneModal(this.id)" class="link-primary" style="margin-left: 10px;">Delete</a>     
+          </li>
+          {% endif %}
+          
+          {% endfor %}
+          {% endif %}
+        </ul> 
         </div>
-        {% endfor %}
-        {% else %}
-        <p>There are no milestones yet.</p>
-        {% endif %}
         </div>
+    </div>
         {%endblock%}
+
         {% block javascript %}
         <script>
+          document.getElementById('searchAll').style.display = 'none';
+          var el = document.getElementById('open');
+          el.onclick = opened;
+          document.getElementById('open').style.color = "black";
+
+          var el2 = document.getElementById('close');
+          el2.onclick = closed;
+    
+          function opened() {
+              if (document.getElementById('Div1')) {
+                  document.getElementById('Div1').style.display = 'block';
+                  document.getElementById('Div2').style.display = 'none';
+                  document.getElementById('open').style.color = "black";
+                  document.getElementById('close').style.color = "darkgray";
+              }
+          }
+    
+          function closed(){
+              if (document.getElementById('Div2')) {
+                  document.getElementById('Div2').style.display = 'block';
+                  document.getElementById('Div1').style.display = 'none';
+                  document.getElementById('close').style.color = "black";
+                  document.getElementById('open').style.color = "darkgray";
+              }
+          }
+
+          function searchAll(){
+            document.getElementById('searchAll').style.display = 'block';
+            document.getElementById('searchRepo').style.display = 'none';
+          }
           setTimeout(function(){
             if ($('#msg').length > 0) {
               $('#msg').remove();

@@ -35,6 +35,8 @@ class ProjectViewsTest(TestCase):
         fill_test_db()
 
     def test_get_all_repo_projects(self):
+        credentials = {'username': 'username', 'password': 'password'}
+        response = self.client.post(reverse('login'), credentials, follow=True)
         repository = Repository.objects.get(name='repository')
         response = self.client.get(reverse('project:projects', kwargs={'id': repository.id}))
         self.assertEqual(response.status_code, 200)

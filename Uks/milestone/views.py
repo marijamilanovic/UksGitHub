@@ -80,3 +80,15 @@ def seeMilestone(request, id):
     issues = Issue.objects.all().filter(milestone=milestone.id)
 
     return render(request, "milestone.html", {"milestone": milestone, "repository": repository, "issues":issues })
+
+def closeMilestone(request,id):
+    milestone = get_object_or_404(Milestone, id = id)
+    milestone.status = 'Closed'
+    milestone.save()
+    return redirect('/milestone/milestones/'+ str(milestone.repository.id))
+
+def reopenMilestone(request,id):
+    milestone = get_object_or_404(Milestone, id = id)
+    milestone.status = 'Opened'
+    milestone.save()
+    return redirect('/milestone/milestones/'+ str(milestone.repository.id))
