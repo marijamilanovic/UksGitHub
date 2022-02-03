@@ -4,11 +4,12 @@ from sqlite3 import connect
 from xml.etree.ElementTree import Comment
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.models import User
+from history.models import History, OBJECT_TYPE
 from project.models import Project
 from repository.views import collaborators
 from .models import MERGED, PULL_REQUEST_STATE, Pullrequest, Repository, Branch
 from comment.models import EMOJI_PICKER
-from datetime import date
+from datetime import date, datetime
 from label.models import Label
 from milestone.models import Milestone
 from issue.models import Issue
@@ -175,7 +176,7 @@ def try_merge(pullrequest):
 def add_assignees_on_pull_request(request, id):
     pullrequest = get_object_or_404(Pullrequest, id=id)
     assignees = request.POST.getlist('assignees')
-
+    message = 'assigned '
     for a in assignees:
         for e in pullrequest.assignees.all():
             if a == e.username:
@@ -183,9 +184,13 @@ def add_assignees_on_pull_request(request, id):
                 pullrequest.save()
                 assignees.remove(a)
     print(pullrequest.prRepository.id)
+
     for a in assignees:
         user = get_object_or_404(User, username=a)
         pullrequest.assignees.add(user)
+        history = History(user = request.user,message= message, created_date = datetime.now(),changed_object_id = user.id, object_type= 'Assignees')
+        history.save()
+        pullrequest.history.add(history)
         pullrequest.save()
         
     return redirect('/pullrequest/updatePullrequestPage/'+ str(id))
@@ -194,6 +199,10 @@ def add_assignees_on_pull_request(request, id):
 def delete_assignees_on_pull_request(request, id, assignee_id):
     pullrequest = get_object_or_404(Pullrequest, id=id)
     pullrequest.assignees.remove(assignee_id)
+    message = 'unassigned '
+    history = History(user = request.user,message= message, created_date = datetime.now(),changed_object_id = assignee_id, object_type= 'Assignees')
+    history.save()
+    pullrequest.history.add(history)
     pullrequest.save()
 
     return redirect('/pullrequest/updatePullrequestPage/'+ str(id))
@@ -202,6 +211,7 @@ def delete_assignees_on_pull_request(request, id, assignee_id):
 def add_labels_on_pull_request(request, id):
     pullrequest = get_object_or_404(Pullrequest, id=id)
     labels = request.POST.getlist('labels')
+    message = 'added  '
 
     for label in labels:
         for l in pullrequest.labels.all():
@@ -212,6 +222,9 @@ def add_labels_on_pull_request(request, id):
     
     for label in labels:
         pullrequest.labels.add(label)
+        history = History(user = request.user,message= message, created_date = datetime.now(),changed_object_id = label, object_type= 'Label')
+        history.save()
+        pullrequest.history.add(history)
         pullrequest.save()
     
     return redirect('/pullrequest/updatePullrequestPage/'+ str(id))
@@ -220,6 +233,10 @@ def add_labels_on_pull_request(request, id):
 def delete_labels_on_pull_request(request, id, label_id):
     pullrequest = get_object_or_404(Pullrequest, id=id)
     pullrequest.labels.remove(label_id)
+    message = 'removed '
+    history = History(user = request.user,message= message, created_date = datetime.now(),changed_object_id = label_id, object_type= 'Label')
+    history.save()
+    pullrequest.history.add(history)
     pullrequest.save()
 
     return redirect('/pullrequest/updatePullrequestPage/'+ str(id))
@@ -232,17 +249,26 @@ def add_milestones_on_pull_request(request, id):
     milestone = get_object_or_404(Milestone, id=milestones)
     pullrequest.milestone.add(milestone)
     pullrequest.save()
-        
+    message = 'added this to the '
+    history = History(user = request.user,message= message, created_date = datetime.now(),changed_object_id = milestones, object_type= 'Milestone')
+    history.save()
+    pullrequest.history.add(history)
+    pullrequest.save()
     return redirect('/pullrequest/updatePullrequestPage/'+ str(id))
 
 
 def add_issues_on_pull_request(request, id):
     pullrequest = get_object_or_404(Pullrequest, id=id)
     issues = request.POST.getlist('issues')
+    message = 'linked an issue that may be closed by this pull request  '
 
     for i in issues:
         issue = get_object_or_404(Issue, id=i)
         issue.pullrequests.add(pullrequest)
+        history = History(user = request.user,message= message, created_date = datetime.now(),changed_object_id = i, object_type= 'Issue')
+        history.save()
+        pullrequest.history.add(history)
+        pullrequest.save()
         issue.save()
 
     return redirect('/pullrequest/updatePullrequestPage/'+ str(id))
@@ -259,8 +285,14 @@ def get_connected_issues_to_pull_request(id, issues):
 
 def delete_issues_on_pull_request(request, id, pr_id):
     issue = get_object_or_404(Issue, id=id)
+    pullrequest = get_object_or_404(Pullrequest, id=id)
 
     issue.pullrequests.remove(pr_id)
+    message = 'removed a link to an issue '
+    history = History(user = request.user,message= message, created_date = datetime.now(),changed_object_id = id, object_type= 'Issue')
+    history.save()
+    pullrequest.history.add(history)
+    pullrequest.save()
     issue.save()
 
     return redirect('/pullrequest/updatePullrequestPage/'+ str(pr_id))
@@ -268,6 +300,7 @@ def delete_issues_on_pull_request(request, id, pr_id):
 def add_projects_in_pull_request(request, id):
     pullrequest = get_object_or_404(Pullrequest, id=id)
     projects = request.POST.getlist('projects')
+    message = 'linked to an '
 
     for project in projects:
         for p in pullrequest.projects.all():
@@ -278,6 +311,9 @@ def add_projects_in_pull_request(request, id):
     
     for project in projects:
         pullrequest.projects.add(project)
+        history = History(user = request.user,message= message, created_date = datetime.now(),changed_object_id = project, object_type= 'Project')
+        history.save()
+        pullrequest.history.add(history)
         pullrequest.save()
 
     return redirect('/pullrequest/updatePullrequestPage/'+ str(id))
@@ -285,6 +321,10 @@ def add_projects_in_pull_request(request, id):
 def delete_projects_on_pull_request(request, id, project_id):
     pullrequest = get_object_or_404(Pullrequest, id=id)
     pullrequest.projects.remove(project_id)
+    message = 'removed a link to an  '
+    history = History(user = request.user,message= message, created_date = datetime.now(),changed_object_id = project_id, object_type= 'Project')
+    history.save()
+    pullrequest.history.add(history)
     pullrequest.save()
 
     return redirect('/pullrequest/updatePullrequestPage/'+ str(id))

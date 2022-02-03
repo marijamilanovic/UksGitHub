@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from datetime import date, datetime, timezone
 
 MILESTONE = "Milestone"
 ISSUE = "Issue"
@@ -29,3 +30,4 @@ class History(models.Model):
     created_date = models.DateTimeField(null=True, blank=True) 
     changed_object_id = models.IntegerField(null=False)
     object_type = models.CharField(max_length=20, choices=OBJECT_TYPE, default=CHANGES)
+
