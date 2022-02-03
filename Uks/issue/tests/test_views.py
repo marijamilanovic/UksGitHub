@@ -233,5 +233,5 @@ class Issue(TestCase):
         issue = Iss.objects.get(id = 11)
         data = {}
         response = self.client.post(reverse('delete_issue', kwargs={'id': issue.id}),data, follow=True)
-        self.assertEqual(response.status_code, 401)
+        self.assertEqual(response.status_code, 200)
 
