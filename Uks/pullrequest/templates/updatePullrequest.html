@@ -1,6 +1,7 @@
 {% extends 'repository/index.html' %}
 {% load static %}
 {% load bootstrap_icons %}
+{% load humanize %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -55,9 +56,30 @@
                 </ul>
                 <div class="tab-content timeline">
                     <div class="tab-pane container active" id="conversation"> 
+                        <div  class="row " style="margin-left: 8px; margin-top: 8px;">
+                            <p style="background: rgb(206, 206, 206);
+                                padding:5px;
+                                border-color: white;
+                                border-width: 2px;
+                                margin-right: 8px;
+                                margin-top: 4px;
+                                border-style: solid;
+                                border-radius: 50%;">{% bs_icon 'upload' size='1.5em' color='gray' %}</p>
+                                <p style="margin-left: 4px; margin-top: 6px;">added {{ commits|length }} commits</p>
+                        </div>
+                        {% for c in commits %}
+                            <div  class="row " style="margin-left: 8px; margin-top: 8px;">
+                                <p style="background-color: white;
+                                padding:5px;
+                                margin-right: 8px;
+                                margin-top: 4px;
+                                width: 6px;">{% bs_icon 'node-plus' size='1.5em' color='gray' %}</p>
+                                <p style="margin-top: 4px; margin-left: 15px;">{% bs_icon 'person-circle' size='1.5em' %} {{c.message}} </p>
+                            </div>
+                        {% endfor %}
                         {% for c in comments %}
                         <div class="card border-secondary mb-3" style="margin-top: 15px;  max-width: 1000px; background-color: #cde9e9;">
-                            <p style="margin-top: 10px; margin-left: 10px;">  {% bs_icon 'person-circle' size='1.5em'%} <b>{{c.author.username}}</b> commented {{c.created_date}}</p>
+                            <p style="margin-top: 10px; margin-left: 10px;">  {% bs_icon 'person-circle' size='1.5em'%} <b>{{c.author.username}}</b> commented {{ c.created_date|naturaltime }}</p>
                             {% if pullrequest.creator.username == c.author.username %}
                                 <span style="margin-top: -42px; margin-left: 770px;">
                                 <p style="border:1px; 
@@ -169,7 +191,8 @@
                                         {% for m in milestones %}
                                             {% if h.changed_object_id == m.id %}
                                                 <a href="{% url 'seeMilestone' id=m.id%}" style="margin-left: 4px; margin-right: 4px; margin-top: 5px; font-size: 14;">{{m.title}}</a>
-                                                <p style="margin-top: 4px;">{{h.object_type}} {{h.created_date}}</p>
+                                                <p style="margin-top: 4px;">{{h.object_type}} </p>
+                                                <p style="margin-top: 4px; margin-left: 4px; color: rgb(206, 206, 206);">{{ h.created_date|naturaltime }} </p>
                                             {% endif %}
                                         {% endfor %}
                                     </div>
@@ -190,6 +213,7 @@
                                                     background-color:{{l.color}}">{{l.name}}
                                                 </span> 
                                                 <p style="margin-top: 4px; margin-left: 4px;">{{h.object_type}}</p>
+                                                <p style="margin-top: 4px; margin-left: 4px; color: rgb(206, 206, 206);">{{ h.created_date|naturaltime }} </p>
                                             {% endif %}
                                         {% endfor %}
                                     </div>
@@ -203,11 +227,15 @@
                                             border-style: solid;
                                             border-radius: 50%;">{% bs_icon 'person' size='1.5em' color='gray' %}</p>
                                             <p style="margin-top: 4px;">{% bs_icon 'person-circle' size='1.5em' %}<b>{{h.user.username}}</b> </p>
-                                        {% for a in assignees.all %}
+                                        {% for a in assignees.all %} 
                                             {% if h.changed_object_id == a.id %}
-                                                <p style="margin-top: 4px; margin-left: 4px;">self-assigned this </p>
-                                            {% else %}
-                                                <p style="margin-top: 4px; margin-left: 4px;"> {{h.message}} </p> <a href="{% url 'visit_profile' id=a.id %}" style="margin-left: 8px; font-size: 14; margin-top: 7px;">{{a.username}}</a>
+                                                {% if h.user.username == a.username %}
+                                                    <p style="margin-top: 4px; margin-left: 4px;">self-assigned this </p>
+                                                {% else %}
+                                                    <p style="margin-top: 4px; margin-left: 4px;"> {{h.message}} </p>
+                                                    <a href="{% url 'visit_profile' id=a.id %}" style="margin-left: 8px; font-size: 14; margin-top: 7px;">{{a.username}}</a>
+                                                {% endif %}
+                                                    <p style="margin-top: 4px; margin-left: 4px; color: rgb(206, 206, 206);">{{ h.created_date|naturaltime }} </p>
                                             {% endif %}
                                         {% endfor %}
                                     </div>
@@ -224,6 +252,7 @@
                                         {% for i in issues %}
                                             {% if h.changed_object_id == i.id %}
                                                 <a href="{% url 'view_issue' id=i.id %}" style="margin-left: 8px; font-size: 14; margin-top: 6px;">{{i.issue_title}}</a>
+                                                <p style="margin-top: 4px; margin-left: 4px; color: rgb(206, 206, 206);">{{ h.created_date|naturaltime }} </p>
                                             {% endif %}
                                         {% endfor %}
                                     </div>
@@ -241,6 +270,41 @@
                                             {% if h.changed_object_id == p.id %}
                                                 <a  style="margin-left: 8px; font-size: 14; margin-top: 6px;">{{p.name}}</a>
                                                 <p style="margin-top: 4px; margin-left: 8px;" >{{h.object_type}}</p>
+                                                <p style="margin-top: 4px; margin-left: 4px; color: rgb(206, 206, 206);">{{ h.created_date|naturaltime }} </p>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                {% elif h.object_type == 'Changes' %}
+                                    <div  class="row" style="margin-left: 8px; margin-top: 8px;">
+                                    <p style="background: rgb(206, 206, 206);
+                                        padding:5px;
+                                        border-color: white;
+                                        border-width: 2px;
+                                        margin-right: 8px;
+                                        border-style: solid;
+                                        border-radius: 50%;">{% bs_icon 'eye' size='1.5em' color='gray' %}</p>
+                                        <p style="margin-top: 4px;">{% bs_icon 'person-circle' size='1.5em' %}<b>{{h.user.username}}</b> {{h.message}} </p>
+                                        {% for r in assignees.all %} 
+                                            {% if h.changed_object_id == r.id %}
+                                                <a href="{% url 'visit_profile' id=r.id %}" style="margin-left: 8px; font-size: 14; margin-top: 6px;">{{r}}</a>
+                                                <p style="margin-top: 4px; margin-left: 4px; color: rgb(206, 206, 206);">{{ h.created_date|naturaltime }} </p>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                {% elif h.object_type == 'Approved' %}
+                                    <div  class="row" style="margin-left: 8px; margin-top: 8px;">
+                                    <p style="background: rgb(56, 167, 61);
+                                        padding:5px;
+                                        border-color: white;
+                                        border-width: 2px;
+                                        margin-right: 8px;
+                                        border-style: solid;
+                                        border-radius: 50%;">{% bs_icon 'check2' size='1.5em' color='white' %}</p>
+                                        <p style="margin-top: 4px;">{% bs_icon 'person-circle' size='1.5em' %}<b>{{h.user.username}}</b> {{h.message}} </p>
+                                        {% for r in reviewers.all %}
+                                            {% if h.changed_object_id == r.id %}
+                                                <a href="{% url 'visit_profile' id=r.id %}" style="margin-left: 8px; font-size: 14; margin-top: 6px;">{{r.username}}</a>
+                                                <p style="margin-top: 4px; margin-left: 4px; color: rgb(206, 206, 206);">{{ h.created_date|naturaltime }} </p>
                                             {% endif %}
                                         {% endfor %}
                                     </div>
@@ -250,7 +314,29 @@
                         </div>
                         
                     </div>
-                    <div class="tab-pane container fade" id="commits">Commits history.</div>
+                    <div class="tab-pane container fade" id="commits">
+                        <div  class="row " style="margin-left: 8px; margin-top: 8px;">
+                            <p style="background: rgb(206, 206, 206);
+                                padding:5px;
+                                border-color: white;
+                                border-width: 2px;
+                                margin-right: 8px;
+                                margin-top: 4px;
+                                border-style: solid;
+                                border-radius: 50%;">{% bs_icon 'upload' size='1.5em' color='gray' %}</p>
+                                <p style="margin-left: 4px; margin-top: 6px;">added {{ commits|length }} commits</p>
+                        </div>
+                        {% for c in commits %}
+                            <div  class="row " style="margin-left: 8px; margin-top: 8px;">
+                                <p style="background-color: white;
+                                padding:5px;
+                                margin-right: 8px;
+                                margin-top: 4px;
+                                width: 6px;">{% bs_icon 'node-plus' size='1.5em' color='gray' %}</p>
+                                <p style="margin-top: 4px; margin-left: 15px;">{% bs_icon 'person-circle' size='1.5em' %} {{c.message}} </p>
+                            </div>
+                        {% endfor %}
+                    </div>
                 </div>
             </div>
             <form style="margin-top: 20px; margin-left: -12px;" method="POST" action="{% url 'add_comment' id=pullrequest.id %}"> 

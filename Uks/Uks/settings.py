@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     'django_bootstrap_icons',
     'crispy_forms',
     'colorfield',
+    'django.contrib.humanize',
 ]
 
 MESSAGE_TAGS = {

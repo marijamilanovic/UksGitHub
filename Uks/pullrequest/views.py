@@ -1,4 +1,5 @@
 from cProfile import label
+from email import message
 from random import choices
 from sqlite3 import connect
 from xml.etree.ElementTree import Comment
@@ -13,6 +14,7 @@ from datetime import date, datetime
 from label.models import Label
 from milestone.models import Milestone
 from issue.models import Issue
+from commit.models import Commit
 
 def pullrequests(request, id):
     repository = get_object_or_404(Repository, id=id)
@@ -52,13 +54,14 @@ def addPullrequest(request):
     return redirect('/pullrequest/updatePullrequestPage/'+ str(newPullrequest.id))
 
 def updatePullrequestPage(request, id):
-    pullrequest, repository, comments, emojis, not_assigned_collaborators_on_repository, reviewers, labels, milestones, projects, issues, connected_issues, assignees = pull_request_page_data(request, id)
+    pullrequest, repository, comments, commits, emojis, not_assigned_collaborators_on_repository, reviewers, labels, milestones, projects, issues, connected_issues, assignees = pull_request_page_data(request, id)
     return render(request, "updatePullrequest.html", {
         'reviewers': reviewers, 
         'not_assigned_collaborators_on_repository': not_assigned_collaborators_on_repository,
         "pullrequest": pullrequest, 
         "repository": repository, 
         "comments": comments, 
+        "commits": commits,
         "emojis": emojis,
         "labels": labels,
         "milestones": milestones,
@@ -91,7 +94,15 @@ def pull_request_page_data(request,id):
     issues = Issue.objects.all().filter(repository = repository)
     connected_issues = get_connected_issues_to_pull_request(id, issues)
     assignees =  repository.developers
-    return pullrequest, repository, comments, emojis, not_assigned_collaborators_on_repository, reviewers, labels, milestones, projects, issues, connected_issues, assignees
+    commits = get_commits(id)
+    return pullrequest, repository, comments, commits, emojis, not_assigned_collaborators_on_repository, reviewers, labels, milestones, projects, issues, connected_issues, assignees
+    
+    
+def get_commits(id):
+    pullrequest = get_object_or_404(Pullrequest, id = id)
+    commits = Commit.objects.all().filter( branch = pullrequest.source, repository = pullrequest.prRepository)
+
+    return commits
 
 def changeStatusPullrequest(request, id):
     pullrequest = get_object_or_404(Pullrequest, id = id)
@@ -103,45 +114,45 @@ def changeStatusPullrequest(request, id):
     return redirect('/pullrequest/pullrequests/'+str(pullrequest.prRepository.id))
 
 def add_reviewers_on_pull_request(request, id):
-    pullrequest, repository, comments, emojis, _ , _ = pull_request_page_data( request, id)
+    pullrequest, repository, comments, commits, emojis, _ , _ , _ , _ , _ , _ , _ , _= pull_request_page_data( request, id)
     reviewers = add_reviewrs(request, pullrequest)
     not_assigned_collaborators_on_repository = get_not_assigned_collaborators_on_pull_request(request, reviewers, repository)
-    return render(request, "updatePullrequest.html", {'reviewers': reviewers, 'not_assigned_collaborators_on_repository': not_assigned_collaborators_on_repository, "pullrequest": pullrequest, "repository": repository, "comments":comments, "emojis":emojis})
+    #return render(request, "updatePullrequest.html", {'reviewers': reviewers, 'not_assigned_collaborators_on_repository': not_assigned_collaborators_on_repository, "pullrequest": pullrequest, "repository": repository, "comments":comments, "emojis":emojis})
+    return redirect('/pullrequest/updatePullrequestPage/'+ str(id))
 
 def add_reviewrs(request,pullrequest):
     reviewers = request.POST.getlist('developers')
+    message = ' requested review from '
     if reviewers != None:
         for reviewer in reviewers:
             object_reviewer = User.objects.get(username = reviewer)
             if object_reviewer not in pullrequest.reviewers.all():
                 pullrequest.reviewers.add(object_reviewer)
+                history = History(user = request.user,message= message, created_date = datetime.now(),changed_object_id = object_reviewer.id, object_type= 'Changes')
+                history.save()
+                pullrequest.history.add(history)
+                pullrequest.save()
     return pullrequest.reviewers.all()
 
 def remove_reviewer_from_pullrequest(request, pullrequest_id, reviewer_id):
     pull_request = Pullrequest.objects.get(id = pullrequest_id)
     reviewer = User.objects.get(id = reviewer_id)
+    message = ' removed reviewer  '
     if reviewer in pull_request.reviewers.all():
         pull_request.reviewers.remove(reviewer)
+        history = History(user = request.user,message= message, created_date = datetime.now(),changed_object_id = reviewer_id, object_type= 'Changes')
+        history.save()
+        pull_request.history.add(history)
+        pull_request.save()
     pullrequest, repository, comments, emojis, not_assigned_collaborators_on_repository, reviewers, labels, milestones, projects, issues, connected_issues, assignees = pull_request_page_data(request, pullrequest_id)
-    return render(request, "updatePullrequest.html", {
-        'reviewers': reviewers, 
-        'not_assigned_collaborators_on_repository': not_assigned_collaborators_on_repository,
-        "pullrequest": pullrequest, 
-        "repository": repository, 
-        "comments": comments, 
-        "emojis": emojis,
-        "labels": labels,
-        "milestones": milestones,
-        "projects": projects,
-        "issues": issues,
-        "connected_issues": connected_issues,
-        "assignees": assignees})
+    return redirect('/pullrequest/updatePullrequestPage/'+ str(pullrequest_id))
 
 def approve(request, pullrequest_id):
     pullrequest = Pullrequest.objects.get(id = pullrequest_id)
     repository = pullrequest.prRepository
     pullrequests = Pullrequest.objects.all().filter(prRepository=repository)
     my_pullrequests = []
+    message = 'approved these changes '
     for pr in pullrequests:
         if pr.creator == request.user:
             my_pullrequests.append(pr)
@@ -150,6 +161,9 @@ def approve(request, pullrequest_id):
     if reviewer in pullrequest.reviewers.all():
         pullrequest.reviewers.remove(reviewer)
         pullrequest.reviewed = True
+        history = History(user = request.user,message= message, created_date = datetime.now(),changed_object_id = reviewer.id, object_type= 'Approved')
+        history.save()
+        pullrequest.history.add(history)
         pullrequest.save()
     pullrequests_for_review = get_pullrequests_for_review(request, repository)
     return render(request, 'pullrequests.html', {"pullrequests":my_pullrequests, "repository":repository,'pullrequests_for_review':pullrequests_for_review})

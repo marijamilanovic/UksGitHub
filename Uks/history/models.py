@@ -11,6 +11,7 @@ ASSIGNEES = "Assignees"
 CHANGES = "Changes"
 COMMENTS = "Comments"
 APPROVED = "Approved"
+MERGED = "Merged"
 
 OBJECT_TYPE = [
     (MILESTONE, "Milestone"),
@@ -21,7 +22,8 @@ OBJECT_TYPE = [
     (ASSIGNEES, "Assignees"),
     (CHANGES, "Changes"),
     (COMMENTS, "Comments"),
-    (APPROVED, "Approved")
+    (APPROVED, "Approved"),
+    (MERGED, "Merged")
 ]
 
 class History(models.Model):
