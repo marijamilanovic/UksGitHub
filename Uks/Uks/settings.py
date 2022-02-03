@@ -41,7 +41,6 @@ INSTALLED_APPS = [
     'label.apps.LabelConfig',
     'milestone.apps.MilestoneConfig',
     'project.apps.ProjectConfig',
-    'task.apps.TaskConfig',
     'branch.apps.BranchConfig',
     'commit.apps.CommitConfig',
     'user.apps.UserConfig',

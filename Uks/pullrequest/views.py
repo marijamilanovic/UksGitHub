@@ -15,6 +15,8 @@ from label.models import Label
 from milestone.models import Milestone
 from issue.models import Issue
 from commit.models import Commit
+from django.contrib.auth.decorators import login_required
+
 
 def pullrequests(request, id):
     repository = get_object_or_404(Repository, id=id)
@@ -34,11 +36,15 @@ def get_pullrequests_for_review(request, repository):
             pullrequests_for_review.append(pullrequest)
     return pullrequests_for_review
 
+
+@login_required(login_url="login")
 def newPullrequest(request, id):
     repository = get_object_or_404(Repository, id=id)
     branches = Branch.objects.all().filter(repository=repository)
     return render(request, 'newPullrequest.html', {"branches":branches, "repository":repository, "logged_user_id": request.user.id})
 
+
+@login_required(login_url="login")
 def addPullrequest(request):
     if request.method == 'POST':
         created = date.today()
@@ -53,6 +59,8 @@ def addPullrequest(request):
         not_assigned_collaborators_on_repository = get_not_assigned_collaborators_on_pull_request(request, reviewers, prRepository)
     return redirect('/pullrequest/updatePullrequestPage/'+ str(newPullrequest.id))
 
+
+@login_required(login_url="login")
 def updatePullrequestPage(request, id):
     pullrequest, repository, comments, commits, emojis, not_assigned_collaborators_on_repository, reviewers, labels, milestones, projects, issues, connected_issues, assignees = pull_request_page_data(request, id)
     return render(request, "updatePullrequest.html", {
@@ -104,6 +112,8 @@ def get_commits(id):
 
     return commits
 
+
+@login_required(login_url="login")
 def changeStatusPullrequest(request, id):
     pullrequest = get_object_or_404(Pullrequest, id = id)
     if(pullrequest.status=='Closed'):
@@ -113,6 +123,8 @@ def changeStatusPullrequest(request, id):
     pullrequest.save()
     return redirect('/pullrequest/pullrequests/'+str(pullrequest.prRepository.id))
 
+
+@login_required(login_url="login")
 def add_reviewers_on_pull_request(request, id):
     pullrequest, repository, comments, commits, emojis, _ , _ , _ , _ , _ , _ , _ , _= pull_request_page_data( request, id)
     reviewers = add_reviewrs(request, pullrequest)
@@ -120,6 +132,8 @@ def add_reviewers_on_pull_request(request, id):
     #return render(request, "updatePullrequest.html", {'reviewers': reviewers, 'not_assigned_collaborators_on_repository': not_assigned_collaborators_on_repository, "pullrequest": pullrequest, "repository": repository, "comments":comments, "emojis":emojis})
     return redirect('/pullrequest/updatePullrequestPage/'+ str(id))
 
+
+@login_required(login_url="login")
 def add_reviewrs(request,pullrequest):
     d = datetime.today() - timedelta(hours=1)
     reviewers = request.POST.getlist('developers')
@@ -135,6 +149,8 @@ def add_reviewrs(request,pullrequest):
                 pullrequest.save()
     return pullrequest.reviewers.all()
 
+
+@login_required(login_url="login")
 def remove_reviewer_from_pullrequest(request, pullrequest_id, reviewer_id):
     d = datetime.today() - timedelta(hours=1)
     pull_request = Pullrequest.objects.get(id = pullrequest_id)
@@ -149,6 +165,8 @@ def remove_reviewer_from_pullrequest(request, pullrequest_id, reviewer_id):
     pullrequest, repository, comments, emojis, not_assigned_collaborators_on_repository, reviewers, labels, milestones, projects, issues, connected_issues, assignees = pull_request_page_data(request, pullrequest_id)
     return redirect('/pullrequest/updatePullrequestPage/'+ str(pullrequest_id))
 
+
+@login_required(login_url="login")
 def approve(request, pullrequest_id):
     d = datetime.today() - timedelta(hours=1)
     pullrequest = Pullrequest.objects.get(id = pullrequest_id)
@@ -171,6 +189,8 @@ def approve(request, pullrequest_id):
     pullrequests_for_review = get_pullrequests_for_review(request, repository)
     return render(request, 'pullrequests.html', {"pullrequests":my_pullrequests, "repository":repository,'pullrequests_for_review':pullrequests_for_review})
 
+
+@login_required(login_url="login")
 def merge(request, pullrequest_id):
     pullrequest = Pullrequest.objects.get(id = pullrequest_id)
     repository = pullrequest.prRepository
@@ -182,6 +202,7 @@ def merge(request, pullrequest_id):
             my_pullrequests.append(pr)
     pullrequests_for_review = get_pullrequests_for_review(request, repository)
     return render(request, 'pullrequests.html', {"pullrequests":my_pullrequests, "repository":repository,'pullrequests_for_review':pullrequests_for_review})
+
 
 def try_merge(pullrequest):
     if len(pullrequest.reviewers.all()) == 0 and pullrequest.reviewed:
@@ -213,6 +234,7 @@ def add_assignees_on_pull_request(request, id):
     return redirect('/pullrequest/updatePullrequestPage/'+ str(id))
 
 
+@login_required(login_url="login")
 def delete_assignees_on_pull_request(request, id, assignee_id):
     d = datetime.today() - timedelta(hours=1)
     pullrequest = get_object_or_404(Pullrequest, id=id)
@@ -226,6 +248,7 @@ def delete_assignees_on_pull_request(request, id, assignee_id):
     return redirect('/pullrequest/updatePullrequestPage/'+ str(id))
 
 
+@login_required(login_url="login")
 def add_labels_on_pull_request(request, id):
     d = datetime.today() - timedelta(hours=1)
     pullrequest = get_object_or_404(Pullrequest, id=id)
@@ -249,6 +272,7 @@ def add_labels_on_pull_request(request, id):
     return redirect('/pullrequest/updatePullrequestPage/'+ str(id))
 
 
+@login_required(login_url="login")
 def delete_labels_on_pull_request(request, id, label_id):
     d = datetime.today() - timedelta(hours=1)
     pullrequest = get_object_or_404(Pullrequest, id=id)
@@ -261,6 +285,8 @@ def delete_labels_on_pull_request(request, id, label_id):
 
     return redirect('/pullrequest/updatePullrequestPage/'+ str(id))
 
+
+@login_required(login_url="login")
 def add_milestones_on_pull_request(request, id):
     d = datetime.today() - timedelta(hours=1)
     pullrequest = get_object_or_404(Pullrequest, id=id)
@@ -278,6 +304,7 @@ def add_milestones_on_pull_request(request, id):
     return redirect('/pullrequest/updatePullrequestPage/'+ str(id))
 
 
+@login_required(login_url="login")
 def add_issues_on_pull_request(request, id):
     d = datetime.today() - timedelta(hours=1)
     pullrequest = get_object_or_404(Pullrequest, id=id)
@@ -305,6 +332,8 @@ def get_connected_issues_to_pull_request(id, issues):
             
     return connected_issues
 
+
+@login_required(login_url="login")
 def delete_issues_on_pull_request(request, id, pr_id):
     d = datetime.today() - timedelta(hours=1)
     issue = get_object_or_404(Issue, id=id)
@@ -320,6 +349,8 @@ def delete_issues_on_pull_request(request, id, pr_id):
 
     return redirect('/pullrequest/updatePullrequestPage/'+ str(pr_id))
 
+
+@login_required(login_url="login")
 def add_projects_in_pull_request(request, id):
     d = datetime.today() - timedelta(hours=1)
     pullrequest = get_object_or_404(Pullrequest, id=id)
@@ -342,6 +373,8 @@ def add_projects_in_pull_request(request, id):
 
     return redirect('/pullrequest/updatePullrequestPage/'+ str(id))
 
+
+@login_required(login_url="login")
 def delete_projects_on_pull_request(request, id, project_id):
     d = datetime.today() - timedelta(hours=1)
     pullrequest = get_object_or_404(Pullrequest, id=id)

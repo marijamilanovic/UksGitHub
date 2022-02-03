@@ -13,6 +13,7 @@ import hashlib
 from repository.models import Repository
 
 
+@login_required(login_url="login")
 def createCommit(request, id):
     form = CommitForm()
     branch = get_object_or_404(Branch, id=id)
@@ -76,8 +77,11 @@ def deleteCommit(request, id):
     else:
         return HttpResponse("Authorization failed!")
 
+
+@login_required(login_url="login")
 def get_current_repository(repo_id):
     return get_object_or_404(Repository, id = repo_id)
+
 
 def viewFoundCommit(request, id):
     commit = get_object_or_404(Commit, id = id)
