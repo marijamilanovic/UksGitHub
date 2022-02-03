@@ -38,8 +38,8 @@ def fill_test_db():
 
         #Pull requests
         pullrequest = Pullrequest.objects.create(id = 1, name='master', status='Opened', creator= test_user, reviewed = True)
-        pullrequest2 = Pullrequest.objects.create(id = 2, name='develop', status='Opened', creator= test_user, reviewed = True)
-        pullrequest3 = Pullrequest.objects.create(id = 3, name='develop', status='Opened', creator= test_user, reviewed = True)
+        pullrequest2 = Pullrequest.objects.create(id = 2, name='develop1', status='Opened', creator= test_user, reviewed = True)
+        pullrequest3 = Pullrequest.objects.create(id = 3, name='develop2', status='Opened', creator= test_user, reviewed = True)
         pullrequest.prRepository = test_repository
         pullrequest.reviewers.add(user)
         pullrequest3.assignees.add(test_user3)
@@ -116,7 +116,7 @@ class PullrequestViewsTest(TestCase):
         client = Client()
         client.login(username='testuser', password='12345')
 
-        pullrequest = Pullrequest.objects.get(id = 3)
+        pullrequest = Pullrequest.objects.get(name='develop2')
         pullrequest.prRepository = Repository.objects.get(name='repository')
         pullrequest.save()
         assignees_id = User.objects.get(username='username3').id
@@ -131,7 +131,7 @@ class PullrequestViewsTest(TestCase):
         client = Client()
         client.login(username='testuser', password='12345')
 
-        pullrequest = Pullrequest.objects.get(id = 3)
+        pullrequest = Pullrequest.objects.get(name='develop2')
         pullrequest.prRepository = Repository.objects.get(name='repository')
         pullrequest.save()
         labels = []
@@ -148,7 +148,7 @@ class PullrequestViewsTest(TestCase):
         client = Client()
         client.login(username='testuser', password='12345')
 
-        pullrequest = Pullrequest.objects.get(id = 3)
+        pullrequest = Pullrequest.objects.get(name='develop2')
         pullrequest.prRepository = Repository.objects.get(name='repository')
         pullrequest.save()
         label_id = Label.objects.get(name='duplicate').id
@@ -163,7 +163,7 @@ class PullrequestViewsTest(TestCase):
         client = Client()
         client.login(username='testuser', password='12345')
 
-        pullrequest = Pullrequest.objects.get(id = 3)
+        pullrequest = Pullrequest.objects.get(name='develop2')
         pullrequest.prRepository = Repository.objects.get(name='repository')
         pullrequest.save()
         milestones = []
@@ -180,7 +180,7 @@ class PullrequestViewsTest(TestCase):
         client = Client()
         client.login(username='testuser', password='12345')
 
-        pullrequest = Pullrequest.objects.get(id = 3)
+        pullrequest = Pullrequest.objects.get(name='develop2')
         pullrequest.prRepository = Repository.objects.get(name='repository')
         pullrequest.save()
         issues = []
@@ -197,7 +197,7 @@ class PullrequestViewsTest(TestCase):
         client = Client()
         client.login(username='testuser', password='12345')
 
-        pullrequest = Pullrequest.objects.get(id = 3)
+        pullrequest = Pullrequest.objects.get(name='develop2')
         pullrequest.prRepository = Repository.objects.get(name='repository')
         pullrequest.save()
         issue_id = Issue.objects.get(issue_title='Issue1').id
@@ -212,7 +212,7 @@ class PullrequestViewsTest(TestCase):
         client = Client()
         client.login(username='testuser', password='12345')
 
-        pullrequest = Pullrequest.objects.get(id = 3)
+        pullrequest = Pullrequest.objects.get(name='develop2')
         pullrequest.prRepository = Repository.objects.get(name='repository')
         pullrequest.save()
         projects = []
@@ -229,7 +229,7 @@ class PullrequestViewsTest(TestCase):
         client = Client()
         client.login(username='testuser', password='12345')
 
-        pullrequest = Pullrequest.objects.get(id = 3)
+        pullrequest = Pullrequest.objects.get(name='develop2')
         pullrequest.prRepository = Repository.objects.get(name='repository')
         pullrequest.save()
         project_id = Project.objects.get(name='Project2').id

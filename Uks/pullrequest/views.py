@@ -197,7 +197,6 @@ def add_assignees_on_pull_request(request, id):
                 pullrequest.assignees.remove(e.id)
                 pullrequest.save()
                 assignees.remove(a)
-    print(pullrequest.prRepository.id)
 
     for a in assignees:
         user = get_object_or_404(User, username=a)
@@ -299,7 +298,7 @@ def get_connected_issues_to_pull_request(id, issues):
 
 def delete_issues_on_pull_request(request, id, pr_id):
     issue = get_object_or_404(Issue, id=id)
-    pullrequest = get_object_or_404(Pullrequest, id=id)
+    pullrequest = get_object_or_404(Pullrequest, id=pr_id)
 
     issue.pullrequests.remove(pr_id)
     message = 'removed a link to an issue '
