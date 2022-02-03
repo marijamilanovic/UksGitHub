@@ -3,9 +3,10 @@ from .models import Milestone
 from repository.models import Repository
 from issue.models import Issue
 from datetime import date
-
+from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 
+@login_required(login_url="login")
 def newMilestone(request, id):
     repository = get_object_or_404(Repository, id=id)
     return render(request, 'newMilestone.html', { "repository":repository, "logged_user_id": request.user.id})
@@ -24,6 +25,7 @@ def allMilestones(request):
     milestones = Milestone.objects.all()
     return render(request, 'milestones.html', {"milestones":milestones})
 
+@login_required(login_url="login")
 def deleteMilestone(request, id):
     milestone = get_object_or_404(Milestone, id=id)
     all_repos = Repository.objects.all()
@@ -35,6 +37,7 @@ def deleteMilestone(request, id):
     messages.success(request, 'Milestone has been deleted.')
     return redirect('/milestone/milestones/'+ str(repository.id))
 
+@login_required(login_url="login")
 def addMilestone(request):
     errorTitle = None
     if request.method == 'POST':
@@ -60,6 +63,7 @@ def getMilestoneById(request, id):
 
     return render(request, "updateMilestone.html", {"milestone": milestone, "repository": repository})
 
+@login_required(login_url="login")
 def updateMilestone(request, id):
     if request.method == 'POST':
         milestone = get_object_or_404(Milestone, id = id)
@@ -81,12 +85,14 @@ def seeMilestone(request, id):
 
     return render(request, "milestone.html", {"milestone": milestone, "repository": repository, "issues":issues })
 
+@login_required(login_url="login")
 def closeMilestone(request,id):
     milestone = get_object_or_404(Milestone, id = id)
     milestone.status = 'Closed'
     milestone.save()
     return redirect('/milestone/milestones/'+ str(milestone.repository.id))
 
+@login_required(login_url="login")
 def reopenMilestone(request,id):
     milestone = get_object_or_404(Milestone, id = id)
     milestone.status = 'Opened'

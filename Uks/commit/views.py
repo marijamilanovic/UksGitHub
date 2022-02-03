@@ -13,6 +13,7 @@ import hashlib
 from repository.models import Repository
 
 
+@login_required(login_url="login")
 def createCommit(request, id):
     form = CommitForm()
     branch = get_object_or_404(Branch, id=id)
@@ -62,13 +63,17 @@ def commitList(request, id):
     return render(request, "commit/commitList.html", context)
 
 
+@login_required(login_url="login")
 def deleteCommit(request, id):
     commit = get_object_or_404(Commit, id=id)
     Commit.objects.get(pk=id).delete()
     return redirect('commit:commitList', id=commit.branch.id)
 
+
+@login_required(login_url="login")
 def get_current_repository(repo_id):
     return get_object_or_404(Repository, id = repo_id)
+
 
 def viewFoundCommit(request, id):
     commit = get_object_or_404(Commit, id = id)

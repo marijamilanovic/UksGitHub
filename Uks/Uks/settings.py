@@ -29,7 +29,7 @@ SECRET_KEY = 'django-insecure-340*9mga*v__&njl88q4jkr+y#3%*jnnf@ab(d*h7*si!ryrd(
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
-local_mode = True  #Za razvoj aplikacije lokalno! 
+local_mode = False  #Za razvoj aplikacije lokalno! 
 
 
 # Application definition
@@ -41,7 +41,6 @@ INSTALLED_APPS = [
     'label.apps.LabelConfig',
     'milestone.apps.MilestoneConfig',
     'project.apps.ProjectConfig',
-    'task.apps.TaskConfig',
     'branch.apps.BranchConfig',
     'commit.apps.CommitConfig',
     'user.apps.UserConfig',
@@ -109,7 +108,7 @@ if local_mode == True:
             'ENGINE': 'django.db.backends.postgresql_psycopg2',
             'NAME': 'uks',
             'USER': 'postgres',
-            'PASSWORD': 'root',
+            'PASSWORD': '1111',
             'HOST': 'localhost',
             'PORT': 5432,
         }
