@@ -2,10 +2,10 @@ from django.db import models
 from django.utils import timezone
 
 from datetime import datetime, timezone
-
 from branch.models import Branch
 from comment.models import Comment
 from repository.models import Repository
+from history.models import History
 from django.contrib.auth.models import User
 from project.models import Project
 from milestone.models import Milestone
@@ -30,6 +30,7 @@ class Pullrequest(models.Model):
     target = models.ForeignKey(to=Branch, related_name='target_branch', null=True, on_delete=models.CASCADE)
     comments = models.ManyToManyField(Comment)
     creator = models.ForeignKey(to=User, null=True, on_delete=models.CASCADE)
+    history = models.ManyToManyField(History)
     reviewers = models.ManyToManyField(User,related_name='pullrequest_reviewers')
     reviewed = models.BooleanField(default=False)
     assignees = models.ManyToManyField(User, related_name='pullrequest_assignees')

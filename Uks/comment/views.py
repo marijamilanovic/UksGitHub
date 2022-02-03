@@ -5,7 +5,7 @@ from pullrequest.models import Pullrequest
 from .models import Comment, EMOJI_PICKER, Emoji
 from repository.models import Repository
 from django.contrib.auth.models import User
-from datetime import date
+from datetime import date, datetime
 
 def add_comment(request, id):
     content = request.POST.get('comment')
@@ -19,8 +19,7 @@ def add_comment(request, id):
         return render(request, "updatePullrequest.html", {"pullrequest": pullrequest, "repository": pullrequest.prRepository, "comments":pullrequest.comments.all(), "emojis":emojis, "error":errorTitle})
     else:     
         if request.method == 'POST':
-            created_date = date.today()
-            comment = Comment(author = request.user, content = content, created_date = created_date)
+            comment = Comment(author = request.user, content = content, created_date = datetime.now())
             comment.save()
 
             pullrequest.comments.add(comment)
