@@ -26,19 +26,21 @@
     {% endblock %}
 
     {% block page_content %}
-    <div class="tab-pane container active" id="milestones">
-    {% if milestone %}
-    <h2 style="margin-top: -20px;">Milestone</h2>
+    <div class="card"  style="width: 800px; margin-top: 60px;margin-left: 370px; background-color: rgb(243, 243, 243);">
+        <div class="card-body">
+            <div style="margin-left: 120px; margin-top: 20px;">
+        {% if milestone %}
+        <h2 style="margin-top: -20px;">Milestone</h2>
         <form style="margin-top: 20px; margin-left: -12px;" method="POST" action="{% url 'updateMilestone' id=milestone.id %}"> 
             {% csrf_token %}
-            <div class="form-group col-md-6">
+            <div class="form-group col-md-10">
                 <h5>Title</h5>
                 <input type="text" class="form-control" id="title" name="title" value="{{ milestone.title }}">
             </div>
             {% if errorTitle %}
             <div style="color: red; margin-left: 14px;" >{{errorTitle}}</div>
             {% endif %}
-            <div class="form-group col-md-6">
+            <div class="form-group col-md-10">
                 <h5 >Due date (optional)</h5>
                 <input type="date" id="dueDate" name="dueDate" value="{{ milestone.due_date|date:"Y-m-d" }}">
             </div>
@@ -48,10 +50,13 @@
             </div>
             <input type="submit" style="margin-left: 12px; margin-top: 5px;"  class="btn btn-success" value="Update">
         </form>
-    {% else %}
-    <p>There are no milestone with that id.</p>
-    {% endif %}
-    </div>  
+            {% else %}
+            <p>There are no milestone with that id.</p>
+            {% endif %}
+            </div>  
+            </div>
+        </div>
+    </div>
     {% endblock %}
 
 </body>

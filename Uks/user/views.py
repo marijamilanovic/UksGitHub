@@ -16,7 +16,7 @@ def welcome(request):
     return render(request, 'welcome.html', {})
 
 def loginUser(request):
-
+    print('U LOGINU SAM')
     ok_login = False
 
     if request.method == 'POST':
