@@ -22,27 +22,33 @@ def createBranch(request, id):
     form = BranchForm()
     print('FORM DATA:', id) 
     repository = get_object_or_404(Repository, id=id)
+
+    
+
     error_name = False
     error_name_message = "Branch with same name already exist in repository"
 
     if request.method == 'POST':                            #Provera da li je POST
-        print('FORM DATA:', request.POST)                   #Print forme - radi provere
-        form = BranchForm(request.POST)  
-        branch_list = Branch.objects.all().filter(repository = repository)
-        same_name = any(b.name == request.POST["name"] for b in branch_list)
+        if request.user in list(repository.developers.all()):
+            print('FORM DATA:', request.POST)                   #Print forme - radi provere
+            form = BranchForm(request.POST)  
+            branch_list = Branch.objects.all().filter(repository = repository)
+            same_name = any(b.name == request.POST["name"] for b in branch_list)
 
-        if same_name:
-            error_name = True
+            if same_name:
+                error_name = True
+            else:
+                error_name = False
+
+            if form.is_valid() and not same_name:                                 #Validacija polja forme
+                branch = Branch.objects.create(
+                    name = request.POST['name'],
+                    repository = Repository.objects.get(pk = id)
+                )                                                                   #Cuvanje u bazi
+                return redirect('branch:repoBranchList', id = id)
         else:
-            error_name = False
-
-        if form.is_valid() and not same_name:                                 #Validacija polja forme
-            branch = Branch.objects.create(
-                name = request.POST['name'],
-                repository = Repository.objects.get(pk = id)
-            )                                                                   #Cuvanje u bazi
-            return redirect('branch:repoBranchList', id = id)
-        
+            return HttpResponse("Authorization failed!")
+            
     context = {
         'form': form,
         'repository': repository,
@@ -50,6 +56,7 @@ def createBranch(request, id):
         'error_name_message': error_name_message,
         }
     return render(request, "branch/createBranch.html", context)
+    
 
 
 def branchList(request):
@@ -59,10 +66,22 @@ def branchList(request):
     }
     return render(request, "branch/branchList.html", context)
 
-
+@login_required(login_url="login")
 def deleteBranch(request, id):
-    Branch.objects.get(pk=id).delete()
-    return render(request, "branch/repoBranchList.html", context)
+    branch = Branch.objects.get(pk=id)
+    repository = get_object_or_404(Repository, id=branch.repository.id)
+    print(request.user)
+    print(list(repository.developers.all()))
+    if request.user in list(repository.developers.all()):
+        Branch.objects.get(pk=id).delete()
+        branch_list = Branch.objects.all().filter(repository=repository)
+        context = {
+        'branch_list': branch_list,
+        'repository': repository,
+    }
+        return render(request, "branch/repoBranchList.html", context)
+    else:
+        return HttpResponse("Authorization failed!")
 
 
 def repoBranchList(request, id):
@@ -74,7 +93,7 @@ def repoBranchList(request, id):
     }
     return render(request, "branch/repoBranchList.html", context)
 
-
+@login_required(login_url="login")
 def editBranch(request, id):
     branch = get_object_or_404(Branch, id=id)
     repo = get_object_or_404(Repository, id = branch.repository.id)
@@ -82,34 +101,37 @@ def editBranch(request, id):
     error_name = False
     error_name_message = "Branch with same name already exist in repository"
 
-    if request.method == 'POST':                            
-        form = EditBranchForm(request.POST)  
-        same_name = any(b.name == request.POST["name"] for b in branch_list)
+    if request.method == 'POST':
+        if request.user in list(repo.developers.all()):                            
+            form = EditBranchForm(request.POST)  
+            same_name = any(b.name == request.POST["name"] for b in branch_list)
 
-        if request.POST["name"] == branch.name:
-            same_name = False
+            if request.POST["name"] == branch.name:
+                same_name = False
 
-        if same_name:
-            error_name = True
+            if same_name:
+                error_name = True
+            else:
+                error_name = False
+
+            if form.is_valid() and not same_name:
+                print(request.POST)
+                name = request.POST["name"]
+                #is_default = request.POST["is_default"] 
+                branch = Branch.objects.get(pk = id)
+                branch.name = name
+                if 'is_default' in request.POST:
+                    branch.is_default = True;
+                    branch_repo_list = Branch.objects.all().filter(is_default = True)
+                    for branchR in branch_repo_list:
+                        branchR.is_default = False
+                        branchR.save()
+                
+                branch.save()
+                                                                                
+                return redirect('branch:repoBranchList', id = branch.repository.id)
         else:
-            error_name = False
-
-        if form.is_valid() and not same_name:
-            print(request.POST)
-            name = request.POST["name"]
-            #is_default = request.POST["is_default"] 
-            branch = Branch.objects.get(pk = id)
-            branch.name = name
-            if 'is_default' in request.POST:
-                branch.is_default = True;
-                branch_repo_list = Branch.objects.all().filter(is_default = True)
-                for branchR in branch_repo_list:
-                    branchR.is_default = False
-                    branchR.save()
-            
-            branch.save()
-                                                                              
-            return redirect('branch:repoBranchList', id = branch.repository.id)
+            return HttpResponse("Authorization failed!")
 
 
     my_record = Branch.objects.get(pk=id)

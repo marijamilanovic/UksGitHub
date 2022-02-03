@@ -15,6 +15,8 @@ class TestBranchUrls(TestCase):
         user.set_password('user1')
         user.save()
         repo = Repository.objects.create(name="repo", status=PRIVATE, creator=user)
+        repo.developers.add(user)
+        repo.save()
         Branch.objects.create(name="master", is_default=True, repository=repo)
         Branch.objects.create(name="develop", is_default=False, repository=repo)
 
