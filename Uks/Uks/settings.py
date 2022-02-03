@@ -29,7 +29,7 @@ SECRET_KEY = 'django-insecure-340*9mga*v__&njl88q4jkr+y#3%*jnnf@ab(d*h7*si!ryrd(
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
-local_mode = True  #Za razvoj aplikacije lokalno! 
+local_mode = False  #Za razvoj aplikacije lokalno! 
 
 
 # Application definition
@@ -98,7 +98,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'Uks.wsgi.application'
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
-
+CSRF_TRUSTED_ORIGINS = ['http://localhost:8083', 'http://localhost:8080/', 'http://127.0.0.1:8080/', 'http://127.0.0.1:8083/']
 
 
 if local_mode == True:
