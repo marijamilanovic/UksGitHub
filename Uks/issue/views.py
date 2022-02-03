@@ -426,7 +426,9 @@ def add_milestone_in_issue(request, issue):
     elif issue.milestone != None:
         if issue.milestone.id == request.POST.getlist('milestone_id')[0]:
             return issue
-    elif not issue.milestone.id == Milestone.objects.get(id = request.POST.getlist('milestone_id')[0]):
+    elif issue.milestone == None:
+        return issue
+    elif issue.milestone.id != Milestone.objects.get(id = request.POST.getlist('milestone_id')[0]):
         issue.milestone = Milestone.objects.get(id = request.POST.getlist('milestone_id')[0])
         message = 'added this from the milestone'
         # history changed

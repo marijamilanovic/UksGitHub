@@ -10,6 +10,7 @@ from milestone.models import Milestone
 from datetime import date
 from project.models import Project
 from pullrequest.models import Pullrequest
+from history.models import History
 
 class Issue(TestCase):
     def setUp(self):
@@ -37,6 +38,7 @@ class Issue(TestCase):
         repository.developers.add(collaborator1)
         collaborator2 = User.objects.create(id=4, username='collaborator2')
         repository.developers.add(collaborator2)
+        repository.developers.add(user)
         # create milestone
         m1 = Milestone.objects.create(id = 1, title = 'Milestone1', description = 'first milestone', status = 'Opened', created=date.today(), due_date=date.today(), repository = repository)
         m2 = Milestone.objects.create(id = 2, title = 'Milestone2', description = 'second milestone', status = 'Opened', created=date.today(), due_date=date.today(), repository = repository)
@@ -135,6 +137,8 @@ class Issue(TestCase):
 
 
     def test_add_issue(self):
+        client = Client()
+        client.login(username='testuser1', password='testuser1')
         # get collaborators
         assignees = []
         assignees.append(User.objects.get(id=1).username)
@@ -147,18 +151,21 @@ class Issue(TestCase):
         # get pullrequeests
         pullrequests_ids = []
         pullrequests = Pullrequest.objects.all()
+        # get milestone
+        milestone_id = []
+        milestone_id = Milestone.objects.all()
         for pr in pullrequests:
             pullrequests_ids.append(pr.id)
         data = {
             'title': 'Issue1', 
             'description':'first issue',
             'repository': 1,
-            'milestone_id': 1,
+            'milestone_id': milestone_id[0],
             'developers': assignees,
             'projects_ids': projects_ids,
             'pullrequests_ids': pullrequests_ids
             }
-        response = self.client.post(reverse('add_issue'), data, follow=True)
+        response = client.post(reverse('add_issue'), data, follow=True)
         self.assertEqual(response.status_code, 200)
     
     def test_view_issue(self):
@@ -171,7 +178,7 @@ class Issue(TestCase):
         self.assertTrue('projects' in response.context)
         self.assertTrue('pullrequests' in response.context)
         self.assertEqual(len(response.context['milestones']), 2)
-        self.assertEqual(len(response.context['developers']), 2)
+        self.assertEqual(len(response.context['developers']), 3)
         self.assertEqual(len(response.context['projects']), 2)
         self.assertEqual(len(response.context['pullrequests']), 2)
     
@@ -186,6 +193,11 @@ class Issue(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_update_issue(self):
+        user = User.objects.create(username='testuser')
+        user.set_password('12345')
+        user.save()
+        client = Client()
+        client.login(username='testuser', password='12345')
         issue = Iss.objects.get(id = 11)
         issue.issue_title = 'UpdatedTitle'
         issue.description = 'UpdatedDescription'
@@ -200,23 +212,26 @@ class Issue(TestCase):
         # get pullrequeests
         pullrequests_ids = []
         pullrequests = Pullrequest.objects.all()
+         # get milestone
+        milestone_id = []
+        milestone_id = Milestone.objects.all()
         for pr in pullrequests:
             pullrequests_ids.append(pr.id)
         data = {
             'title': issue.issue_title, 
             'description': issue.description,
             'state': 'Close',
-            'milestone_id': 1,
+            'milestone_id': milestone_id[0],
             'developers': assignees,
             'projects_ids': projects_ids,
             'pullrequests_ids': pullrequests_ids
             }
-        response = self.client.post(reverse('update_issue', kwargs={'id': issue.id}),data, follow=True)
+        response = client.post(reverse('update_issue', kwargs={'id': issue.id}),data, follow=True)
         self.assertEqual(response.status_code, 200)
     
     def test_delete_issue(self):
         issue = Iss.objects.get(id = 11)
         data = {}
         response = self.client.post(reverse('delete_issue', kwargs={'id': issue.id}),data, follow=True)
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 401)
 
