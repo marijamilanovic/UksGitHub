@@ -48,7 +48,7 @@
     <div style="background-color:  rgb(243, 243, 243); height: 65px;">
 
     <!--Style if forked repo-->
-    {% if forked_from  and show %}
+    {% if repository.is_repo_forked|first and  repository.is_repo_forked|first != request.user.id %}
     <span style="margin-left: 20px;">{% bs_icon 'diagram-2' size='1.4em' %}</span>
     <a href="{% url 'profile' %}" style="font-size: large; margin-left: 5px; margin-top: 15px; display:inline-block;"> {{repository.creator}} </a>
     <span style="font-size: large;">/</span>
@@ -57,7 +57,7 @@
     style="font-size: 0.8em; margin-left: 10px; height: 22px;" >{{repository.status}}
     </span>
     <div style=" margin-left: 50px; margin-top: 1px;">
-    <small >forked from {{forked_from}}/{{repository.name}}</small>
+    <small >forked from {{repository.is_repo_forked|first}}/{{repository.is_repo_forked|last}}</small>
     {% if message %}
     <small style="margin-left: 990px; color: red;" >{{message}}</small>
     {% endif %}
@@ -67,9 +67,9 @@
       <a href="{% url 'watchRepository' id=repository.id  %}" class="btn btn-outline-secondary btn-sm" style="width: 100px;  color: black;"><span style="margin-left: -4px;  ">{% bs_icon 'eye' size='1.1em' %}</span> Watch <span class="badge badge-success">{{repository.get_watchers_number}}</span></a>
       <a href="#"  onclick="showModal()" class="btn btn-outline-secondary btn-sm" style="width: 100px; margin-left: 10px; color: black;"><span style="margin-left: -4px; ">{% bs_icon 'diagram-2' size='1.1em' %} </span> Fork <span class="badge badge-success">{{repository.get_forks_number}}</span></a>
       {% if stargazers %}
-      <a href="{% url 'starRepository' id=repository.id  %}"  class="btn btn-outline-secondary btn-sm" style="width: 100px;margin-left: 10px;color: black;"><span style="margin-left: -4px; color:orange">{% bs_icon 'star-fill' size='1.1em' %} </span>  Star <span class="badge badge-success">{{repository.get_stars_number}}</span></a>
+      <a href="{% url 'starRepository' id=repository.id  %}"  class="btn btn-outline-secondary btn-sm" style="width: 100px;margin-left: 10px;color: black;"><span style="margin-left: -4px; color:orange">{% bs_icon 'star-fill' size='1.1em' %} </span>  Star <span class="badge badge-success">{{repository.get_stargazers_number}}</span></a>
       {% else %}
-      <a href="{% url 'starRepository' id=repository.id  %}"  class="btn btn-outline-secondary btn-sm" style="width: 100px;margin-left: 10px;color: black;"><span style="margin-left: -4px; color: grey;">{% bs_icon 'star-fill' size='1.1em' %} </span>  Star <span class="badge badge-success">{{repository.get_stars_number}}</span></a>
+      <a href="{% url 'starRepository' id=repository.id  %}"  class="btn btn-outline-secondary btn-sm" style="width: 100px;margin-left: 10px;color: black;"><span style="margin-left: -4px; color: grey;">{% bs_icon 'star-fill' size='1.1em' %} </span>  Star <span class="badge badge-success">{{repository.get_stargazers_number}}</span></a>
       {% endif %}
       </div>
     </div>
@@ -113,7 +113,7 @@
       {% endblock %}
 
       {% block navIssues %}
-      <li class="nav-item">
+      <li class="nav-item" >
         <a class="nav-link"  id="issues" style="color: black;" href="{% url 'issues' id=repository.id  %}">{% bs_icon 'record-circle' size='1em' %} Issues</a>
       </li>
       {% endblock %}
@@ -147,7 +147,7 @@
         <a class="nav-link" id="insights" style="color: black;" href="{% url 'insights:pulse' id=repository.id days=1  %}">{% bs_icon 'graph-up' size='1.3em' %} Insights</a>
       </li>
       {% endblock %}
-      {% if logged_user_id == repository.creator_id %}
+      {% if request.user.id == repository.creator_id %}
         {% block navCollaborator %}
         <li class="nav-item">
           <a class="nav-link" id="collaborators" style="color: black;" href="{% url 'collaborators' id=repository.id  %}">{% bs_icon 'gear' size='1.3em' %} Collaborators</a>
@@ -194,13 +194,13 @@
         <div class="col-lg-4">
           <h5 style="margin-top: 20px;">About</h5>
           <div class="col">
-          <a href="{% url 'stargazers' id=repository.id  %}"  style="margin-left: -15px; color:black;">{% bs_icon 'star' size='1.1em' %} {{stargazers|length}} stars</a> 
+          <a href="{% url 'stargazers' id=repository.id  %}"  style="margin-left: -15px; color:black;">{% bs_icon 'star' size='1.1em' %} {{repository.get_stargazers_number}} stars</a> 
           </div>
           <div class="col" style="margin-top: 5px;">
-            <a href="{% url 'watchers' id=repository.id  %}" style="margin-left: -15px;color:black;">{% bs_icon 'eye' size='1.1em' %} {{watchers|length}} watching</a> 
+            <a href="{% url 'watchers' id=repository.id  %}" style="margin-left: -15px;color:black;">{% bs_icon 'eye' size='1.1em' %} {{repository.get_watchers_number}} watching</a> 
           </div>
           <div class="col" style="margin-top: 5px;">
-            <a href="{% url 'forkers' id=repository.id  %}" style="margin-left: -15px;color: black; ">{% bs_icon 'diagram-2' size='1.1em' %}  {{forks|length}} forks </a>
+            <a href="{% url 'forkers' id=repository.id  %}" style="margin-left: -15px;color: black; ">{% bs_icon 'diagram-2' size='1.1em' %}  {{repository.get_forks_number}} forks </a>
           </div>
           <hr style="margin-top: 20px;">
           <h5 style="margin-top: 20px;">Contributors</h5>

@@ -1,13 +1,16 @@
 from django.shortcuts import render
 from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib.auth.decorators import login_required
+
 from project.models import Project
 from repository.models import Repository
 
-
+@login_required(login_url="login")
 def all_projects(request):
     all_projects = Project.objects.all()
     return render(request,'all_projects.html',{'all_projects':all_projects})
 
+@login_required(login_url="login")
 def projects(request,id):
     repository = Repository.objects.get(id=id)
     projects = Project.objects.all().filter(repository = repository)

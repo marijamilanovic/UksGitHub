@@ -48,6 +48,18 @@
 
 </div>
 
+<div style="margin-top: 8%; margin-left: 40%;" class="reports">
+  <div class="report1">
+  {% for key, value in collaborators.items %}
+
+    <h3>Collaborator {{key}} made {{value}} commits</h3>
+
+  {% endfor %}
+    
+
+  </div>
+</div>
+
 {% if days == 3 %}
 
 <Script type="text/javascript">

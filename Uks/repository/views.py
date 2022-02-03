@@ -15,10 +15,7 @@ from issue.models import Issue
 from branch.models import Branch
 from commit.models import Commit
 from label.models import Label
-
 from django.contrib import messages
-
-
 
 
 @login_required(login_url="login")
@@ -57,7 +54,6 @@ def get_repo_infos(request,id):
     watchers = User.objects.all().filter(user_watchers = repository)
     stargazers = User.objects.all().filter(user_stargazers = repository)
     forks = User.objects.all().filter(user_forks = repository)
-    #to do trebalo bi dodati kreiranje nekih labela 
     forkers,forked_from, forked_repo, repo_copy = find_forkers_info(request,id, repository)
 
     return my_milestones, my_pullrequests,issues,branch_list,default_branch,commit_list,watchers,stargazers,forks,forked_from
@@ -122,10 +118,13 @@ def add_initial_labels(newRepository):
     invalid_label = Label(name = 'invalid', description = "This doesn't seem right", color = '#7efa19', repository = newRepository)
     invalid_label.save()  
 
-
+@login_required(login_url="login")
 def transferToEditRepository(request,id):
     repo = Repository.objects.get(id = id)
-    return render(request, "repository/editRepository.html", {'repository':repo})
+    if request.user.id == repo.creator_id:
+        return render(request, "repository/editRepository.html", {'repository':repo})
+    else:
+        return HttpResponse('401 Unauthorized', status=401)
 
 def editRepository(request):
     id = request.POST['id']
@@ -138,22 +137,42 @@ def editRepository(request):
     messages.success(request, 'Repository has been updated.')
     return redirect("/repository/all_repositories")
 
+@login_required(login_url="login")
 def deleteRepository(request,id):
     repo = Repository.objects.get(id=id)
-    pullrequests = Pullrequest.objects.all()
-    for pr in pullrequests:
-        if pr.prRepository == repo:
-            pr.prRepository = None
+    forks = User.objects.all().filter(user_forks = repo)
+    forkers,forked_from, forked_repo, repo_copy = find_forkers_info(request,id, repo)
+
+    if request.user.id == repo.creator_id:
     
-    repo.delete()
-    messages.success(request, 'Repository has been deleted.')
-    return redirect("/repository/all_repositories")
+        if (forked_repo is not None and forked_repo.id == repo.id):
+            forked_repo.forks.clear()
+            repo_copy.forks.clear()
+            forked_repo.delete()
+        elif (repo_copy is not None and repo_copy.id == repo.id):
+            user = User.objects.get(id=repo_copy.creator.id)
+            forked_repo.forks.remove(user) 
+            repo_copy.forks.clear()
+            repo_copy.delete()
+
+        else:  # ovaj deo je za obican repo
+            pullrequests = Pullrequest.objects.all()
+            for pr in pullrequests:
+                if pr.prRepository == repo:
+                    pr.prRepository = None
+        
+            repo.delete()
+        messages.success(request, 'Repository has been deleted.')
+        return redirect("/repository/all_repositories")
+    else:
+        return HttpResponse('401 Unauthorized', status=401)
 
 def get_my_pullrequests(request, id):
     repository = get_object_or_404(Repository, id=id)
     pullrequests = Pullrequest.objects.all().filter(prRepository=repository)
     return pullrequests
 
+@login_required(login_url="login")
 def all_repositories(request):
     #prikazuju se samo koje je kreirao
     #koristi se na profilnoj stranici
@@ -236,12 +255,21 @@ def forkRepository(request,id):
     if request.user not in forks:
         newRepository = Repository(name = repository.name, status = repository.status, creator = request.user)
         newRepository.save()
-        newRepository.developers.add(repository.creator)
-        branch = Branch.objects.create(
-                name = 'master',
-                is_default = True,
-                repository = Repository.objects.get(pk = newRepository.id)
-            )  
+        add_initial_labels(newRepository)
+        newRepository.developers.add(request.user)
+        repo_branches = Branch.objects.all().filter(repository = repository)
+        for branch in repo_branches:
+            if (branch.is_default):
+                newBranch = Branch.objects.create(name = branch.name, is_default = True , repository = newRepository )
+                newBranch.save()
+            else:
+                newBranch = Branch.objects.create(name = branch.name, is_default = False , repository = newRepository )
+            branch_commits = Commit.objects.all().filter(branch = branch)
+            for commit in branch_commits:
+                newCommit = Commit.objects.create(message = commit.message, date_time = commit.date_time,
+                hash_id = commit.hash_id, branch = newBranch, author = commit.author, repository = newRepository)
+                newCommit.save()
+        
         repository.forks.add(user)
         newRepository.forks.add(user)
     else:
@@ -269,7 +297,6 @@ def find_forkers_info(request,id,repository):
     forkers = User.objects.all().filter(user_forks = repository)
     forked_from = None
     forked_repo = None
-    proba = None
     repo_copy = None
     for f in forkers:
         if (f.id == repository.creator.id): 
