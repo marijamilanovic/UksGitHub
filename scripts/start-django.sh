@@ -6,6 +6,7 @@ python manage.py collectstatic --noinput
 # setup db
 python manage.py makemigrations
 python manage.py migrate
+echo "from django.contrib.auth.models import User; User.objects.create_superuser('admin', 'admin@example.com', 'pass')" | python manage.py shell
 # run Django develop server
 #python3 manage.py runserver 0.0.0.0:8000
 # run Django app inside gunicorn

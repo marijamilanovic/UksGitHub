@@ -23,7 +23,7 @@ def pullrequests(request, id):
     pullrequests = Pullrequest.objects.all().filter(prRepository=repository)
     my_pullrequests = []
     for pr in pullrequests:
-        if pr.prRepository.id == id:
+        if pr.prRepository.id == id and pr.creator == request.user:
             my_pullrequests.append(pr)
     pullrequests_for_review = get_pullrequests_for_review(request, repository)
     return render(request, 'pullrequests.html', {"pullrequests":my_pullrequests, "repository":repository,'pullrequests_for_review':pullrequests_for_review,"logged_user_id":request.user.id})
@@ -32,7 +32,7 @@ def get_pullrequests_for_review(request, repository):
     pullrequests_for_this_repository = Pullrequest.objects.all().filter(prRepository = repository)
     pullrequests_for_review = []
     for pullrequest in pullrequests_for_this_repository:
-        if request.user in pullrequest.reviewers.all() and request.user != pullrequest.creator:
+        if request.user in pullrequest.reviewers.all() and request.user != pullrequest.creator and pullrequest.status != "Merged":
             pullrequests_for_review.append(pullrequest)
     return pullrequests_for_review
 
@@ -180,7 +180,7 @@ def approve(request, pullrequest_id):
     repository = pullrequest.prRepository
     reviewer = request.user
     if reviewer in pullrequest.reviewers.all():
-        pullrequest.reviewers.remove(reviewer)
+        #pullrequest.reviewers.remove(reviewer)
         pullrequest.reviewed = True
         history = History(user = request.user,message= message, created_date = d,changed_object_id = reviewer.id, object_type= 'Approved')
         history.save()
@@ -205,7 +205,9 @@ def merge(request, pullrequest_id):
 
 
 def try_merge(pullrequest):
-    if len(pullrequest.reviewers.all()) == 0 and pullrequest.reviewed:
+    #if len(pullrequest.reviewers.all()) == 0 and pullrequest.reviewed:
+    print(pullrequest.reviewed)
+    if pullrequest.reviewed:
         pullrequest.status = "Merged"
         pullrequest.save()
         return True
