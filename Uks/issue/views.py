@@ -429,16 +429,13 @@ def add_milestone_in_issue(request, issue):
     elif issue.milestone != None:
         if issue.milestone.id == request.POST.getlist('milestone_id')[0]:
             return issue
-    elif issue.milestone == None:
-        return issue
-    elif issue.milestone.id != Milestone.objects.get(id = request.POST.getlist('milestone_id')[0]):
-        issue.milestone = Milestone.objects.get(id = request.POST.getlist('milestone_id')[0])
-        message = 'added this from the milestone'
+    issue.milestone = Milestone.objects.get(id = request.POST.getlist('milestone_id')[0])
+    message = 'added this from the milestone'
         # history changed
-        history = History(user = request.user,message = message, created_date = d, changed_object_id = issue.milestone.id, object_type= 'Issue_milestone')
-        history.save()
-        issue.history.add(history)
-        issue.save()
+    history = History(user = request.user,message = message, created_date = d, changed_object_id = issue.milestone.id, object_type= 'Issue_milestone')
+    history.save()
+    issue.history.add(history)
+    issue.save()
     return issue
 
 # pullrequests methods

@@ -160,7 +160,7 @@ class Issue(TestCase):
             'title': 'Issue1', 
             'description':'first issue',
             'repository': 1,
-            'milestone_id': milestone_id[0],
+            'milestone_id': milestone_id[0].id,
             'developers': assignees,
             'projects_ids': projects_ids,
             'pullrequests_ids': pullrequests_ids
@@ -221,7 +221,7 @@ class Issue(TestCase):
             'title': issue.issue_title, 
             'description': issue.description,
             'state': 'Close',
-            'milestone_id': milestone_id[0],
+            'milestone_id': milestone_id[0].id,
             'developers': assignees,
             'projects_ids': projects_ids,
             'pullrequests_ids': pullrequests_ids
