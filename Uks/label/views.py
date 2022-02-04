@@ -2,6 +2,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from repository.models import Repository
 from .models import Label
 from django.http import HttpResponse
+from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 
 def labels(request,id):
@@ -9,10 +10,12 @@ def labels(request,id):
     labels = Label.objects.all().filter(repository = repository)
     return render(request,'labels.html', {"labels": labels, "repository":repository, "logged_user_id": request.user.id})
 
+@login_required(login_url="login")
 def newLabel(request,id):
     repository = repository = get_object_or_404(Repository, id=id)
     return render(request,'newLabel.html',{ "repository":repository})
 
+@login_required(login_url="login")
 def addLabel(request):
     errorName = None
     if request.method == 'POST':
@@ -35,6 +38,7 @@ def getLabelById(request, id):
     print(labelColor.lower())
     return render(request, "editLabel.html", {"label": label, "repository": repository, "color": labelColor.lower()})
 
+@login_required(login_url="login")
 def editLabel(request, id):
     if request.method == 'POST':
         label = get_object_or_404(Label, id = id)
@@ -50,6 +54,7 @@ def editLabel(request, id):
         messages.success(request, 'Label has been updated.')
     return redirect('/label/labels/'+ str(repository.id))
 
+@login_required(login_url="login")
 def deleteLabel(request, id):
     label = get_object_or_404(Label, id = id)
     if not label.repository.developers.all().filter(id=request.user.id):

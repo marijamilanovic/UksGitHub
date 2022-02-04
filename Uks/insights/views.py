@@ -12,7 +12,6 @@ from user.models import User
 from django.contrib.auth.decorators import login_required
 
 
-@login_required(login_url="login")
 def pulse(request, id, days):
     repository = get_object_or_404(Repository, id=id)
     now = datetime.now()
@@ -170,7 +169,6 @@ def pulse(request, id, days):
 
         return render(request, "insights/base_insights.html", context)
 
-@login_required(login_url="login")
 def contributors(request, id, days):
     repository = get_object_or_404(Repository, id=id)
 
@@ -418,7 +416,6 @@ def contributors(request, id, days):
 
     return render(request, "insights/contributors.html", context)
 
-@login_required(login_url="login")
 def commits(request, id):
     repository = get_object_or_404(Repository, id=id)
 

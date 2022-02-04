@@ -63,7 +63,7 @@
     {% endif %}
     </div>
 
-    <div style="margin-left: 1150px; margin-top: -50px;">
+    <div style="margin-left: 1200px; margin-top: -50px;">
       <a href="{% url 'watchRepository' id=repository.id  %}" class="btn btn-outline-secondary btn-sm" style="width: 100px;  color: black;"><span style="margin-left: -4px;  ">{% bs_icon 'eye' size='1.1em' %}</span> Watch <span class="badge badge-success">{{repository.get_watchers_number}}</span></a>
       <a href="#"  onclick="showModal()" class="btn btn-outline-secondary btn-sm" style="width: 100px; margin-left: 10px; color: black;"><span style="margin-left: -4px; ">{% bs_icon 'diagram-2' size='1.1em' %} </span> Fork <span class="badge badge-success">{{repository.get_forks_number}}</span></a>
       {% if stargazers %}
@@ -85,7 +85,7 @@
     </span>
    
 
-    <div style="margin-left: 1150px; margin-top: -30px;">
+    <div style="margin-left: 1200px; margin-top: -30px;">
       <a href="{% url 'watchRepository' id=repository.id  %}" class="btn btn-outline-secondary btn-sm" style="width: 100px;  color: black;"><span style="margin-left: -4px;  ">{% bs_icon 'eye' size='1.1em' %}</span> Watch <span class="badge badge-success">{{repository.get_watchers_number}}</span></a>
       <a href="#"  onclick="showModal()" class="btn btn-outline-secondary btn-sm" style="width: 100px; margin-left: 10px; color: black;"><span style="margin-left: -4px; ">{% bs_icon 'diagram-2' size='1.1em' %} </span> Fork <span class="badge badge-success">{{repository.get_forks_number}}</span></a>
       {% if stargazers %}

@@ -15,16 +15,19 @@ def all_projects(request):
             all_projects.append(p)
     return render(request,'all_projects.html',{'all_projects':all_projects})
 
-@login_required(login_url="login")
 def projects(request,id):
     repository = Repository.objects.get(id=id)
     projects = Project.objects.all().filter(repository = repository)
     return render (request, 'repoProjects.html', {"projects":projects, "repository": repository,"logged_user_id": request.user.id})
 
+
+@login_required(login_url="login")
 def newProject(request, id):
     repository = get_object_or_404(Repository, id=id)
     return render(request, 'newProject.html', { "repository":repository, "logged_user_id": request.user.id})
 
+
+@login_required(login_url="login")
 def addProject(request):
     errorName = None
     if request.method == 'POST':
@@ -43,12 +46,16 @@ def addProject(request):
     
     return redirect('/project/projects/'+ str(repository.id))
 
+
+@login_required(login_url="login")
 def closeProject(request,id):
     project = get_object_or_404(Project, id=id)
     project.status = 'Closed'
     project.save()
     return redirect('/project/projects/'+ str(project.repository.id))
 
+
+@login_required(login_url="login")
 def reopenProject(request,id):
     project = get_object_or_404(Project, id=id)
     project.status = 'Opened'
@@ -61,6 +68,8 @@ def getProjectById(request, id):
 
     return render(request, "updateProject.html", {"project": project, "repository": repository})
 
+
+@login_required(login_url="login")
 def updateProject(request, id):
     if request.method == 'POST':
         project = get_object_or_404(Project, id=id)

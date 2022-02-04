@@ -31,86 +31,86 @@
     <div class="row">
         <div class="tab-pane container active" id="milestones" style="margin-right: auto;">
           {% include 'messages.html' %}
+          <a href="{% url 'new_issue' repo_id=repository.id %}" style="margin-left: 900px; margin-top: -25px; margin-bottom: 10;" type="button" class="btn btn-success" >New issue</a>
           <div class="row">
                 {% csrf_token %}
-              <select id="assignees" >
+              <select id="assignees" style="min-width:100px;border-radius: 6px;border: 2px solid #AAA;box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.1);" class="selectpicker"   >
                 <option value=>Assignee</option>
                 {% for assignee in assignees %}
                 <option id= "{{assignee.id}}" value="{{assignee}}" >{{ assignee.username }}</option>
                 {% endfor %}
-                <script>
-                  document.getElementById('assignees').addEventListener("change", function() {
-                    var username = this.value;
-                    console.log(username);
-                    var data_to_send = "assigned:"+username
-                    var url_mask = "{% url 'filter_issues' repo_id=repository.id pk=12345 %}".replace(/12345/, data_to_send.toString());
-                    window.location.href = url_mask
-                  });
-                </script>
             </select>
-            <select id="author" >
+            <script>
+              document.getElementById('assignees').addEventListener("change", function() {
+                var username = this.value;
+                console.log(username);
+                var data_to_send = "assigned:"+username
+                var url_mask = "{% url 'filter_issues' repo_id=repository.id pk=12345 %}".replace(/12345/, data_to_send.toString());
+                window.location.href = url_mask
+              });
+            </script>
+            <select id="author" style="min-width:100px;border-radius: 6px;border: 2px solid #AAA;box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.1);" class="selectpicker" >
               <option value=>Author</option>
               {% for assignee in assignees %}
               <option id= "{{assignee.id}}" value="{{assignee}}" >{{ assignee.username }}</option>
               {% endfor %}
-              <script>
-                document.getElementById('author').addEventListener("change", function() {
-                  var username = this.value;
-                  console.log(username);
-                  var data_to_send = "author:"+username
-                  var url_mask = "{% url 'filter_issues' repo_id=repository.id pk=12345 %}".replace(/12345/, data_to_send.toString());
-                  window.location.href = url_mask
-                });
-              </script>
             </select>
-            <select id="milestone" >
+            <script>
+              document.getElementById('author').addEventListener("change", function() {
+                var username = this.value;
+                console.log(username);
+                var data_to_send = "author:"+username
+                var url_mask = "{% url 'filter_issues' repo_id=repository.id pk=12345 %}".replace(/12345/, data_to_send.toString());
+                window.location.href = url_mask
+              });
+            </script>
+            <select id="milestone" style="min-width:100px;border-radius: 6px;border: 2px solid #AAA;box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.1);" class="selectpicker" >
               <option value=>Milestones</option>
               {% for milestone in milestones %}
               <option id= "{{milestones.id}}" value="{{milestone.title}}" >{{ milestone.title }}</option>
               {% endfor %}
-              <script>
-                document.getElementById('milestone').addEventListener("change", function() {
-                  var username = this.value;
-                  console.log(username);
-                  var data_to_send = "milestone:"+username
-                  var url_mask = "{% url 'filter_issues' repo_id=repository.id pk=12345 %}".replace(/12345/, data_to_send.toString());
-                  window.location.href = url_mask
-                });
-              </script>
             </select>
-            <select id="projects" >
+            <script>
+              document.getElementById('milestone').addEventListener("change", function() {
+                var username = this.value;
+                console.log(username);
+                var data_to_send = "milestone:"+username
+                var url_mask = "{% url 'filter_issues' repo_id=repository.id pk=12345 %}".replace(/12345/, data_to_send.toString());
+                window.location.href = url_mask
+              });
+            </script>
+            <select id="projects" style="min-width:100px;border-radius: 6px;border: 2px solid #AAA;box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.1);" class="selectpicker" >
               <option value=>Projects</option>
               {% for project in projects %}
               <option id= "{{project.id}}" value="{{project.name}}" >{{ project.name }}</option>
               {% endfor %}
-              <script>
-                document.getElementById('projects').addEventListener("change", function() {
-                  var username = this.value;
-                  console.log(username);
-                  var data_to_send = "project:"+username
-                  var url_mask = "{% url 'filter_issues' repo_id=repository.id pk=12345 %}".replace(/12345/, data_to_send.toString());
-                  window.location.href = url_mask
-                });
-              </script>
             </select>
-            <select id="labels2" >
+            <script>
+              document.getElementById('projects').addEventListener("change", function() {
+                var username = this.value;
+                console.log(username);
+                var data_to_send = "project:"+username
+                var url_mask = "{% url 'filter_issues' repo_id=repository.id pk=12345 %}".replace(/12345/, data_to_send.toString());
+                window.location.href = url_mask
+              });
+            </script>
+            <select id="labels2" style="min-width:100px;border-radius: 6px;border: 2px solid #AAA;box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.1);" class="selectpicker" >
                   <option value=>Labels</option>
                   {% for label in labels %}
                   <option id= "{{label.id}}" value="{{label.name}}" >{{ label.name }}</option>
                   {% endfor %}
-                  <script>
-                    document.getElementById('labels2').addEventListener("change", function() {
-                      var username = this.value;
-                      console.log(username);
-                      var data_to_send = "label:"+username
-                      var url_mask = "{% url 'filter_issues' repo_id=repository.id pk=12345 %}".replace(/12345/, data_to_send.toString());
-                      window.location.href = url_mask
-                    });
-                  </script>
               </select>
-            <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search for names..">
-            <a href="{% url 'new_issue' repo_id=repository.id %}" style="margin-left: 900px; margin-top: -25px; margin-bottom: 3;" type="button" class="btn btn-success" >New issue</a>
-          </div>
+              <script>
+                document.getElementById('labels2').addEventListener("change", function() {
+                  var username = this.value;
+                  console.log(username);
+                  var data_to_send = "label:"+username
+                  var url_mask = "{% url 'filter_issues' repo_id=repository.id pk=12345 %}".replace(/12345/, data_to_send.toString());
+                  window.location.href = url_mask
+                });
+              </script>
+            <input type="text" id="myInput" style="margin-left: auto; margin-right: auto; width: 500; margin-top: 10px; margin-bottom: 10px; border-radius: 6px;border: 2px solid #AAA;box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.1);" onkeyup="myFunction()" placeholder="Search for names..">
+           </div>
           <script>
             var input = document.getElementById("myInput");
             input.addEventListener("keydown", function (e) {
@@ -150,7 +150,11 @@
                 <div class="card-body">
                     {% for issue in issues %}
                         {% if issue.state == 'Opened' %}
-                            <a href="#" id="{{issue.id}}" onclick="askToDeleteIssueModal(this.id)" class="link-primary" style="position:absolute; margin-left: 900px;">❌</a>
+                            {% for developer in issue.repository.developers.all %}
+                              {% if developer.id ==  logged_user_id %}
+                                <a href="#" id="{{issue.id}}" onclick="askToDeleteIssueModal(this.id)" class="link-primary" style="position:absolute; margin-left: 900px;">❌</a>
+                              {% endif %}
+                            {% endfor %}
                             <!-- DELETE MODAL -->
                             <div class="modal" id="delete_{{issue.id}}" tabindex="-1" role="dialog">
                               <div class="modal-dialog modal-dialog-centered" role="document">
