@@ -6,6 +6,8 @@ from repository.models import Repository
 from milestone.models import Milestone
 from label.models import Label;
 from django.contrib.auth.models import User
+from history.models import History
+from comment.models import Comment
 
 OPENED = "Opened"
 CLOSE = "Close"
@@ -26,6 +28,8 @@ class Issue(models.Model):
     milestone = models.ForeignKey(to=Milestone,null=True, on_delete=models.CASCADE)
     labels = models.ManyToManyField(Label)
     created = models.DateField(null=True, blank=True)
+    history = models.ManyToManyField(History)
+    comments = models.ManyToManyField(Comment)
     
     
     def __str__(self):

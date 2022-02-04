@@ -5,9 +5,14 @@ from pullrequest.models import Pullrequest
 from .models import Comment, EMOJI_PICKER, Emoji
 from repository.models import Repository
 from django.contrib.auth.models import User
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 
+from datetime import date, datetime
+from django.contrib.auth.decorators import login_required
+
+@login_required(login_url="login")
 def add_comment(request, id):
+    d = datetime.today() - timedelta(hours=1)
     content = request.POST.get('comment')
     pullrequest = get_object_or_404(Pullrequest, id=id)
     errorTitle = None
@@ -19,7 +24,7 @@ def add_comment(request, id):
         return render(request, "updatePullrequest.html", {"pullrequest": pullrequest, "repository": pullrequest.prRepository, "comments":pullrequest.comments.all(), "emojis":emojis, "error":errorTitle})
     else:     
         if request.method == 'POST':
-            comment = Comment(author = request.user, content = content, created_date = datetime.now())
+            comment = Comment(author = request.user, content = content, created_date = d)
             comment.save()
 
             pullrequest.comments.add(comment)
@@ -27,6 +32,7 @@ def add_comment(request, id):
 
             return redirect('/pullrequest/updatePullrequestPage/'+ str(pullrequest.id))
 
+@login_required(login_url="login")
 def add_emoji(request, id, pr_id):
     if request.method == 'POST':
         have_emoji = FALSE
@@ -46,6 +52,7 @@ def add_emoji(request, id, pr_id):
       
         return redirect('/pullrequest/updatePullrequestPage/'+ str(pr_id))
 
+@login_required(login_url="login")
 def create_new_emoji(request, comment):
     emoji = Emoji()
     emoji.name = request.POST.get('emoji')
@@ -56,6 +63,7 @@ def create_new_emoji(request, comment):
     comment.emojis.add(emoji)
     comment.save()
 
+@login_required(login_url="login")
 def add_reaction_creator(request, comment, emoji):
     reaction_creators = emoji.reaction_creators.all()
     for r in reaction_creators:
@@ -67,7 +75,7 @@ def add_reaction_creator(request, comment, emoji):
         else:
             emoji.reaction_creators.add(request.user)
 
-
+@login_required(login_url="login")
 def update_comment(request, id, pr_id):
     if request.method == 'POST':
         comment = get_object_or_404(Comment, id=id)
@@ -77,7 +85,9 @@ def update_comment(request, id, pr_id):
 
         return redirect('/pullrequest/updatePullrequestPage/'+ str(pr_id))
 
+@login_required(login_url="login")
 def delete_comment(request, id, pr_id):
+    print("ne treba ovde da bude")
     comment = get_object_or_404(Comment, id=id)
     pullrequest = get_object_or_404(Pullrequest, id=pr_id)
 

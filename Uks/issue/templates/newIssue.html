@@ -98,7 +98,7 @@
             <input type="hidden" name="repository"  value="{{repository.id}}"/>
             <div class="form-group col-md-6">
                 <h5>Title</h5> 
-                <input type="text" class="form-control" id="title" name="title" value="{{ title }}">
+                <input type="text" class="form-control" id="title" name="title" value="{{ title }}" required>
             </div>
       
             {% if errorTitle %}
@@ -109,7 +109,13 @@
                 <textarea class="form-control col-md-12" id="description" rows="4" name="description"></textarea>
             </div>
             <br><br>
-            <input type="submit" style="margin-left: 12px; margin-top: 5px;"  class="btn btn-success" value="Create">
+            {% for developer in repository.developers.all %}
+                {% if developer.id == logged_user_id %}
+                    <input type="submit" style="margin-left: 12px; margin-top: 5px;"  class="btn btn-success" value="Create">
+                {% else %}
+                    <input type="submit" style="margin-left: 12px; margin-top: 5px;"  class="btn btn-success" value="Create" disabled>
+                {% endif %}
+            {% endfor %}
         </form>
     </div>  
     {% endblock %}

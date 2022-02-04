@@ -51,7 +51,8 @@ class RepositoryViewsTest(TestCase):
         fill_test_db()
 
     def test_add_collaborator_on_repository(self):
-        author = User.objects.get(username='username1')
+        credentials = {'username': 'username1', 'password': 'password1'}
+        self.client.post(reverse('login'), credentials, follow=True)
         developer = User.objects.get(username='username1')
         repository = Repository.objects.get(name = 'repository1')
         collaborators = add_collaborator_on_repository(repository, developer)
@@ -64,18 +65,24 @@ class RepositoryViewsTest(TestCase):
         self.assertEqual(response.status_code, 200)
     
     def test_remove_collaborator_from_repository(self):
+        credentials = {'username': 'username1', 'password': 'password1'}
+        self.client.post(reverse('login'), credentials, follow=True)
         developer = User.objects.get(username='username')
         repository = Repository.objects.get(name = 'repository1')
         collaborators = remove_collaborato_from_repository(repository, developer)
         self.assertEqual(len(collaborators), 1)
 
     def test_remove_collaborator_from_repository_view(self):
+        credentials = {'username': 'username1', 'password': 'password1'}
+        self.client.post(reverse('login'), credentials, follow=True)
         developer = User.objects.get(username='username')
         repository = Repository.objects.get(name = 'repository1')
         response = self.client.post(reverse('remove_collaborator', kwargs={'id': repository.id, 'developer_id':developer.id}), follow=True)
         self.assertEqual(response.status_code, 200)
 
     def test_get_watchers_repository(self):
+        credentials = {'username': 'username1', 'password': 'password1'}
+        self.client.post(reverse('login'), credentials, follow=True)
         repository = Repository.objects.get(name = 'repository1')
         response = self.client.get(reverse('watchers', kwargs={'id': repository.id}), follow=True)
         self.assertEqual(response.status_code, 200)
@@ -83,6 +90,8 @@ class RepositoryViewsTest(TestCase):
         self.assertTrue('repository' in response.context)
 
     def test_watch_repository(self):
+        credentials = {'username': 'username1', 'password': 'password1'}
+        self.client.post(reverse('login'), credentials, follow=True)
         repository = Repository.objects.get(name = 'repository1')
         user = User.objects.create(username='testuser')
         user.set_password('12345')
@@ -95,6 +104,8 @@ class RepositoryViewsTest(TestCase):
         self.assertEqual(len(response.context['watchers']), 3)
 
     def test_get_stargazers_repository(self):
+        credentials = {'username': 'username1', 'password': 'password1'}
+        self.client.post(reverse('login'), credentials, follow=True)
         repository = Repository.objects.get(name = 'repository1')
         response = self.client.get(reverse('stargazers', kwargs={'id': repository.id}), follow=True)
         self.assertEqual(response.status_code, 200)
@@ -114,6 +125,8 @@ class RepositoryViewsTest(TestCase):
         self.assertEqual(len(response.context['stargazers']), 3)
 
     def test_no_forkers_repository(self):
+        credentials = {'username': 'username1', 'password': 'password1'}
+        self.client.post(reverse('login'), credentials, follow=True)
         repository = Repository.objects.get(name = 'repository1')
         response = self.client.get(reverse('forkers', kwargs={'id': repository.id}), follow=True)
         self.assertEqual(response.status_code, 200)
@@ -132,6 +145,8 @@ class RepositoryViewsTest(TestCase):
         self.assertEqual(len(response.context['forks']), 1)
     
     def test_get_forkers_repository(self):
+        credentials = {'username': 'username1', 'password': 'password1'}
+        self.client.post(reverse('login'), credentials, follow=True)
         repository = Repository.objects.get(name = 'repository1')
         user = User.objects.create_user(username='miki', password='miki')
         repository.forks.add(user)
