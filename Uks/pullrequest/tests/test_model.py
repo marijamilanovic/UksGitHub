@@ -22,3 +22,13 @@ class PullrequestModelTest(TestCase):
         is_merged = try_merge(pullrequest)
         self.assertEquals(is_merged, True)
 
+    def test_name_pull_request(self):
+        pullrequest = Pullrequest.objects.get(name='develop')
+        pullrequest_name = pullrequest._meta.get_field('name').verbose_name
+        self.assertEquals(pullrequest_name, 'name')
+
+    def test_status_pull_request(self):
+        pullrequest = Pullrequest.objects.get(name='develop')
+        pullrequest_status = pullrequest._meta.get_field('status').verbose_name
+        self.assertEquals(pullrequest_status, 'status')
+
