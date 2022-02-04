@@ -21,7 +21,7 @@ def pullrequests(request, id):
     pullrequests = Pullrequest.objects.all().filter(prRepository=repository)
     my_pullrequests = []
     for pr in pullrequests:
-        if pr.creator == request.user:
+        if pr.prRepository.id == id:
             my_pullrequests.append(pr)
     pullrequests_for_review = get_pullrequests_for_review(request, repository)
     return render(request, 'pullrequests.html', {"pullrequests":my_pullrequests, "repository":repository,'pullrequests_for_review':pullrequests_for_review,"logged_user_id":request.user.id})

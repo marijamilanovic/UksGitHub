@@ -1,3 +1,4 @@
+from cgi import test
 from django.test import TestCase, Client
 from milestone.models import Milestone
 from pullrequest.models import Pullrequest
@@ -7,6 +8,7 @@ from django.contrib.auth.models import User
 from label.models import Label
 from issue.models import Issue
 from project.models import Project
+from branch.models import Branch
 from datetime import datetime, timezone, date, timedelta
 from django.urls import reverse
 
@@ -71,12 +73,50 @@ def fill_test_db():
         test_project.save()
         test_project1.save()
 
-
+        # Create branch
+        test_branch = Branch.objects.create(name='main', is_default = True, repository = test_repository)
+        test_branch1 = Branch.objects.create(name='develop', is_default = False, repository = test_repository1)
+        test_branch.save()
+        test_branch1.save()
 
 class PullrequestViewsTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         fill_test_db()
+
+    def test_new_pullrequest(self):
+        repository = Repository.objects.get(name='repository')
+        user = User.objects.create(username='testuser')
+        user.set_password('12345')
+        user.save()
+        client = Client()
+        client.login(username='testuser', password='12345')
+
+        response = client.post(reverse('newPullrequest', kwargs={'id': repository.id}), follow=True)
+        self.assertEqual(response.status_code, 200)
+
+    def test_add_pull_request(self):
+        user = User.objects.create(username='testuser')
+        user.set_password('12345')
+        user.save()
+        client = Client()
+        client.login(username='testuser', password='12345')
+        repository = Repository.objects.get(name= 'repository')
+        branch_source = Branch.objects.get(name = 'main')
+        branch_target = Branch.objects.get(name = 'develop')
+        data = {'repository': repository.id, 'branch_source_id': branch_source.id, 'branch_target_id': branch_target.id}
+        response = client.post(reverse('addPullrequest'), data, follow=True)
+        self.assertEqual(response.status_code, 200)
+
+    def test_change_status_pull_request(self):
+        user = User.objects.create(username='testuser')
+        user.set_password('12345')
+        user.save()
+        client = Client()
+        client.login(username='testuser', password='12345')
+        pullrequest = Pullrequest.objects.get(name='master')
+        response = client.post(reverse('changeStatusPullrequest', kwargs={'id': pullrequest.id}), follow=True)
+        self.assertEqual(response.status_code, 200)
 
     def test_approve(self):
         client = Client()
