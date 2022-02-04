@@ -1,5 +1,6 @@
 {% extends 'repository/index.html' %}
 {% load static %}
+{% load bootstrap_icons %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -12,31 +13,48 @@
 </head>
 
 <body>
+    {% block navCode %}
+    <li class="nav-item">
+      <a class="nav-link active" style=" color: black;" id="code" aria-current="page" href="{% url 'repository' id=repository.id %}">{% bs_icon 'code' size='1em' %} Code</a>
+    </li>
+    {% endblock %}
+
+    {% block navMilestones %}
+      <li class="nav-item">
+        <a class="nav-link" id="milestones" style="border-bottom:3px solid darkviolet;color: black;" href="{% url 'milestones' id=repository.id  %}">{% bs_icon 'signpost' size='1em' %} Milestones</a>
+      </li>
+    {% endblock %}
 
     {% block page_content %}
-    <div class="tab-pane container active" id="milestones">
-    <h2 style="margin-top: -20px;">New milestone</h2>
+
+    <div class="card"  style="width: 800px; margin-top: 60px;margin-left: 370px; background-color: rgb(243, 243, 243);">
+        <div class="card-body">
+            <div style="margin-left: 120px; margin-top: 20px;">
+                <h2 style="margin-top: -20px;">New milestone</h2>
         <form style="margin-top: 20px; margin-left: -12px;" method="POST" action="{% url 'addMilestone' %}"> 
             {% csrf_token %}
             <input type="hidden" name="repository"  value="{{repository.id}}"/>
-            <div class="form-group col-md-6">
+            <div class="form-group col-md-10">
                 <h5>Title</h5> 
                 <input type="text" class="form-control" id="title" name="title" value="{{ title }}">
             </div>
             {% if errorTitle %}
             <div style="color: red; margin-left: 14px;" >{{errorTitle}}</div>
             {% endif %}
-            <div class="form-group col-md-6">
+            <div class="form-group col-md-10">
                 <h5 for="">Due date (optional) </h5>
                 <input type="date" id="dueDate" name="dueDate">
             </div>
-            <div class="form-group col-md-6">
+            <div class="form-group col-md-10">
                 <h5 for="description">Description</h5>
                 <textarea class="form-control col-md-12" id="description" rows="4" name="description"></textarea>
             </div>
-            <input type="submit" style="margin-left: 12px; margin-top: 5px;"  class="btn btn-success" value="Create">
+            <input type="submit" style="margin-left: 12px; margin-top: 5px;"  class="btn btn-success" value="Create milestone">
         </form>
-    </div>  
+            </div>
+        </div>
+      </div>
+
     {% endblock %}
 
 </body>

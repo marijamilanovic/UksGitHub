@@ -78,3 +78,331 @@ nav .navbar-nav li a{
   .greska{
     color: red;
   }
+
+.insights-tab{
+  display: grid;
+  grid-template-columns: 30%, 70%;
+}
+
+.sidebar {
+  grid-column: 1;
+  margin-top: 3%;
+  margin-left: 15%;
+  padding: 0;
+  width: 200px;
+  position: absolute;
+  height: auto;
+  background-color: #f1f1f1;
+  
+}
+
+.sidebar a{
+  display: block;
+  color: black;
+  padding: 10px;
+  text-decoration: none;
+  border-bottom: 2px solid black;
+}
+
+
+.chart{
+  display: grid;
+  grid-template-rows: repeat(10, 10%);
+  grid-template-rows: repeat(20, 10%);
+}
+
+.info{
+  grid-column-start: 5;
+  grid-row-start: 2;
+}
+
+.chart_up{
+  grid-column-start: 7;
+  grid-row-start: 2;
+}
+
+.chart_data1{
+  width: 70%;
+  height: 70%;
+  margin-left: 15%;
+  grid-column-start: 4;
+  grid-column-end: 7;
+  grid-row-start: 5;
+  grid-row-end: 8;
+  margin-top: -10%;
+}
+
+.chart_data2{
+  width: 70%;
+  height: 70%;
+  grid-column-start: 6;
+  grid-column-end: 9;
+  grid-row-start: 5;
+  grid-row-end: 8;
+  margin-top: -10%;
+}
+
+
+
+  .code{
+    display: grid;
+    grid-template-columns: repeat(10, auto);
+    padding: 2%;
+}
+
+
+.code-item1{
+    color: brown;
+    grid-column-start: 2;
+
+}
+
+
+.code-item2{
+    grid-column-start: 4;
+    margin-top: 3%;
+}
+  .popover__wrapper {
+    position: relative;
+    margin-top: -2.6rem;
+    display: inline-block;
+  }
+
+  .popover__content {
+    opacity: 0;
+    visibility: hidden;
+    position: absolute;
+    left: -50px;
+    margin-left: 750px ;
+    margin-top: 25px;
+    transform: translate(0, 10px);
+    background-color: #ffffff;
+    padding: 1.5rem;
+    box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.26);
+    width: auto;
+  }
+  .popover__content:before {
+    position: absolute;
+    z-index: -1;
+    content: "";
+    right: calc(50% - 10px);
+    top: -8px;
+    border-style: solid;
+    border-width: 0 10px 10px 10px;
+    border-color: transparent transparent #ffffff transparent;
+    transition-duration: 0.3s;
+    transition-property: transform;
+  }
+  .popover__wrapper:hover .popover__content {
+    z-index: 10;
+    opacity: 1;
+    visibility: visible;
+    transform: translate(0, -20px);
+    transition: all 0.5s cubic-bezier(0.75, -0.02, 0.2, 0.97);
+  }
+  .popover__message {
+    text-align: center;
+  }
+
+  .emoji_style{
+    border-color: transparent;
+    background-color: transparent;
+    height: 40px;
+    width: 40px;
+    font-size:20px;
+    color: #ffffff;
+  }
+
+  .emoji_table{
+    margin-bottom: 100px;
+  }
+
+  .popover__wrapper2 {
+    position: relative;
+    margin-top: -2.6rem;
+    display: inline-block;
+  }
+
+  .popover__content2 {
+    opacity: 0;
+    visibility: hidden;
+    position: absolute;
+    left: -50px;
+    margin-left: 890px ;
+    margin-top: 25px;
+    transform: translate(0, 10px);
+    background-color: #ffffff;
+    padding: 1.5rem;
+    box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.26);
+    width: auto;
+  }
+  .popover__content2:before {
+    position: absolute;
+    z-index: -1;
+    content: "";
+    right: calc(50% - 10px);
+    top: -8px;
+    border-style: solid;
+    border-width: 0 10px 10px 10px;
+    border-color: transparent transparent #ffffff transparent;
+    transition-duration: 0.3s;
+    transition-property: transform;
+  }
+  .popover__wrapper2:hover .popover__content2 {
+    z-index: 10;
+    opacity: 1;
+    visibility: visible;
+    transform: translate(0, -20px);
+    transition: all 0.5s cubic-bezier(0.75, -0.02, 0.2, 0.97);
+  }
+  .popover__message2 {
+    text-align: center;
+  }
+
+  .more_tools{
+    text-align: center; 
+    border: transparent; 
+    background-color: transparent;
+    width: auto;
+  }
+
+  .delete_button{
+    text-align: left; 
+    border: transparent; 
+    color: white;
+    width: 140px;
+    font-size: medium;
+  }
+  
+  .delete_button:hover{
+    background: rgb(207, 207, 207);
+    box-shadow: 0 6px 12px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
+  }
+
+  .functionalities_button{
+    text-align: left; 
+    border: transparent; 
+    background-color: transparent;
+    width: 140px;
+    font-size: larger;
+  }
+  
+  .functionalities_button:hover{
+    background: rgb(207, 207, 207);
+    box-shadow: 0 6px 12px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
+  }
+
+
+  .contributors_chart{
+    width: 70%;
+    height: 70%;
+    grid-column-start: 6;
+    grid-column-end: 9;
+    grid-row-start: 5;
+    grid-row-end: 8;
+  }
+
+  .reports a{
+    display: block;
+  }
+
+  .reports{
+    grid-column-start: 5;
+    grid-column-end: 9;
+    grid-row-start: 14;
+    grid-row-end: 18;
+    margin-top: -14%;
+  }
+
+  .commit_chart{
+    width: 55%;
+    height: 10%;
+    grid-column-start: 10;
+    grid-column-end: 16;
+    grid-row-start: 1;
+    grid-row-end: 6;
+  }
+
+  .commit_chart2{
+    width: 55%;
+    height: 10%;
+    grid-column-start: 10;
+    grid-column-end: 16;
+    grid-row-start: 8;
+    grid-row-end: 13;
+  }
+
+
+  .timeline {
+    position: relative;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  .timeline::after {
+    content: '';
+    position: absolute;
+    width: 3px;
+    background-color: rgb(206, 206, 206);
+    top: 0;
+    bottom: 0;
+    left: 4%;
+    margin-left: -3px;
+    position:absolute;
+    z-index:-1;
+  }
+  
+  .container_timeline {
+    padding: 1px 4px;
+    position: relative;
+    background-color: inherit;
+    width: 100%;
+  }
+  
+  .container_timeline::after {
+    content: '';
+    position: absolute;
+    width: 25px;
+    height: 25px;
+    right: -1px;
+    background-color: rgb(168, 30, 30);
+    border: 4px solid #FF9F55;
+    top: 15px;
+    border-radius: 50%;
+    z-index: 1;
+  }
+  
+  .right {
+    left: 50%;
+  }
+  
+  .right::after {
+    left: -16px;
+  }
+  
+  .content_timeline {
+    padding: 20px 30px;
+    background-color: white;
+    position: relative;
+    border-radius: 6px;
+  }
+  
+  @media screen and (max-width: 600px) {
+    .timeline::after {
+    left: 31px;
+    }
+    
+    .container_timeline {
+    width: 100%;
+    padding-left: 7px;
+    padding-right: 2px;
+    }
+    
+    .right::after {
+    left: 15px;
+    }
+    
+    .right {
+    left: 0%;
+    }
+  }

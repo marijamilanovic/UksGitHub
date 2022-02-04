@@ -12,46 +12,29 @@
 </head>
 
 <body>
-    {% block navCode %}
-            <a class="nav-link " data-toggle="tab" href="#code">Code</a>
-    {% endblock %}
-
-    {% block navRepository %}
-    <a class="nav-link active" data-toggle="tab" href="#milestones">Milestones</a>
-    {% endblock %}
-
-    {% block tabCode %}
-    <div class="tab-pane container " id="code">
-        Space for code
-    </div>
-    {% endblock %}
-
-    {% block tabRepository %}
-    <div class="tab-pane container active" id="milestones">
-    <h2 style="margin-top: -20px;">New repository</h2>
-        <form style="margin-top: 20px; margin-left: -12px;" method="POST" action="{% url 'addRepository' %}"> 
-            {% csrf_token %}
-            <input type="hidden" name="repository_id"  value="{{repository_id}}"/>
-            <div class="form-group col-md-6">
-                <h5>Name</h5> 
-                <input type="text" class="form-control" id="name" name="name" value="{{ name }}">
-            </div>
-            {% if errorTitle %}
-            <div style="color: red; margin-left: 14px;" >{{errorTitle}}</div>
-            {% endif %}
-            <div class="form-group col-md-6">
-                <h5 for="">Status </h5>
-                <input type="radio" id="choice1"
-                    name="status" value="public">
+    {% block page_content %}
+        <div class="tab-pane container active" id="milestones">
+        <h2 style="margin-top: -20px;">New repository</h2>
+            <form style="margin-top: 20px; margin-left: -12px;" method="POST" action="{% url 'addRepository' %}"> 
+                {% csrf_token %}
+                <input type="hidden" name="repository_id"  value="{{repository_id}}"/>
+                <div class="form-group col-md-6">
+                    <h5>Name</h5> 
+                    <input type="text" class="form-control" id="name" name="name" value="{{ name }}">
+                </div>
+                {% if errorTitle %}
+                <div style="color: red; margin-left: 14px;" >{{errorTitle}}</div>
+                {% endif %}
+                <div class="form-group col-md-6">
+                    <h5 for="">Status </h5>
+                    <input type="radio" id="choice1" name="status" value="public" checked>
                     <label for="public">public</label>
-
-                    <input type="radio" style="margin-left: 30px;" id="choice2"
-                    name="status" value="private">
+                    <input type="radio" style="margin-left: 30px;" id="choice2" name="status" value="private">
                     <label for="public" >private</label>
-            </div>
-            <input type="submit" style="margin-left: 12px; margin-top: 5px;"  class="btn btn-success" value="Create">
-        </form>
-    </div>  
+                </div>
+                <input type="submit" style="margin-left: 12px; margin-top: 5px;"  class="btn btn-success" value="Create">
+            </form>
+        </div>  
     {% endblock %}
 
 </body>

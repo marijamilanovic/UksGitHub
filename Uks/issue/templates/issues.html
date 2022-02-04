@@ -9,35 +9,321 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+    <link href="{% static 'css/sb-admin-2.min.css' %}" rel="stylesheet">
     <title>Document</title>
 </head>
 
 <body>
+    {% block navCode %}
+      <li class="nav-item">
+        <a class="nav-link active" href="{% url 'repository' id=repository.id %}" style= "color: black;" id="code" aria-current="page">{% bs_icon 'code' size='1em' %} Code</a>
+      </li>
+    {% endblock %}
+
+    {% block navIssues %}
+      <li class="nav-item">
+        <a class="nav-link"  id="issues" style="border-bottom:3px solid darkviolet;color: black;" href="{% url 'issues' id=repository.id  %}">{% bs_icon 'record-circle' size='1em' %} Issues</a>
+      </li>
+    {% endblock %}
+
+
     {% block page_content %}
-        <div class="tab-pane container active" id="milestones">
-            <a href="{% url 'new_issue' id=repository.id %}" style="margin-left: 763px; margin-top: -25px;" type="button" class="btn btn-success" >New issue</a>
+    <div class="row">
+        <div class="tab-pane container active" id="milestones" style="margin-right: auto;">
+          {% include 'messages.html' %}
+          <a href="{% url 'new_issue' repo_id=repository.id %}" style="margin-left: 900px; margin-top: -25px; margin-bottom: 10;" type="button" class="btn btn-success" >New issue</a>
+          <div class="row">
+                {% csrf_token %}
+              <select id="assignees" style="min-width:100px;border-radius: 6px;border: 2px solid #AAA;box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.1);" class="selectpicker"   >
+                <option value=>Assignee</option>
+                {% for assignee in assignees %}
+                <option id= "{{assignee.id}}" value="{{assignee}}" >{{ assignee.username }}</option>
+                {% endfor %}
+            </select>
+            <script>
+              document.getElementById('assignees').addEventListener("change", function() {
+                var username = this.value;
+                console.log(username);
+                var data_to_send = "assigned:"+username
+                var url_mask = "{% url 'filter_issues' repo_id=repository.id pk=12345 %}".replace(/12345/, data_to_send.toString());
+                window.location.href = url_mask
+              });
+            </script>
+            <select id="author" style="min-width:100px;border-radius: 6px;border: 2px solid #AAA;box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.1);" class="selectpicker" >
+              <option value=>Author</option>
+              {% for assignee in assignees %}
+              <option id= "{{assignee.id}}" value="{{assignee}}" >{{ assignee.username }}</option>
+              {% endfor %}
+            </select>
+            <script>
+              document.getElementById('author').addEventListener("change", function() {
+                var username = this.value;
+                console.log(username);
+                var data_to_send = "author:"+username
+                var url_mask = "{% url 'filter_issues' repo_id=repository.id pk=12345 %}".replace(/12345/, data_to_send.toString());
+                window.location.href = url_mask
+              });
+            </script>
+            <select id="milestone" style="min-width:100px;border-radius: 6px;border: 2px solid #AAA;box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.1);" class="selectpicker" >
+              <option value=>Milestones</option>
+              {% for milestone in milestones %}
+              <option id= "{{milestones.id}}" value="{{milestone.title}}" >{{ milestone.title }}</option>
+              {% endfor %}
+            </select>
+            <script>
+              document.getElementById('milestone').addEventListener("change", function() {
+                var username = this.value;
+                console.log(username);
+                var data_to_send = "milestone:"+username
+                var url_mask = "{% url 'filter_issues' repo_id=repository.id pk=12345 %}".replace(/12345/, data_to_send.toString());
+                window.location.href = url_mask
+              });
+            </script>
+            <select id="projects" style="min-width:100px;border-radius: 6px;border: 2px solid #AAA;box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.1);" class="selectpicker" >
+              <option value=>Projects</option>
+              {% for project in projects %}
+              <option id= "{{project.id}}" value="{{project.name}}" >{{ project.name }}</option>
+              {% endfor %}
+            </select>
+            <script>
+              document.getElementById('projects').addEventListener("change", function() {
+                var username = this.value;
+                console.log(username);
+                var data_to_send = "project:"+username
+                var url_mask = "{% url 'filter_issues' repo_id=repository.id pk=12345 %}".replace(/12345/, data_to_send.toString());
+                window.location.href = url_mask
+              });
+            </script>
+            <select id="labels2" style="min-width:100px;border-radius: 6px;border: 2px solid #AAA;box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.1);" class="selectpicker" >
+                  <option value=>Labels</option>
+                  {% for label in labels %}
+                  <option id= "{{label.id}}" value="{{label.name}}" >{{ label.name }}</option>
+                  {% endfor %}
+              </select>
+              <script>
+                document.getElementById('labels2').addEventListener("change", function() {
+                  var username = this.value;
+                  console.log(username);
+                  var data_to_send = "label:"+username
+                  var url_mask = "{% url 'filter_issues' repo_id=repository.id pk=12345 %}".replace(/12345/, data_to_send.toString());
+                  window.location.href = url_mask
+                });
+              </script>
+            <input type="text" id="myInput" style="margin-left: auto; margin-right: auto; width: 500; margin-top: 10px; margin-bottom: 10px; border-radius: 6px;border: 2px solid #AAA;box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.1);" onkeyup="myFunction()" placeholder="Search for names..">
+           </div>
+          <script>
+            var input = document.getElementById("myInput");
+            input.addEventListener("keydown", function (e) {
+             if (e.key === "Enter") {  
+               validate(e);
+             }
+           });
+            
+            function validate(e) {
+              var text_value
+              console.log("fjdsklj")
+              console.log(e.target.value)
+              if(e.target.value === ""){
+                text_value = 'pocetak';
+              }else{
+                
+                text_value = e.target.value;
+              }
+              text_value = e.target.value;
+              var url_mask = "{% url 'filter_issues' repo_id=repository.id pk=12345 %}".replace(/12345/, text_value.toString());
+             window.location.href = url_mask
+             alert(text);
+           }
+         </script>
+          
         {% if issues %}
-            <table class="table">
-                <tbody>
+        <div class="accordion" id="accordionExample">
+            <div class="card">
+              <div class="card-header" id="headingOne">
+                <h2 class="mb-0">
+                  <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                    Open issues
+                  </button>
+                </h2>
+              </div>
+              <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
+                <div class="card-body">
                     {% for issue in issues %}
-                        <tr>
-                            <td>
-                                <a  class="nav-link" href="{% url 'view_issue' id=issue.id %}">{{issue.issue_title}}</a>
-                                <small style="margin-left: 15px;color: gray;">
-                                    opened by <b>{{issue.opened_by}}</b> and assignee to <b>{{issue.assignee}}</b>
-                                </small>
-                            </td>
-                            <td>
-                                <a href="{% url 'delete_issue' id=issue.id %}" class="link-primary" style="margin-left: 10px;">❌</a>
-                            </td>
-                        </tr>
+                        {% if issue.state == 'Opened' %}
+                            {% for developer in issue.repository.developers.all %}
+                              {% if developer.id ==  logged_user_id %}
+                                <a href="#" id="{{issue.id}}" onclick="askToDeleteIssueModal(this.id)" class="link-primary" style="position:absolute; margin-left: 900px;">❌</a>
+                              {% endif %}
+                            {% endfor %}
+                            <!-- DELETE MODAL -->
+                            <div class="modal" id="delete_{{issue.id}}" tabindex="-1" role="dialog">
+                              <div class="modal-dialog modal-dialog-centered" role="document">
+                                <div class="modal-content">
+                                  <div class="modal-header">
+                                    <h5 class="modal-title">Delete</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                      <span aria-hidden="true">&times;</span>
+                                    </button>
+                                  </div>
+                                  <div class="modal-body">
+                                    <p>Do you want to delete issue ({{issue.issue_title}}) ?</p>
+                                  </div>
+                                  <div class="modal-footer">
+                                    <a class="btn btn-primary" href="{% url 'delete_issue' id=issue.id %}" role="button">Yes</a>
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                            <div >
+                              <a  class="nav-link" href="{% url 'view_issue' id=issue.id %}" style="display: inline-block;">
+                                <img src="https://img.icons8.com/external-vitaliy-gorbachev-flat-vitaly-gorbachev/58/000000/external-open-sales-vitaliy-gorbachev-flat-vitaly-gorbachev.png" style="width: 30px;height: 30px;"/>
+                                &nbsp;&nbsp;&nbsp;{{issue.issue_title}}&nbsp;&nbsp;&nbsp; 
+                              </a>
+                              <span>
+                                {% for lab in issue.labels.all %}
+                                <span class="badge badge-pill d-inline-flex align-items-center justify-content-center  "
+                                style="margin-top: 5px; margin-left: 5px; font-size: 0.9em;  height: 30px;display: inline-block;  
+                                background-color: {{ lab.color }}">{{lab.name}}
+                                </span>
+                                {% endfor %}
+                              </span>
+                            </div>
+                            <small style="margin-left: 60px;color: gray;">
+                                opened by <b>{{issue.opened_by}}</b>
+                                {% if issue.assignees.all %}
+                                    <span>
+                                        and assigned to:
+                                        <b>
+                                            {% for tag in issue.assignees.all %} 
+                                                {{ tag.username }}, 
+                                            {% endfor %}
+                                        </b>
+                                    </span>
+                                {% endif %}
+                            </small>
+                            <hr>
+                        {% endif %}
                     {% endfor %}
-                </tbody>
-            </table>
+                </div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-header" id="headingTwo">
+                <h2 class="mb-0">
+                  <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                    Closed issues
+                  </button>
+                </h2>
+              </div>
+              <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
+                <div class="card-body">
+                    {% for issue in issues %}
+                        {% if issue.state == 'Close' %}
+                            <a href="#" id="{{issue.id}}" onclick="askToDeleteClosedIssueModal(this.id)" class="link-primary" style="position:absolute; margin-left: 900px;">❌</a>
+                            <!-- DELETE MODAL -->
+                            <div class="modal" id="delete_{{issue.id}}" tabindex="-1" role="dialog">
+                              <div class="modal-dialog modal-dialog-centered" role="document">
+                                <div class="modal-content">
+                                  <div class="modal-header">
+                                    <h5 class="modal-title">Delete</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                      <span aria-hidden="true">&times;</span>
+                                    </button>
+                                  </div>
+                                  <div class="modal-body">
+                                    <p>Do you want to delete issue ({{issue.issue_title}}) ?</p>
+                                  </div>
+                                  <div class="modal-footer">
+                                    <a class="btn btn-primary" href="{% url 'delete_issue' id=issue.id %}" role="button">Yes</a>
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                            <div>
+                              <a  class="nav-link" href="{% url 'view_issue' id=issue.id %}" style="display: inline-block;">
+                                <img src="https://img.icons8.com/color/48/000000/checkmark--v1.png" style="width: 30px;height: 30px;"/>
+                                &nbsp;&nbsp;&nbsp;{{issue.issue_title}}
+                              </a>
+                              <span>
+                                {% for lab in issue.labels.all %}
+                                <span class="badge badge-pill d-inline-flex align-items-center justify-content-center  "
+                                style="margin-top: 5px; margin-left: 5px; font-size: 0.9em;  height: 30px;display: inline-block;  
+                                background-color: {{ lab.color }}">{{lab.name}}
+                                </span>
+                                {% endfor %}
+                              </span>
+                            </div>
+                            
+                            <small style="margin-left: 60px;color: gray;">
+                                opened by <b>{{issue.opened_by}}</b>
+                                {% if issue.assignees.all %}
+                                    <span>
+                                        and assigned to:
+                                        <b>
+                                            {% for tag in issue.assignees.all %} 
+                                                {{ tag.username }}, 
+                                            {% endfor %}
+                                        </b>
+                                    </span>
+                                {% endif %}
+                            </small>
+                            <hr>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+              </div>
+            </div>
+            
+        </div>
         {% else %}
         <p>There are no issues yet.</p>
         {% endif %}
         </div>
+        <!--Modal-->
+        <div class="modal" id="myModal" tabindex="-1" role="dialog">
+          <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title">Fork {{repository.name}}</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <p>Where should we fork {{repository.name}} ?</p>
+                <a class="tooltip-test" title="Will be created as {{request.user}}/{{repository.name}}" href="{% url 'forkRepository' id=repository.id  %}"  style="font-size: large;"> {% bs_icon 'person-circle' size='1.2em' %} {{request.user}}</a>
+              </div>
+            </div>
+          </div>
+        </div>
         {%endblock%}
+  {% block javascript %}
+  <script>
+    document.getElementById('searchAll').style.display = 'none';
+
+    function searchAll(){
+      document.getElementById('searchAll').style.display = 'block';
+      document.getElementById('searchRepo').style.display = 'none';
+    }
+
+    function showModal() {
+        $('#myModal').modal('show')
+    }
+
+    setTimeout(function(){
+      if ($('#msg').length > 0) {
+        $('#msg').remove();
+      }
+    }, 2000)
+    function askToDeleteIssueModal(id) {
+        $('#delete_' + id).modal('show')
+    }
+    function askToDeleteClosedIssueModal(id) {
+        $('#delete_' + id).modal('show')
+    }
+  </script>
+  {% endblock %}
 </body>
 </html>

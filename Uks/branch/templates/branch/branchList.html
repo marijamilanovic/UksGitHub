@@ -7,6 +7,9 @@
 <body>
     
 {% block content %}
+
+<script src="https://code.iconify.design/2/2.1.2/iconify.min.js"></script>
+
 <div class="table_content">
 <link rel="stylesheet" type="text/css" href="{% static 'branch/style.css' %}">
 <table id="branchTable" class="table table-striped table-bordered table-hover table-sm text-center" cellspacing="0" width="100%">
@@ -20,7 +23,7 @@
         </th>
         <th class="th-sm">Default
   
-        <th class="th-sm">Delete
+        <th class="th-sm">Options
   
         </th>
       </tr>
@@ -31,7 +34,7 @@
             <td>{{branch.name}}</td>
             <td>{{branch.repository}}</td>
             <td>{{branch.is_default}}</td>
-            <td><form action="{% url 'branch:deleteBranch' branch.id  %}"><button type="submit" class="btn btn-primary">Delete</button></form></td>
+            <td><form action="{% url 'branch:deleteBranch' branch.id  %}"><button type="submit" class="btn btn-primary"><span class="iconify" data-icon="fluent:delete-24-filled"></span>/button></form></td>
           </tr>
           {% endfor %}
      

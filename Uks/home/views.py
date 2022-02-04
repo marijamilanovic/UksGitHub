@@ -9,6 +9,7 @@ from repository.models import Repository
 from user.models import User
 from milestone.models import Milestone
 from issue.models import Issue
+from django.db.models import Q
 
 # Create your views here.
 
@@ -26,12 +27,11 @@ def profile(request):
     template = loader.get_template('home/profile.html')
     my_repositories = get_my_repos(request)
     my_milestones = get_my_milestones(request)
-    my_issues = get_my_issues(request)
+    #my_issues = get_my_issues(request)
     all_users = get_all_users()
     return render(request, "home/profile.html", {
         'my_repositories': my_repositories, 
         'milestones': my_milestones,
-        'my_issues': my_issues,
         'all_users':all_users})
 
 def get_all_users():
@@ -46,12 +46,20 @@ def repository(request, id):
 # def deleteRepository(request, id):
 #     return redirect('/deleteRepository/' + id)
 def get_my_repos(request):
-    return Repository.objects.filter(creator_id=request.user.id)
+    repos_creator = Repository.objects.filter(Q(creator_id = request.user.id))
+    repos_collaborators = Repository.objects.filter(Q(developers=request.user))
+    if repos_collaborators:
+        repos_collaborators.union(repos_creator)
+        return repos_collaborators
+    return repos_creator
 
 def get_my_milestones(request):
     return Milestone.objects.all()
 
-def get_my_issues(request):
-    issues = Issue.objects.filter(opened_by=request.user.username)
-    issues = issues.union(Issue.objects.filter(assignee=request.user.username))
-    return issues
+def can_user_access_private_repo(request, repository):
+    if request.user.id == repository.creator_id or Repository.objects.filter(developers=request.user.id).exists():
+        print(Repository.objects.filter(developers=request.user.id))
+        return True
+    else:
+        return False
+

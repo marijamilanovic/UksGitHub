@@ -1,0 +1,137 @@
+{% extends 'home/profile.html' %}
+{% load static %}
+{% load bootstrap_icons %}
+
+<body>
+    {% block navCode %}
+      <li class="nav-item">
+        <a class="nav-link active" href="{% url 'repository' id=repository.id %}" style= "color: black;" id="code" aria-current="page">{% bs_icon 'code' size='1em' %} Code</a>
+      </li>
+    {% endblock %}
+
+    {% block navRepos %}
+          <li class="nav-item">
+            <a class="nav-link" style="color: black;" href="{% url 'all_repositories' %}">{% bs_icon 'pc-display-horizontal' size='1.2em' %} Repositories</a>
+          </li>
+    {% endblock %}
+
+    {% block navIssues %}
+    <li class="nav-item">
+      <a class="nav-link" style="border-bottom:3px solid darkviolet; color: black;" href="{% url 'all_issues' %}">{% bs_icon 'record-circle' size='1.2em' %}Issues</a>
+    </li>
+    {% endblock %}
+
+
+{% block page_content %}
+<div class="tab-pane container" id="issues">
+    <table class="table">
+        <tbody>
+            {% if my_issues %}
+                <div class="accordion" id="accordionExample">
+                    <div class="card">
+                      <div class="card-header" id="headingOne">
+                        <h2 class="mb-0">
+                          <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                            Open issues
+                          </button>
+                        </h2>
+                      </div>
+                      <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
+                        <div class="card-body">
+                            {% for issue in my_issues %}
+                                {% if issue.state == 'Opened' %}
+                                    <div>
+                                      <a  class="nav-link" href="{% url 'view_issue' id=issue.id %}" style="display: inline-block;">
+                                            <img src="https://img.icons8.com/external-vitaliy-gorbachev-flat-vitaly-gorbachev/58/000000/external-open-sales-vitaliy-gorbachev-flat-vitaly-gorbachev.png" style="width: 30px;height: 30px;"/>
+                                        &nbsp;&nbsp;&nbsp;{{issue.issue_title}}
+                                        <small style="color: gray;">
+                                            / {{issue.repository.name}}
+                                        </small>
+                                      </a>
+                                      <span>
+                                        {% for lab in issue.labels.all %}
+                                        <span class="badge badge-pill d-inline-flex align-items-center justify-content-center  "
+                                        style="margin-top: 5px; margin-left: 5px; font-size: 0.9em;  height: 30px;display: inline-block;  
+                                        background-color: {{ lab.color }}">{{lab.name}}
+                                        </span>
+                                        {% endfor %}
+                                      </span>
+                                    </div>
+                                    
+                                    <small style="margin-left: 60px;color: gray;">
+                                        opened by <b>{{issue.opened_by}}</b>
+                                        {% if issue.assignees.all %}
+                                            <span>
+                                                and assigned to:
+                                                <b>
+                                                    {% for tag in issue.assignees.all %} 
+                                                        {{ tag.username }}, 
+                                                    {% endfor %}
+                                                </b>
+                                            </span>
+                                        {% endif %}
+                                    </small>
+                                    <hr>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                      </div>
+                    </div>
+                    <div class="card">
+                      <div class="card-header" id="headingTwo">
+                        <h2 class="mb-0">
+                          <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                            Closed issues
+                          </button>
+                        </h2>
+                      </div>
+                      <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
+                        <div class="card-body">
+                            {% for issue in my_issues %}
+                                {% if issue.state == 'Close' %}
+                                    <div>
+                                      <a  class="nav-link" href="{% url 'view_issue' id=issue.id %}" style="display: inline-block;">
+                                        <img src="https://img.icons8.com/color/48/000000/checkmark--v1.png" style="width: 30px;height: 30px;"/>
+                                        &nbsp;&nbsp;&nbsp;{{issue.issue_title}}
+                                        <small style="color: gray;">
+                                            / {{issue.repository.name}}
+                                        </small>
+                                      </a>
+                                      <span>
+                                        {% for lab in issue.labels.all %}
+                                        <span class="badge badge-pill d-inline-flex align-items-center justify-content-center  "
+                                        style="margin-top: 5px; margin-left: 5px; font-size: 0.9em;  height: 30px;display: inline-block;  
+                                        background-color: {{ lab.color }}">{{lab.name}}
+                                        </span>
+                                        {% endfor %}
+                                      </span>
+                                    </div>
+                                    
+                                    <small style="margin-left: 60px;color: gray;">
+                                        opened by <b>{{issue.opened_by}}</b>
+                                        {% if issue.assignees.all %}
+                                            <span>
+                                                and assigned to:
+                                                <b>
+                                                    {% for tag in issue.assignees.all %} 
+                                                        {{ tag.username }}, 
+                                                    {% endfor %}
+                                                </b>
+                                            </span>
+                                        {% endif %}
+                                    </small>
+                                    <hr>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+            {% else %}
+                <p>There are no issues yet.</p>
+            {% endif %}
+        </tbody>
+    </table>
+</div>
+{% endblock page_content%}
+</body>

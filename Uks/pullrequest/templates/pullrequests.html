@@ -12,34 +12,81 @@
 </head>
 
 <body>
+    {% block navCode %}
+      <li class="nav-item">
+        <a class="nav-link active" href="{% url 'repository' id=repository.id %}" style=" color: black;" id="code" aria-current="page">{% bs_icon 'code' size='1em' %} Code</a>
+      </li>
+    {% endblock %}
+
+    {% block navPullRequests %}
+      <li class="nav-item">
+        <a class="nav-link" id="pullRequests" style="border-bottom:3px solid darkviolet;color: black;" href="{% url 'pullrequests' id=repository.id  %}">{% bs_icon 'shuffle' size='1.3em' %} Pull requests</a>
+      </li>
+    {% endblock %}
+
     {% block page_content %}
-        <div class="tab-pane container active" id="milestones">
-            <a href="{% url 'newPullrequest' id=repository.id %}" style="margin-left: 850px; margin-top: -25px;" type="button" class="btn btn-success" >New pull request</a>
-        {% if pullrequests %}
-            {% for pr in pullrequests %}
-            <div class="card border-secondary mb-3" style="margin-top: 15px;  max-width: 1000px;">
-                {% if pr.status == 'Opened' %}
-                <div class="card-header" style="background-color: #d7f0db;">
-                    {% bs_icon 'bezier2' size='1em' color='green' %} <span style="padding-left:15px">{{pr.name}}</span>  <span style="padding-left:20px; color: green;"> {{pr.status}}</span>
+        <div class="row">
+            <div class="tab-pane container active" id="milestones" style="width: 40%; margin-left: auto; margin-right: auto;" >
+                <a href="{% url 'newPullrequest' id=repository.id %}" style=" margin-top: -55px; margin-bottom: 30;" type="button" class="btn btn-success" >New pull request</a>
+                <p>My pullrequests</p>
+                {% if pullrequests %}
+                {% for pr in pullrequests %}
+                <div class="card border-secondary mb-3" style="margin-top: 15px;  max-width: 1000px;">
+                    {% if pr.status == 'Opened' %}
+                    <div class="card-header" style="background-color: #d7f0db;">
+                        {% bs_icon 'bezier2' size='1em' color='green' %} <span style="padding-left:15px">{{pr.name}}</span>  <span style="padding-left:20px; color: green;"> {{pr.status}}</span>
+                    </div>
+                    {% elif pr.status == 'Merged' %}
+                    <div class="card-header" style="background-color: #e9d7f0;">
+                        {% bs_icon 'bezier2' size='1em' color='purple' %} <span style="padding-left:15px">{{pr.name}}</span>  <span style="padding-left:20px; color: purple;"> {{pr.status}}</span>
+                    </div>
+                    {% else %}
+                    <div class="card-header" style="background-color: #f1bebe;">
+                        {% bs_icon 'pause' size='1em' color='red' %} <span style="padding-left:15px">{{pr.name}}</span> <span style="padding-left:20px; color: red;"> {{pr.status}}</span>
+                    </div>
+                    {% endif %}
+                    <div class="card-body">
+                        <h7 class="card-title">#23 opened {{pr.created}} by {{pr.creator.username}}</h7>
+                    </div>
+                    <a href="{% url 'updatePullrequestPage' id=pr.id %}" style="margin-left: 20px; margin-top: -10px; width: 150px; margin-bottom: 10px;" type="button" class="btn btn-success">Edit</a>
                 </div>
-                {% elif pr.status == 'Merged' %}
-                <div class="card-header" style="background-color: #e9d7f0;">
-                    {% bs_icon 'bezier2' size='1em' color='purple' %} <span style="padding-left:15px">{{pr.name}}</span>  <span style="padding-left:20px; color: purple;"> {{pr.status}}</span>
-                </div>
-                {% else %}
-                <div class="card-header" style="background-color: #f1bebe;">
-                    {% bs_icon 'pause' size='1em' color='red' %} <span style="padding-left:15px">{{pr.name}}</span> <span style="padding-left:20px; color: red;"> {{pr.status}}</span>
-                </div>
-                {% endif %}
-                <div class="card-body">
-                    <h7 class="card-title">#23 opened {{pr.created}} by _____</h7>
-                </div>
-                <a href="{% url 'updatePullrequestPage' id=pr.id %}" style="margin-left: 20px; margin-top: -10px; width: 150px; margin-bottom: 10px;" type="button" class="btn btn-success">Edit</a>
+                {% endfor %}
+            {% else %}
+            <p>There are no pullrequests yet.</p>
+            {% endif %}
             </div>
-            {% endfor %}
-        {% else %}
-        <p>There are no pullrequests yet.</p>
-        {% endif %}
+            <div style="width: 40%; margin-left: auto; margin-right: auto; ">
+                <p style="margin-top: 140px;">Pullrequests for review</p>
+                {% if pullrequests_for_review %}
+                    {% for pr in pullrequests_for_review %}
+                        <div class="card border-secondary mb-3" style="margin-top: 15px;  max-width: 1000px;">
+                            {% if pr.status == 'Opened' %}
+                            <div class="card-header" style="background-color: #b3d4ff;">
+                                {% bs_icon 'bezier2' size='1em' color='green' %} <span style="padding-left:15px">{{pr.name}}</span>  <span style="padding-left:20px; color: rgb(7, 113, 252);"> {{pr.status}}</span>
+                            </div>
+                            {% elif pr.status == 'Merged' %}
+                            <div class="card-header" style="background-color: #bb8624;">
+                                {% bs_icon 'bezier2' size='1em' color='purple' %} <span style="padding-left:15px">{{pr.name}}</span>  <span style="padding-left:20px; color: purple;"> {{pr.status}}</span>
+                            </div>
+                            {% else %}
+                            <div class="card-header" style="background-color: #bb8624;">
+                                {% bs_icon 'pause' size='1em' color='red' %} <span style="padding-left:15px">{{pr.name}}</span> <span style="padding-left:20px; color: red;"> {{pr.status}}</span>
+                            </div>
+                            {% endif %}
+                            <div class="card-body">
+                                <h7 class="card-title">#23 opened {{pr.created}} by {{pr.creator.username}}</h7>
+                            </div>
+                            <div>
+                                <a href="{% url 'approve' pullrequest_id=pr.id  %}" style="margin-left: 20px; margin-top: -10px; width: 150px; margin-bottom: 10px; background-color:rgb(7, 113, 252); border: rgb(7, 113, 252);" type="button" class="btn btn-success">Approve</a>
+                                <a href="{% url 'updatePullrequestPage' id=pr.id %}" style="margin-left: 20px; margin-top: -10px; width: 150px; margin-bottom: 10px; background-color:rgb(7, 113, 252); border: rgb(7, 113, 252);" type="button" class="btn btn-success">Comment</a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p style="margin-top: 50; margin-left: auto; margin-right: auto;">There are no pullrequests for review.</p>
+                {% endif %}
+
+            </div>
         </div>
         {%endblock%}
 </body>

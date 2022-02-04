@@ -1,0 +1,36 @@
+{% extends 'home/profile.html' %}
+{% load bootstrap_icons %}
+
+
+          {% block navRepos %}
+          <li class="nav-item">
+            <a class="nav-link" style="color: black;" href="{% url 'all_repositories' %}">{% bs_icon 'pc-display-horizontal' size='1.2em' %} Repositories</a>
+          </li>
+          {% endblock %}
+
+          {% block navProjects %}
+          <li class="nav-item">
+            <a class="nav-link" style="border-bottom:3px solid darkviolet; color: black;" href="{% url 'project:all_projects' %}">{% bs_icon 'layout-text-window-reverse' size='1.2em' %}Projects</a>
+          </li>
+          {% endblock %}
+
+{% block page_content  %}
+<div class="tab-pane container" id="projects">
+            {% if all_projects %}
+                {% for project in all_projects %}
+                <div class="card" style="margin-top: 20px; width: 900px; ">
+                    <div class="card-header" style="background-color: #d7f0db;">
+                      <h5>{{project.name}}</h5>
+                    </div>
+                    <div class="card-body">
+                        <p>{{project.description}}<span style="height: 20px; margin-left: 15px;" class="badge badge-pill badge-info">{{project.status}}</span></p> 
+                        <span style="margin-left: 0px;">{% bs_icon 'pc-display-horizontal' size='0.9em' %}</span>
+                        <a href="{% url 'repository' id=project.repository.id  %}">{{project.repository}}</a>
+                    </div>
+                  </div>
+                {% endfor %}
+            {% else %}
+                <p>There are no projects yet.</p>
+            {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,86 @@
+{% extends 'home/profile.html' %}
+{% load bootstrap_icons %}
+
+        {% block navRepos %}
+        <li class="nav-item">
+        <a class="nav-link" style="color: black;" href="{% url 'all_repositories' %}">{% bs_icon 'pc-display-horizontal' size='1.2em' %} Repositories</a>
+        </li>
+        {% endblock %}
+
+        {% block navUsers %}
+          {% if request.user.is_superuser %}
+            <li class="nav-item">
+                <a style="border-bottom:3px solid darkviolet; color: black;" class="nav-link" href="{% url 'all_users' %}">{% bs_icon 'people-fill' size='1.2em' %} Users</a>
+            </li>
+          {% endif %}
+          {% endblock %} 
+
+{% block page_content  %}
+<div class="tab-pane container " id="users">
+    {% include 'messages.html' %}
+    <table class="table">
+        <tbody>
+            {% for user in all_users %}
+                <tr>
+                    <td>
+                        <small style="margin-left: 15px;color: gray;">
+                            Name:  <b>{{user.first_name}}</b>
+                        </small>
+                    </td>
+                    <td>
+                        <small style="margin-left: -25px;color: gray;">
+                            Surname: <b>{{user.last_name}}</b>
+                        </small>
+                    </td>
+                    <td>
+                        <small style="margin-left: -25px;color: gray;">
+                            Email: <b>{{user.email}}</b>
+                        </small>
+                    </td>
+                    <td>
+                        <small style="margin-left: -25px;color: gray;">
+                            Username: <b>{{user.username}}</b>
+                        </small>
+                    </td>
+                    <td>
+                        <a  href="{% url 'go_to_edit_user' id=user.id %}" style="margin-left: 200px; " type="button" class="btn btn-success" >Edit</a> 
+                        <a  href="#" id="{{user.id}}" onclick="askToDeleteUserModal(id)" style="margin-left: 20px; " type="button" class="btn btn-success" >Delete</a> 
+                    </td>
+                </tr>
+                <!-- DELETE MODAL -->
+                <div class="modal" id="delete_user_{{user.id}}" tabindex="-1" role="dialog">
+                    <div class="modal-dialog modal-dialog-centered" role="document">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5 class="modal-title">Delete</h5>
+                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                        </div>
+                        <div class="modal-body">
+                          <p>Do you want to delete user with username <i>{{user.username}}</i> ?</p>
+                        </div>
+                        <div class="modal-footer">
+                          <a class="btn btn-primary" href="{% url 'delete_user' id=user.id %}" role="button">Yes</a>
+                          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% block javascript %}
+    <script>
+        setTimeout(function(){
+        if ($('#msg').length > 0) {
+            $('#msg').remove();
+        }
+        }, 2000)
+        function askToDeleteUserModal(id) {
+            $('#delete_user_' + id).modal('show')
+        }
+    </script>
+    {% endblock %}
+</div>
+{% endblock %}

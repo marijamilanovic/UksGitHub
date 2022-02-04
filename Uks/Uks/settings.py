@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 
 from pathlib import Path
 import os
+from django.contrib.messages import constants as messages
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -39,12 +41,13 @@ INSTALLED_APPS = [
     'label.apps.LabelConfig',
     'milestone.apps.MilestoneConfig',
     'project.apps.ProjectConfig',
-    'task.apps.TaskConfig',
     'branch.apps.BranchConfig',
     'commit.apps.CommitConfig',
     'user.apps.UserConfig',
     'pullrequest.apps.PullrequestConfig',
+    'insights.apps.InsightsConfig',
     'comment.apps.CommentConfig',
+    'history.apps.HistoryConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -53,7 +56,17 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django_bootstrap_icons',
     'crispy_forms',
+    'colorfield',
+    'django.contrib.humanize',
 ]
+
+MESSAGE_TAGS = {
+        messages.DEBUG: 'alert-secondary',
+        messages.INFO: 'alert-info',
+        messages.SUCCESS: 'alert-success',
+        messages.WARNING: 'alert-warning',
+        messages.ERROR: 'alert-danger',
+ }
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -86,7 +99,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'Uks.wsgi.application'
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
-
+CSRF_TRUSTED_ORIGINS = ['http://localhost:8083', 'http://localhost:8080/', 'http://127.0.0.1:8080/', 'http://127.0.0.1:8083/']
 
 
 if local_mode == True:

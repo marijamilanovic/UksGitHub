@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'repository/index.html' %}
 {% load static %}
 
 {% load crispy_forms_tags %}
@@ -6,8 +6,12 @@
 
 <body>
     
-{% block content %}
-<div class="table_content">
+{% block page_content %}
+
+<a href="{% url 'commit:newCommit' id=branch.id %}" style="margin-left: 75%; margin-top: 3%; position: relative;" type="button" class="btn btn-success" >New commit</a>
+
+
+<div class="table_content" style="margin-top: 0%;">
 <link rel="stylesheet" type="text/css" href="{% static 'commit/style.css' %}">
 <table id="commitTable" class="table table-striped table-bordered table-hover table-sm text-center" cellspacing="0" width="100%">
     <thead>

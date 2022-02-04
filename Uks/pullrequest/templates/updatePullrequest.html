@@ -1,6 +1,7 @@
 {% extends 'repository/index.html' %}
 {% load static %}
 {% load bootstrap_icons %}
+{% load humanize %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -9,97 +10,614 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="{% static 'home/style.css' %}">
+
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
 </head>
 
 <body>
-    {% block page_content %}
-    <div class="tab-pane container active" id="pullrequests">
-    {% if pullrequest %}
-    <h2 style="margin-top: -20px;">{{pullrequest.name}}</h2>
-    {% if pullrequest.status == 'Opened' %}
-        <div class="card-header" style="background-color: #d7f0db;">
-            {% bs_icon 'bezier2' size='1em' color='green' %}<span style="padding-left:20px; color: green;"> {{pr.status}}</span> <span style="padding-left:15px">merging commits into {{pullrequest.target.name}} from {{pullrequest.source.name}}</span>  
-    </div>
-    {% elif pullrequest.status == 'Merged' %}
-        <div class="card-header" style="background-color: #e9d7f0;">
-            {% bs_icon 'bezier2' size='1em' color='purple' %} <span style="padding-left:15px; color: purple;" >{{pr.status}}</span>  <span style="padding-left:15px">merging commits into {{pullrequest.target.name}} from {{pullrequest.source.name}}</span>  
-        </div>
-    {% else %}
-        <div class="card-header" style="background-color: #f1bebe;">
-            {% bs_icon 'pause' size='1em' color='red' %} <span style="padding-left:15px; color: red;">{{pr.status}}</span> <span style="padding-left:15px">merging commits into {{pullrequest.target.name}} from {{pullrequest.source.name}}</span>  
-        </div>
-    {% endif %}
-    <div class="container">
+    {% block navCode %}
+      <li class="nav-item">
+        <a class="nav-link active" href="{% url 'repository' id=repository.id %}" style=" color: black;" id="code" aria-current="page">{% bs_icon 'code' size='1em' %} Code</a>
+      </li>
+    {% endblock %}
 
-        <!-- Nav tabs -->
-        <ul class="nav nav-tabs">
-        <li class="nav-item">
-          <a class="nav-link active" data-toggle="tab" href="#conversation">Conversation</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" data-toggle="tab" href="#commits">Commits</a>
-        </li>
-        </ul>
+    {% block navPullRequests %}
+      <li class="nav-item">
+        <a class="nav-link" id="pullRequests" style="border-bottom:3px solid darkviolet;color: black;" href="{% url 'pullrequests' id=repository.id  %}">{% bs_icon 'shuffle' size='1.3em' %} Pull requests</a>
+      </li>
+    {% endblock %}
     
-        <!-- Tab panes -->
-        <div class="tab-content">
-            <div class="tab-pane container active" id="conversation"> Pull request conversation history.</div>
-            <div class="tab-pane container fade" id="commits">Commits history.</div>
-        </div>
-    </div>   
-        <form style="margin-top: 20px; margin-left: -12px;" method="POST"> 
-            {% csrf_token %}
-            <hr>
-            {% if pullrequest.status == 'Opened' %}
-                <div class="card-header" style="border-color: green;">
-                    {% bs_icon 'bezier2' size='1em' color='green' %} <a href="#" style="margin-left: 20px; margin-top: 10px; width: 200px; height: 50px; margin-bottom: 10px;" type="button" class="btn btn-success">Merge pull request</a>
-                </div>
-            {% elif pullrequest.status == 'Merged' %}
-                <div class="card-header" style="border-color: purple;">
-                    {% bs_icon 'bezier2' size='1em' color='purple' %}<span style="padding-left:15px; ">Pull request successfully merged and closed</span>
-                    <br>
-                    <span style="padding-left:35px;">You are all set—the <b style="background-color: rgb(219, 216, 216);">{{pullrequest.source.name}} </b> branch can be safely deleted.</span><a href="#" style="margin-left: 20px; margin-top: 10px; width: 150px; margin-bottom: 10px;" type="button" class="btn btn-secondary">Delete branch</a>
-                </div>
-            {% else %}
-                <div class="card-header" style="border-color: red;">
-                    {% bs_icon 'pause' size='1em' color='red' %} <span style="padding-left:15px;">Closed with unmerged commits</span>
-                    <br>
-                    <span style="padding-left:35px;">This pull request is closed, but the <b style="background-color: rgb(219, 216, 216);">{{pullrequest.source.name}} </b> branch has unmerged commits.</span><a href="#" style="margin-left: 20px; margin-top: 10px; width: 150px; margin-bottom: 10px;" type="button" class="btn btn-secondary">Delete branch</a>
-                </div>
-            {% endif %}
-            <hr>
+    {% block page_content %}
+        <div class="row">
+            <div class="tab-pane container active" id="pullrequests" style="margin-left: auto;">
+                {% if pullrequest %}
+                    <h2 style="margin-top: -20px;">{{pullrequest.name}}</h2>
+                    {% if pullrequest.status == 'Opened' %}
+                        <div class="card-header" style="background-color: #d7f0db;">
+                            <span style="padding-left:20px; color: green;"> {{pr.status}}</span> <span style="padding-left:15px">merging commits into {{pullrequest.target.name}} from {{pullrequest.source.name}}</span>  
+                        </div>
+                    {% elif pullrequest.status == 'Merged' %}
+                        <div class="card-header" style="background-color: #e9d7f0;">
+                            {% bs_icon 'bezier2' size='1em' color='purple' %} <span style="padding-left:15px; color: purple;" >{{pr.status}}</span>  <span style="padding-left:15px">merging commits into {{pullrequest.target.name}} from {{pullrequest.source.name}}</span>  
+                        </div>
+                    {% else %}
+                        <div class="card-header" style="background-color: #f1bebe;">
+                            {% bs_icon 'pause' size='1em' color='red' %} <span style="padding-left:15px; color: red;">{{pr.status}}</span> <span style="padding-left:15px">merging commits into {{pullrequest.target.name}} from {{pullrequest.source.name}}</span>  
+                        </div>
+                    {% endif %}
             <div class="container">
-
-                <!-- Nav tabs -->
                 <ul class="nav nav-tabs">
-                <li class="nav-item">
-                  <a class="nav-link active" data-toggle="tab" href="#write">Write</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" data-toggle="tab" href="#preview">Preview</a>
-                </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" data-toggle="tab" href="#conversation"> {% bs_icon 'chat-right' size='1em'%} Conversation</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-toggle="tab" href="#commits">Commits</a>
+                    </li>
                 </ul>
-            
-                <!-- Tab panes -->
-                <div class="tab-content">
-                    <div class="tab-pane container active" id="write"> 
-                        <textarea class="form-control col-md-12" id="comment" rows="4" name="comment" placeholder="Leave a comment"></textarea>
+                <div class="tab-content timeline">
+                    <div class="tab-pane container active" id="conversation"> 
+                        <div  class="row " style="margin-left: 8px; margin-top: 8px;">
+                            <p style="background: rgb(206, 206, 206);
+                                padding:5px;
+                                border-color: white;
+                                border-width: 2px;
+                                margin-right: 8px;
+                                margin-top: 4px;
+                                border-style: solid;
+                                border-radius: 50%;">{% bs_icon 'upload' size='1.5em' color='gray' %}</p>
+                                <p style="margin-left: 4px; margin-top: 6px;">added {{ commits|length }} commits</p>
+                        </div>
+                        {% for c in commits %}
+                            <div  class="row " style="margin-left: 8px; margin-top: 8px;">
+                                <p style="background-color: white;
+                                padding:5px;
+                                margin-right: 8px;
+                                margin-top: 4px;
+                                width: 6px;">{% bs_icon 'node-plus' size='1.5em' color='gray' %}</p>
+                                <p style="margin-top: 4px; margin-left: 15px;">{% bs_icon 'person-circle' size='1.5em' %} {{c.message}} </p>
+                            </div>
+                        {% endfor %}
+                        {% for c in comments %}
+                        <div class="card border-secondary mb-3" style="margin-top: 15px;  max-width: 1000px; background-color: #cde9e9;">
+                            <p style="margin-top: 10px; margin-left: 10px;">  {% bs_icon 'person-circle' size='1.5em'%} <b>{{c.author.username}}</b> commented {{ c.created_date|naturaltime }}</p>
+                            {% if pullrequest.creator.username == c.author.username %}
+                                <span style="margin-top: -42px; margin-left: 770px;">
+                                <p style="border:1px; 
+                                    border-style:solid; 
+                                    border-color:#53adad; 
+                                    width: 90px; height: 30px; 
+                                    border-radius: 10px;
+                                    text-align: center; color: gray;">Author</p>
+                                </span>
+                            {% endif %}
+                            <div class="popover__wrapper">
+                                <a href="#" style="width: 40px; margin-left: 880px; background-color: transparent; border-color: transparent;">
+                                    {% bs_icon 'emoji-smile' size='1.5em' color='gray' %} 
+                                </a>
+                                <div class="popover__content">
+                                    <form method="POST" action="{% url 'add_emoji' id=c.id pr_id=pullrequest.id %}">
+                                    {% csrf_token %}
+                                        <p style="text-align: center;">Pick your reaction</p>
+                                        <hr>
+                                        <table>
+                                            <tr class="emoji_table">
+                                                {% for e in emojis %}
+                                                    <th class="emoji_table"><button name="emoji" value={{e}} href="{% url 'add_emoji' id=c.id pr_id=pullrequest.id %}" style="color: white;" class="emoji_style">&#{{e}};</button></th>
+                                                {% endfor %}
+                                            </tr>
+                                        </table>
+                                    </form>
+                                </div>
+                            </div>
+                            <div class="popover__wrapper2" style="width: 20px; margin-left: 5px; margin-top:-25px; background-color: transparent; border-color: transparent;">
+                                <a href="#" style="width: 20px; margin-left: 920px; background-color: transparent; border-color: transparent;">
+                                   {% bs_icon 'three-dots' size='1.5em' color='gray' %} 
+                                </a>
+                                <div class="popover__content2" style="width: 180px; ">
+                                    <button class="functionalities_button" value="{{c.content}}" onclick="quote_comment(this.value);" >Quote replay</button>
+                                    <hr>
+                                    <table>
+                                        <tr>
+                                            <th><button class="functionalities_button" onclick="enable_textarea();">Edit</button></th>
+                                        </tr>
+                                        <tr>
+                                            <th><a type="button" href="{% url 'delete_comment' id=c.id pr_id=pullrequest.id %}" class="delete_button" style="text-align: left; 
+                                                border: transparent; 
+                                                background-color: transparent;
+                                                margin-left: 5px;
+                                                color: red;
+                                                width: 140px;
+                                                font-size: large;">Delete</a>
+                                            </th>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="card-header" style="background-color: white; margin-top: 5px;">
+                                <form method="POST" action="{% url 'update_comment' id=c.id pr_id=pullrequest.id %}">
+                                {% csrf_token %}
+                                    <textarea id="comment_content_edit" name="comment_content_edit" aria-disabled="true"  style=" width:600px;resize: none; border-color: transparent; background-color: transparent;" disabled=true style="border-color: white;">{{c.content}}</textarea>
+                                    <button id="update_comment" hidden="true" style="margin-top: -28px;" class="btn btn-outline-success">Update comment</button>
+                                    <hr style="border-color: #ffffff;">
+                                </form>
+                                {% for e in c.emojis.all%}
+                                    <th style="width: 40px;">
+                                        <button name="emoji" value={{e.name}} href="{% url 'add_emoji' id=c.id pr_id=pullrequest.id%}" 
+                                        style="border:1px; 
+                                        border-style:solid; 
+                                        border-color:#53adad; 
+                                        width: 70px; height: 30px; 
+                                        border-radius: 10px;
+                                        background-color: #cde9e9;
+                                        text-align: center;">&#{{e.name}}; 
+                                        <span style="margin-left: 10px;">
+                                            {% if e.name == '129505' %}
+                                                {{c.get_emoji_heart}}
+                                            {% elif e.name == '128640' %}
+                                                {{c.get_emoji_rocket}}
+                                            {% elif e.name == '128577' %}
+                                                {{c.get_emoji_sad}}
+                                            {% elif e.name == '128512' %}
+                                                {{c.get_emoji_happy}}
+                                            {% elif e.name == '128077' %}
+                                                {{c.get_emoji_like}}
+                                            {% elif e.name == '128078' %}
+                                                {{c.get_emoji_dislike}}
+                                            {% elif e.name == '128064' %}
+                                                {{c.get_emoji_eyes}}
+                                            {% elif e.name == '127881' %}
+                                                {{c.get_emoji_party}}
+                                            {% endif %}
+                                            </span>
+                                        </button>
+                                    </th>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endfor %}
+
+                        <div>
+                            {% for h in pullrequest.history.all %}
+                                {% if h.object_type == 'Milestone' %}
+                                    <div  class="row " style="margin-left: 8px; margin-top: 8px;">
+                                        <p style="background: rgb(206, 206, 206);
+                                        padding:5px;
+                                        border-color: white;
+                                        border-width: 2px;
+                                        margin-right: 8px;
+                                        border-style: solid;
+                                        border-radius: 50%;">{% bs_icon 'signpost' size='1.5em' color='gray' %}</p>
+                                        <p style="margin-top: 4px;">{% bs_icon 'person-circle' size='1.5em' %}<b>{{h.user.username}}</b> {{h.message}} </p>
+                                        {% for m in milestones %}
+                                            {% if h.changed_object_id == m.id %}
+                                                <a href="{% url 'seeMilestone' id=m.id%}" style="margin-left: 4px; margin-right: 4px; margin-top: 5px; font-size: 14;">{{m.title}}</a>
+                                                <p style="margin-top: 4px;">{{h.object_type}} </p>
+                                                <p style="margin-top: 4px; margin-left: 4px; color: rgb(206, 206, 206);">{{ h.created_date|naturaltime }} </p>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                {% elif h.object_type == 'Label' %}
+                                    <div  class="row" style="margin-left: 8px; margin-top: 8px;">
+                                    <p style="background: rgb(206, 206, 206);
+                                        padding:5px;
+                                        border-color: white;
+                                        margin-right: 8px;
+                                        border-width: 2px;
+                                        border-style: solid;
+                                        border-radius: 50%;">{% bs_icon 'tag' size='1.5em' color='gray' %}</p>
+                                        <p style="margin-top: 4px;">{% bs_icon 'person-circle' size='1.5em' %}<b>{{h.user.username}}</b> {{h.message}} </p>
+                                        {% for l in labels %}
+                                            {% if h.changed_object_id == l.id %}
+                                                <span  class="badge badge-pill d-inline-flex align-items-center justify-content-center  "
+                                                    style="margin-left: 5px; margin-top: 4px; font-size: 0.9em;  height: 30px; width: auto;
+                                                    background-color:{{l.color}}">{{l.name}}
+                                                </span> 
+                                                <p style="margin-top: 4px; margin-left: 4px;">{{h.object_type}}</p>
+                                                <p style="margin-top: 4px; margin-left: 4px; color: rgb(206, 206, 206);">{{ h.created_date|naturaltime }} </p>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                {% elif h.object_type == 'Assignees' %}
+                                    <div  class="row" style="margin-left: 8px; margin-top: 8px;">
+                                        <p style="background: rgb(206, 206, 206);
+                                            padding:5px;
+                                            border-color: white;
+                                            border-width: 2px;
+                                            margin-right: 8px;
+                                            border-style: solid;
+                                            border-radius: 50%;">{% bs_icon 'person' size='1.5em' color='gray' %}</p>
+                                            <p style="margin-top: 4px;">{% bs_icon 'person-circle' size='1.5em' %}<b>{{h.user.username}}</b> </p>
+                                        {% for a in assignees.all %} 
+                                            {% if h.changed_object_id == a.id %}
+                                                {% if h.user.username == a.username %}
+                                                    <p style="margin-top: 4px; margin-left: 4px;">self-assigned this </p>
+                                                {% else %}
+                                                    <p style="margin-top: 4px; margin-left: 4px;"> {{h.message}} </p>
+                                                    <a href="{% url 'visit_profile' id=a.id %}" style="margin-left: 8px; font-size: 14; margin-top: 7px;">{{a.username}}</a>
+                                                {% endif %}
+                                                    <p style="margin-top: 4px; margin-left: 4px; color: rgb(206, 206, 206);">{{ h.created_date|naturaltime }} </p>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                {% elif h.object_type == 'Issue' %}
+                                    <div  class="row" style="margin-left: 8px; margin-top: 8px;">
+                                    <p style="background: rgb(206, 206, 206);
+                                        padding:5px;
+                                        border-color: white;
+                                        border-width: 2px;
+                                        margin-right: 8px;
+                                        border-style: solid;
+                                        border-radius: 50%;">{% bs_icon 'bookmark' size='1.5em' color='gray' %}</p>
+                                        <p style="margin-top: 4px;">{% bs_icon 'person-circle' size='1.5em' %}<b style="margin-right: 4px;">{{h.user.username}}</b>{{h.message}} </p>
+                                        {% for i in issues %}
+                                            {% if h.changed_object_id == i.id %}
+                                                <a href="{% url 'view_issue' id=i.id %}" style="margin-left: 8px; font-size: 14; margin-top: 6px;">{{i.issue_title}}</a>
+                                                <p style="margin-top: 4px; margin-left: 4px; color: rgb(206, 206, 206);">{{ h.created_date|naturaltime }} </p>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                {% elif h.object_type == 'Project' %}
+                                    <div  class="row" style="margin-left: 8px; margin-top: 8px;">
+                                    <p style="background: rgb(206, 206, 206);
+                                        padding:5px;
+                                        border-color: white;
+                                        border-width: 2px;
+                                        margin-right: 8px;
+                                        border-style: solid;
+                                        border-radius: 50%;">{% bs_icon 'layout-text-window-reverse' size='1.5em' color='gray' %}</p>
+                                        <p style="margin-top: 4px;">{% bs_icon 'person-circle' size='1.5em' %}<b>{{h.user.username}}</b> {{h.message}} </p>
+                                        {% for p in projects %}
+                                            {% if h.changed_object_id == p.id %}
+                                                <a  style="margin-left: 8px; font-size: 14; margin-top: 6px;">{{p.name}}</a>
+                                                <p style="margin-top: 4px; margin-left: 8px;" >{{h.object_type}}</p>
+                                                <p style="margin-top: 4px; margin-left: 4px; color: rgb(206, 206, 206);">{{ h.created_date|naturaltime }} </p>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                {% elif h.object_type == 'Changes' %}
+                                    <div  class="row" style="margin-left: 8px; margin-top: 8px;">
+                                    <p style="background: rgb(206, 206, 206);
+                                        padding:5px;
+                                        border-color: white;
+                                        border-width: 2px;
+                                        margin-right: 8px;
+                                        border-style: solid;
+                                        border-radius: 50%;">{% bs_icon 'eye' size='1.5em' color='gray' %}</p>
+                                        <p style="margin-top: 4px;">{% bs_icon 'person-circle' size='1.5em' %}<b>{{h.user.username}}</b> {{h.message}} </p>
+                                        {% for r in assignees.all %} 
+                                            {% if h.changed_object_id == r.id %}
+                                                <a href="{% url 'visit_profile' id=r.id %}" style="margin-left: 8px; font-size: 14; margin-top: 6px;">{{r}}</a>
+                                                <p style="margin-top: 4px; margin-left: 4px; color: rgb(206, 206, 206);">{{ h.created_date|naturaltime }} </p>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                {% elif h.object_type == 'Approved' %}
+                                    <div  class="row" style="margin-left: 8px; margin-top: 8px;">
+                                    <p style="background: rgb(56, 167, 61);
+                                        padding:5px;
+                                        border-color: white;
+                                        border-width: 2px;
+                                        margin-right: 8px;
+                                        border-style: solid;
+                                        border-radius: 50%;">{% bs_icon 'check2' size='1.5em' color='white' %}</p>
+                                        <p style="margin-top: 4px;">{% bs_icon 'person-circle' size='1.5em' %}<b>{{h.user.username}}</b> {{h.message}} </p>
+                                        {% for r in reviewers.all %}
+                                            {% if h.changed_object_id == r.id %}
+                                                <a href="{% url 'visit_profile' id=r.id %}" style="margin-left: 8px; font-size: 14; margin-top: 6px;">{{r.username}}</a>
+                                                <p style="margin-top: 4px; margin-left: 4px; color: rgb(206, 206, 206);">{{ h.created_date|naturaltime }} </p>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                        <!-- Timeline-->
+                        </div>
+                        
                     </div>
-                    <div class="tab-pane container fade" id="preview">Comments preview.</div>
+                    <div class="tab-pane container fade" id="commits">
+                        <div  class="row " style="margin-left: 8px; margin-top: 8px;">
+                            <p style="background: rgb(206, 206, 206);
+                                padding:5px;
+                                border-color: white;
+                                border-width: 2px;
+                                margin-right: 8px;
+                                margin-top: 4px;
+                                border-style: solid;
+                                border-radius: 50%;">{% bs_icon 'upload' size='1.5em' color='gray' %}</p>
+                                <p style="margin-left: 4px; margin-top: 6px;">added {{ commits|length }} commits</p>
+                        </div>
+                        {% for c in commits %}
+                            <div  class="row " style="margin-left: 8px; margin-top: 8px;">
+                                <p style="background-color: white;
+                                padding:5px;
+                                margin-right: 8px;
+                                margin-top: 4px;
+                                width: 6px;">{% bs_icon 'node-plus' size='1.5em' color='gray' %}</p>
+                                <p style="margin-top: 4px; margin-left: 15px;">{% bs_icon 'person-circle' size='1.5em' %} {{c.message}} </p>
+                            </div>
+                        {% endfor %}
+                    </div>
                 </div>
-            </div>   
-            <input type="submit" style="margin-left: 1000px; margin-top: 15px; margin-bottom: 20px;"  class="btn btn-success" value="Comment">
-            {% if pullrequest.status == 'Closed' %}
-                <a href="{% url 'changeStatusPullrequest' id=pullrequest.id %}" type="button" class="btn btn-outline-secondary" style="margin-left: 820px; margin-top: -58px; margin-bottom: 20px;">Reopen pull request </a>
-            {% elif pullrequest.status == 'Opened' %}
-                <a href="{% url 'changeStatusPullrequest' id=pullrequest.id %}" type="button" class="btn btn-outline-secondary" style="margin-left: 820px; margin-top: -58px; margin-bottom: 20px;">Close pull request </a>
+            </div>
+            <form style="margin-top: 20px; margin-left: -12px;" method="POST" action="{% url 'add_comment' id=pullrequest.id %}"> 
+                    {% csrf_token %}
+                    <hr>
+                    {% if pullrequest.status == 'Opened' %}
+                        <div class="card-header" style="border-color: green;">
+                            {% bs_icon 'bezier2' size='1em' color='green' %} <a href="{% url 'merge' pullrequest_id=pullrequest.id %}" style="margin-left: 20px; margin-top: 10px; width: 200px; height: 50px; margin-bottom: 10px;" type="button" class="btn btn-success">Merge pull request</a>
+                        </div>
+                    {% elif pullrequest.status == 'Merged' %}
+                        <div class="card-header" style="border-color: purple;">
+                            {% bs_icon 'bezier2' size='1em' color='purple' %}<span style="padding-left:15px; ">Pull request successfully merged and closed</span>
+                            <br>
+                            <span style="padding-left:35px;">You are all set—the <b style="background-color: rgb(219, 216, 216);">{{pullrequest.source.name}} </b> branch can be safely deleted.</span><a href="#" style="margin-left: 20px; margin-top: 10px; width: 150px; margin-bottom: 10px;" type="button" class="btn btn-secondary">Delete branch</a>
+                        </div>
+                    {% else %}
+                        <div class="card-header" style="margin-left: 13px; border-color: red; width: 1100px;">
+                            {% bs_icon 'pause' size='1em' color='red' %} <span style="padding-left:15px;">Closed with unmerged commits</span>
+                            <br>
+                            <span style="padding-left:35px;">This pull request is closed, but the <b style="background-color: rgb(219, 216, 216);">{{pullrequest.source.name}} </b> branch has unmerged commits.</span><a href="#" style="margin-left: 20px; margin-top: 10px; width: 150px; margin-bottom: 10px;" type="button" class="btn btn-secondary">Delete branch</a>
+                        </div>
+                    {% endif %}
+                    <hr>
+                    <div class="container" style="margin-left: 9px;">
+
+                        <!-- Nav tabs -->
+                        <ul class="nav nav-tabs">
+                            <li class="nav-item">
+                            <a class="nav-link active" data-toggle="tab" href="#write">Write</a>
+                            </li>
+                            <li class="nav-item">
+                            <a class="nav-link" data-toggle="tab" onclick="preview_comment()" href="#preview">Preview</a>
+                            </li>
+                        </ul>
+
+                        <div class="tab-content">
+                            <div class="tab-pane container active" id="write"> 
+                                {% if error%}
+                                    <h6 style="color: red;">{{error}}</h6>
+                                {%endif%}
+                                <textarea class="form-control col-md-12" id="comment" rows="4" name="comment" placeholder="Leave a comment" style="background-color: #E5E8E8;"></textarea>
+                                <hr style="border-color: white;">
+                            </div>
+                            <div class="tab-pane container fade" id="preview">
+                                <textarea disabled = true; class="form-control col-md-12" id="preview_comment" rows="4" name="comment" style="background-color: #ffffff;"></textarea>
+                                <hr>
+                            </div>
+                        </div>
+
+                        <input type="submit" style=" margin-left: 980px; margin-top: 15px; margin-bottom: 20px;"  class="btn btn-success" value="Comment">
+                        {% if pullrequest.status == 'Closed' %}
+                            <a href="{% url 'changeStatusPullrequest' id=pullrequest.id %}" type="button" class="btn btn-outline-secondary" style="margin-left: 800px; margin-top: -58px; margin-bottom: 20px;">Reopen pull request </a>
+                        {% elif pullrequest.status == 'Opened' %}
+                            <a href="{% url 'changeStatusPullrequest' id=pullrequest.id %}" type="button" class="btn btn-outline-secondary" style="margin-left: 800px; margin-top: -58px; margin-bottom: 20px;">Close pull request </a>
+                        {% endif %}
+                    </div> 
+                    
+                </form>
+            {% else %}
+            <p>There are no pullrequest with that id.</p>
             {% endif %}
-        </form>
-    {% else %}
-    <p>There are no milestone with that id.</p>
-    {% endif %}
-    </div>  
+            </div>  
+            <div style="margin-right: auto; margin-top: 80px;">
+                <form style="margin-top: 20px;" method="POST" action="{% url 'add_reviewers_on_pull_request' pullrequest.id %}"> 
+                    {% csrf_token %}
+                    <h5>Add reviewers</h5>
+                    <div style="margin-top: 20;">
+                        <div style="position: absolute; ">
+                            <select name="developers" style="width: 250; border-radius: 6px;border: 2px solid #AAA;box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.1);" multiple>
+                                {% for dev in not_assigned_collaborators_on_repository %}
+                                    {% if dev in  reviewers %} 
+                                        <option value="{{ dev.username }}" selected>{{ dev.username }}</option>
+                                    {% else %}      
+                                        <option value="{{ dev.username }}">{{ dev.username }}</option>
+                                    {% endif %}
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <input type="submit" style="margin-left: 195;  margin-top: 100; "  class="btn btn-success" value="Add">
+                    </div>
+                </form>
+                <hr style="margin-top: 20;"/>
+                <div style="margin-top: 10;">
+                    <h5> Reviewers</h5>
+                    {% if reviewers %}
+                    {% for reviewer in reviewers %}
+                        <div class="row" style="width: 200; margin-left: 5;" >
+                            <li style="font-size: 14;">{{reviewer.username}}</li>                            
+                            <a class="btn btn-primary btn-sm" href="{% url 'remove_reviewer_from_pullrequest' pullrequest_id=pullrequest.id reviewer_id=reviewer.id %}" onclick="return confirm('Are you sure you want to remove reviewer?');" style="margin-left: auto; margin-top: 3; border: 0ch; background-color: #A5A4A4 ;" >Remove</a>               
+                        </div>
+                    {% endfor %}
+                {%else %}
+                    <p style="font-size: 14;">No reviewers</p>
+                {% endif %}
+                </div>
+                <hr style="margin-top: 20;"/>
+                <h5>Assignees</h5>
+                <form style="margin-top: 20px;" method="POST" action="{% url 'add_assignes_on_pull_request' pullrequest.id %}"> 
+                    {% csrf_token %}
+                    <select class="selectpicker" multiple data-live-search="true" name="assignees">
+                        <option disabled style="text-align: left;">Suggestions</option>
+                        {% for a in assignees.all %}
+                            {% if a in pullrequest.assignees.all %}
+                            <option disabled selected>{{a.username}}</option>
+                            {% else %}
+                            <option value="{{a.username}}">{{a.username}}</option>
+                            {% endif %}
+                        {%endfor%}
+                    </select>
+                    <input type="submit"  class="btn btn-success" value="Add">
+                </form>
+                <div style="margin-top: 10;">
+                    {% if pullrequest.assignees.all %}
+                        {% for assignee in pullrequest.assignees.all %}
+                            <div class="row" style="width: 200; margin-left: 5;" >
+                                {% bs_icon 'person-circle' size='1.5em'%} 
+                                <p style="margin-left: 8px; font-size: 14;">{{assignee.username}}</p>
+                                <a style="margin-left: 50px;" href="{% url 'delete_assignees_on_pull_request' id=pullrequest.id assignee_id=assignee.id %}" type="button">{% bs_icon 'x-circle' size='1.5em'%} </a>                            
+                            </div>
+                        {% endfor %}
+                    {%else %}
+                        <p style="font-size: 14;">No assignees</p>
+                    {% endif %}
+                </div>
+                <hr style="margin-top: 20;"/>
+                <h5>Labels</h5>
+                <form style="margin-top: 20px;" method="POST" action="{% url 'add_labels_on_pull_request' pullrequest.id %}"> 
+                    {% csrf_token %}
+                    <select class="selectpicker" multiple data-live-search="true" name="labels">
+                        <option disabled style="text-align: left;">Suggestions</option>
+                        {% for l in labels %}   
+                            {% if l in pullrequest.labels.all %}
+                                <option disabled selected value="{{l.id}}" class="badge badge-pill d-inline-flex align-items-center justify-content-center  "
+                                style="margin-top: 5px; margin-left: 20px; font-size: 0.9em;  height: 30px; width: auto;
+                                background-color:{{l.color}}">{{l.name}}</option>
+                            {% else %}
+                                <option value="{{l.id}}" class="badge badge-pill d-inline-flex align-items-center justify-content-center  "
+                                style="margin-top: 5px; margin-left: 20px; font-size: 0.9em; align-content: center; height: 30px; width: auto;
+                                background-color:{{l.color}}">{{l.name}}</option>
+                            {% endif %}
+                        {%endfor%}
+                    </select>
+                    <input type="submit"  class="btn btn-success" value="Add">
+                </form>
+                <div style="margin-top: 10;">
+                    <p style="color: #A5A4A4; font-size: 0.8em; ">Click on label to remove</p>
+                    {% if pullrequest.labels.all %}
+                        {% for label in pullrequest.labels.all %}
+                                <a style="color: black;" href="{% url 'delete_labels_on_pull_request' id=pullrequest.id label_id=label.id %}" type="button">
+                                    <span  class="badge badge-pill d-inline-flex align-items-center justify-content-center  "
+                                    style="margin-left: 5px; margin-top: 3px; font-size: 0.9em;  height: 30px; width: auto;
+                                    background-color:{{label.color}}">{{label.name}}
+                                    </span> 
+                                </a>        
+                        {% endfor %}
+                    {%else %}
+                        <p style="font-size: 14;">No labels</p>
+                    {% endif %}
+                </div>
+                <!--Project -->
+                <hr style="margin-top: 20;"/>
+                <h5>Projects</h5>
+                <form style="margin-top: 20px;" method="POST" action="{% url 'add_projects_in_pull_request' pullrequest.id %}"> 
+                    {% csrf_token %}
+                    <select class="selectpicker" multiple data-live-search="true" name="projects">
+                        <option disabled style="text-align: left;">Suggestions</option>
+                        {% for p in projects %}  
+                            {% if p in pullrequest.projects.all %}
+                                <option  selected disabled>{{p.name}}</option>
+                            {% else %}
+                                <option value="{{p.id}}">{{p.name}}</option>
+                            {% endif %}
+                        {%endfor%}
+                    </select>
+                    <input type="submit"  class="btn btn-success" value="Add">
+                </form>
+                <div style="margin-top: 10;">
+                    {% if pullrequest.projects.all %}
+                        {% for p in pullrequest.projects.all %}
+                            <div class="row" style="width: 200; margin-left: 5; border-color: #A5A4A4;" > 
+                                   <a href="{% url 'getProjectById' id=p.id %}">{{p.name}}</a> <a style="margin-left: 50px;" href="{% url 'delete_projects_on_pull_request' id=pullrequest.id project_id=p.id %}" type="button">{% bs_icon 'x-circle' size='1.5em'%} </a>
+                            </div>       
+                        {% endfor %}
+                    {%else %}
+                        <p style="font-size: 14;">No projects</p>
+                    {% endif %}
+                </div>
+
+                <!--Project -->
+                <!--Milestone -->
+                <hr style="margin-top: 20;"/>
+                <h5>Milestone</h5>
+                <form style="margin-top: 20px;" method="POST" action="{% url 'add_milestones_on_pull_request' pullrequest.id %}"> 
+                    {% csrf_token %}
+                    <select class="selectpicker" data-live-search="true" name="milestones">
+                        <option disabled style="text-align: left;">Suggestions</option>
+                        {% for m in milestones %}   
+                            {% if m in pullrequest.milestone.all %}
+                                <option selected value="{{m.id}}">{{m.title}}</option>
+                            {% else %}
+                                <option value="{{m.id}}">{{m.title}} - {{m.status}}</option>
+                            {% endif %}
+                        {%endfor%}
+                    </select>
+                    <input type="submit"  class="btn btn-success" value="Add">
+                </form>
+                <div style="margin-top: 10;">
+                    {% if pullrequest.milestone.all %}
+                        {% for m in pullrequest.milestone.all %}
+                            <div class="row" style="width: 200; margin-left: 5;" > 
+                                <div class="progress" style="width: 200px; margin-top: 10px;">
+                                    <div class="progress-bar bg-success" role="progressbar" style="width: {{m.get_completed_percentage}}%" aria-valuenow="{{m.get_completed_percentage}}" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                                <a href="{% url 'seeMilestone' id=m.id%}" style="margin-left: 8px; font-size: 14;">{{m.title}}</a> 
+                            </div>       
+                        {% endfor %}
+                    {%else %}
+                        <p style="font-size: 14;">No milestones</p>
+                    {% endif %}
+                </div>
+
+                 <!--Issues -->
+                 <hr style="margin-top: 20;"/>
+                 <h5>Linked issues</h5>
+                 <form style="margin-top: 20px;" method="POST" action="{% url 'add_issues_on_pull_request' pullrequest.id %}"> 
+                     {% csrf_token %}
+                     <select class="selectpicker" multiple data-live-search="true" name="issues">
+                         <option disabled style="text-align: left;">Suggestions</option>
+                         {% for i in issues %}   
+                             {% if i in connected_issues %}
+                                <option disabled selected >{{i.issue_title}}</option>
+                             {% else %}
+                                <option value="{{i.id}}"> {{i.issue_title}} </option>
+                             {% endif %}
+                         {%endfor%}
+                     </select>
+                     <input type="submit"  class="btn btn-success" value="Add">
+                 </form>
+                 <div style="margin-top: 10;">
+                     {% if connected_issues %}
+                         {% for c in connected_issues %}
+                            <div class="row" style="width: 250; margin-left: 5;" > 
+                                {% if c.state == 'Close' %}
+                                   <a href="{% url 'view_issue' id=c.id%}"  style=" font-size: 14; margin-right: 10px;"> {% bs_icon 'check-circle' color='purple' size='1em'%} {{c.issue_title}}</a> <a  href="{% url 'delete_issues_on_pull_request' id=c.id pr_id=pullrequest.id%}" type="button">{% bs_icon 'x-circle' size='1.5em'%} </a>
+                                {% else %}
+                                   <a href="{% url 'view_issue' id=c.id%}"  style="font-size: 14; margin-right: 10px;"> {% bs_icon 'record-circle' color='green' size='1em'%}  {{c.issue_title}}</a><a  href="{% url 'delete_issues_on_pull_request' id=c.id pr_id=pullrequest.id%}" type="button">{% bs_icon 'x-circle' size='1.5em'%} </a>
+                                {% endif %} 
+                            </div>       
+                         {% endfor %}
+                     {%else %}
+                         <p style="font-size: 14;">No linked issues</p>
+                     {% endif %}
+                 </div>
+            </div>
+        </div>
     {% endblock %}
     </body>
 </html>
+
+{% block javascript %}
+<script>
+    var quoted_comments = ""
+    var typed_text = ""
+    function quote_comment(c) {
+        this.typed_text = document.getElementById("comment").value.concat("\n");
+        this.quoted_comments = typed_text.concat(c + "\n")
+
+        document.getElementById("comment").value = quoted_comments;
+    }
+
+    function preview_comment() {
+        this.typed_text = document.getElementById("comment").value;
+        document.getElementById("preview_comment").innerHTML = typed_text;
+    }
+
+    function enable_textarea(){
+        console.log("cdscscds")
+        document.getElementById("comment_content_edit").disabled=false;
+        document.getElementById("comment_content_edit").style.backgroundColor = "#E5E8E8";
+        document.getElementById("update_comment").hidden=false;
+    }
+
+</script>
+{% endblock %}
