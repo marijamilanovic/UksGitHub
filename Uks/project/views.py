@@ -7,7 +7,12 @@ from repository.models import Repository
 
 @login_required(login_url="login")
 def all_projects(request):
-    all_projects = Project.objects.all()
+    all_repositories = Repository.objects.all().filter(creator = request.user)
+    all_projects = []
+    for r in all_repositories:
+        all_repo_projects = Project.objects.all().filter(repository = r)
+        for p in all_repo_projects:
+            all_projects.append(p)
     return render(request,'all_projects.html',{'all_projects':all_projects})
 
 def projects(request,id):

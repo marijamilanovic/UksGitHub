@@ -9,11 +9,19 @@
       </li>
     {% endblock %}
 
-    {% block navIssues %}
-      <li class="nav-item">
-        <a class="nav-link"  id="issues" style="border-bottom:3px solid darkviolet;color: black;" href="{% url 'issues' id=repository.id  %}">{% bs_icon 'record-circle' size='1em' %} Issues</a>
-      </li>
+    {% block navRepos %}
+          <li class="nav-item">
+            <a class="nav-link" style="color: black;" href="{% url 'all_repositories' %}">{% bs_icon 'pc-display-horizontal' size='1.2em' %} Repositories</a>
+          </li>
     {% endblock %}
+
+    {% block navIssues %}
+    <li class="nav-item">
+      <a class="nav-link" style="border-bottom:3px solid darkviolet; color: black;" href="{% url 'all_issues' %}">{% bs_icon 'record-circle' size='1.2em' %}Issues</a>
+    </li>
+    {% endblock %}
+
+
 {% block page_content %}
 <div class="tab-pane container" id="issues">
     <table class="table">

@@ -50,7 +50,7 @@
     <!--Style if forked repo-->
     {% if repository.is_repo_forked|first and  repository.is_repo_forked|first != request.user.id %}
     <span style="margin-left: 20px;">{% bs_icon 'diagram-2' size='1.4em' %}</span>
-    <a href="{% url 'profile' %}" style="font-size: large; margin-left: 5px; margin-top: 15px; display:inline-block;"> {{repository.creator}} </a>
+    <a href="{% url 'visit_profile' id=repository.id %}" style="font-size: large; margin-left: 5px; margin-top: 15px; display:inline-block;"> {{repository.creator}} </a>
     <span style="font-size: large;">/</span>
     <a href="#" style="font-size: large; margin-left: 0px; margin-top: 15px; display:inline-block;"> {{repository.name}} </a>
     <span class="badge badge-pill badge-success d-inline-flex align-items-center justify-content-center"
@@ -63,7 +63,7 @@
     {% endif %}
     </div>
 
-    <div style="margin-left: 1000px; margin-top: -50px;">
+    <div style="margin-left: 1200px; margin-top: -50px;">
       <a href="{% url 'watchRepository' id=repository.id  %}" class="btn btn-outline-secondary btn-sm" style="width: 100px;  color: black;"><span style="margin-left: -4px;  ">{% bs_icon 'eye' size='1.1em' %}</span> Watch <span class="badge badge-success">{{repository.get_watchers_number}}</span></a>
       <a href="#"  onclick="showModal()" class="btn btn-outline-secondary btn-sm" style="width: 100px; margin-left: 10px; color: black;"><span style="margin-left: -4px; ">{% bs_icon 'diagram-2' size='1.1em' %} </span> Fork <span class="badge badge-success">{{repository.get_forks_number}}</span></a>
       {% if stargazers %}
@@ -77,7 +77,7 @@
     <!--Style if regular repo-->
     {% else %}
     <span style="margin-left: 20px;">{% bs_icon 'pc-display-horizontal' size='1.4em' %}</span>
-    <a href="{% url 'profile' %}" style="font-size: large; margin-left: 5px; margin-top: 15px; display:inline-block;"> {{repository.creator}} </a>
+    <a href="{% url 'visit_profile' id=repository.creator.id %}" style="font-size: large; margin-left: 5px; margin-top: 15px; display:inline-block;"> {{repository.creator}} </a>
     <span style="font-size: large;">/</span>
     <a href="#" style="font-size: large; margin-left: 0px; margin-top: 15px; display:inline-block;"> {{repository.name}} </a>
     <span class="badge badge-pill badge-success d-inline-flex align-items-center justify-content-center"
@@ -85,7 +85,7 @@
     </span>
    
 
-    <div style="margin-left: 1000px; margin-top: -30px;">
+    <div style="margin-left: 1200px; margin-top: -30px;">
       <a href="{% url 'watchRepository' id=repository.id  %}" class="btn btn-outline-secondary btn-sm" style="width: 100px;  color: black;"><span style="margin-left: -4px;  ">{% bs_icon 'eye' size='1.1em' %}</span> Watch <span class="badge badge-success">{{repository.get_watchers_number}}</span></a>
       <a href="#"  onclick="showModal()" class="btn btn-outline-secondary btn-sm" style="width: 100px; margin-left: 10px; color: black;"><span style="margin-left: -4px; ">{% bs_icon 'diagram-2' size='1.1em' %} </span> Fork <span class="badge badge-success">{{repository.get_forks_number}}</span></a>
       {% if stargazers %}
@@ -162,7 +162,7 @@
         <div class="col">
         <!--Left part of the page-->  
           <div class="code">
-            <div class="code-item1" style="margin-left: -48px;">
+            <div class="code-item1" style="margin-left: -58px;">
               <span class="iconify" data-icon="fa-solid:code-branch"></span>
               <select class="selectpicker" data-live-search="true" data-size="5" onchange="location = this.value">
                 {% for branch in branch_list.all  %}

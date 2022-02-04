@@ -6,7 +6,7 @@ from repository.models import Repository
 from issue.models import Issue
 from commit.models import Commit
 from branch.models import Branch
-
+from project.models import Project
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
@@ -16,7 +16,6 @@ def welcome(request):
     return render(request, 'welcome.html', {})
 
 def loginUser(request):
-    print('U LOGINU SAM')
     ok_login = False
 
     if request.method == 'POST':
@@ -51,7 +50,7 @@ def search(request):
     if request.method == 'POST':
         searchedWord = request.POST['search']
         words = searchedWord.split()
-        repositories = checkRepositories(words)
+        repositories = checkRepositories(words, request)
         issues = checkIssues(words)
         commits = checkCommits(words)
         #to do add users search
@@ -75,10 +74,21 @@ def search(request):
     "users":users, "foundUsers":usersIds,
     "searchedWords":searchedWord})
 
-def checkRepositories(words):
+def checkRepositories(words, request):
     repositories = []
-    all_repositories = Repository.objects.all()
+    logged_user = User.objects.get(id = request.user.id)
+    all_private_repositories = Repository.objects.all().filter(status = 'private')
     all_public_repositories = Repository.objects.all().filter(status = 'public')
+    for r in all_private_repositories:
+        developers = User.objects.all().filter(user_developers = r)
+        for d in developers:
+            if (logged_user.id == d.id):
+                for word in words:
+                    if (word.lower() in r.name.lower()):
+                        if (len(repositories) == 0):
+                            repositories.append(r)
+                        elif(r not in repositories):
+                            repositories.append(r)
     for repository in all_public_repositories:
         for word in words:
             if (word.lower() in repository.name.lower()):
@@ -263,17 +273,14 @@ def all_users(request):
 
 def checkUsers(words):
     users = []
-    all_users = User.objects.all()
-    all_repositories = Repository.objects.all()
-    for r in all_repositories:
-        for user in all_users:
-            if (r.creator.id == user.id):
-                for word in words:
-                    if (word.lower() in user.username.lower()):
-                        if (len(users) == 0):
-                            users.append(user)
-                        elif(user not in users):
-                            users.append(user)
+    all_users = User.objects.all().filter(is_superuser = False)
+    for user in all_users:
+        for word in words:
+            if (word.lower() in user.username.lower()):
+                if (len(users) == 0):
+                    users.append(user)
+                elif(user not in users):
+                    users.append(user)
     return users
 
 def searchedUsers(request):
@@ -329,3 +336,14 @@ def find_all_searched_results(request):
     searchedWords = request.POST.get('searchedWords')
 
     return issues, issuesIds,commits,commitsIds,repositories,repositoriesIds,users,usersIds,searchedWords
+
+def user_projects(request,id):
+    user = User.objects.get(id = id)
+    user_public_repositories = Repository.objects.all().filter(status='public', creator = user)
+    projects = []
+    for r in user_public_repositories:
+        user_projects = Project.objects.all().filter(repository=r)
+        for p in user_projects:
+            projects.append(p)
+    
+    return render(request,'userProjects.html', {"user":user,"projects":projects })

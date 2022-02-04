@@ -28,7 +28,9 @@
     {%block page_content%}
     <div class="tab-pane container active" id="milestones" style="margin-right: 120px;">
       <a href="{% url 'newMilestone' id=repository.id %}" style="margin-left: 834px; margin-top: -25px;" type="button" class="btn btn-success" >New milestone</a>
-  
+      <div style="margin-top: 15px; margin-left: -35px; max-width: 1010px;">
+        {% include 'messages.html' %}
+      </div>
       <div class="card" style="width: 1000px; margin-top: 15px; margin-left: -30px;">
         <div class="card-header" style="background-color: #d7f0db;">
             {% bs_icon 'signpost' size='1.1em' %} <a style="color: darkgray" href="#" id="open" > {{repository.get_opened_milestones_number}} Open </a>
@@ -40,6 +42,26 @@
           <ul class="list-group list-group-flush" style="margin-top: 10px;">
             {% for m in milestones %} 
             {% if m.status == 'Opened' %}
+            <!-- DELETE MODAL -->
+            <div class="modal" id="delete_milestone_{{m.id}}" tabindex="-1" role="dialog">
+              <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title">Delete</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                    <p>Do you want to delete milestone with title <i>{{m.title}}</i> ?</p>
+                  </div>
+                  <div class="modal-footer">
+                    <a class="btn btn-primary" href="{% url 'deleteMilestone' id=m.id %}" role="button">Yes</a>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                  </div>
+                </div>
+              </div>
+            </div>
             <li class="list-group-item"> 
             <a  style="color: black; font-size: x-large;" href="{% url 'seeMilestone' id=m.id %}" class="card-title">{{m.title}}</a>
             <div class="progress" style="width: 600px; margin-top: -20px; margin-left: 350px;">
@@ -60,7 +82,7 @@
             {% endif %}
             <a href="{% url 'getMilestoneById' id=m.id %}" class="link-primary">Edit</a>
             <a href="{% url 'closeMilestone' id=m.id %}" class="link-primary" style="margin-left: 10px;">Close</a>
-            <a href="#" id="{{m.id}}" onclick="askToDeleteMilestoneModal(this.id)" class="link-primary" style="margin-left: 10px;">Delete</a>     
+            <a href="#" id="{{m.id}}" onclick="askToDeleteMilestoneModal(this.id)" class="link-primary" style="margin-left: 10px; color: red;">Delete</a>     
           </li>
           {% endif %}
           {% endfor %}
@@ -77,6 +99,26 @@
         <ul class="list-group list-group-flush" style="margin-top: 10px;">
           {% for m in milestones %} 
           {% if m.status == 'Closed' %}
+          <!-- DELETE MODAL -->
+          <div class="modal" id="delete_milestone_{{m.id}}" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title">Delete</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <p>Do you want to delete milestone with title <i>{{m.title}}</i> ?</p>
+                </div>
+                <div class="modal-footer">
+                  <a class="btn btn-primary" href="{% url 'deleteMilestone' id=m.id %}" role="button">Yes</a>
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+              </div>
+            </div>
+          </div>
           <li class="list-group-item"> 
           <a  style="color: black; font-size: x-large;" href="{% url 'seeMilestone' id=m.id %}" class="card-title">{{m.title}}</a>
           <div class="progress" style="width: 600px; margin-top: -20px; margin-left: 350px;">
@@ -107,6 +149,24 @@
         </div>
         </div>
     </div>
+
+        <!--Modal-->
+        <div class="modal" id="myModal" tabindex="-1" role="dialog">
+          <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title">Fork {{repository.name}}</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <p>Where should we fork {{repository.name}} ?</p>
+                <a class="tooltip-test" title="Will be created as {{request.user}}/{{repository.name}}" href="{% url 'forkRepository' id=repository.id  %}"  style="font-size: large;"> {% bs_icon 'person-circle' size='1.2em' %} {{request.user}}</a>
+              </div>
+            </div>
+          </div>
+        </div>
         {%endblock%}
 
         {% block javascript %}
@@ -118,7 +178,11 @@
 
           var el2 = document.getElementById('close');
           el2.onclick = closed;
-    
+          
+          function showModal() {
+              $('#myModal').modal('show')
+          }
+          
           function opened() {
               if (document.getElementById('Div1')) {
                   document.getElementById('Div1').style.display = 'block';

@@ -1,4 +1,20 @@
 {% extends 'home/profile.html' %}
+{% load bootstrap_icons %}
+
+        {% block navRepos %}
+        <li class="nav-item">
+        <a class="nav-link" style="color: black;" href="{% url 'all_repositories' %}">{% bs_icon 'pc-display-horizontal' size='1.2em' %} Repositories</a>
+        </li>
+        {% endblock %}
+
+        {% block navUsers %}
+          {% if request.user.is_superuser %}
+            <li class="nav-item">
+                <a style="border-bottom:3px solid darkviolet; color: black;" class="nav-link" href="{% url 'all_users' %}">{% bs_icon 'people-fill' size='1.2em' %} Users</a>
+            </li>
+          {% endif %}
+          {% endblock %} 
+
 {% block page_content  %}
 <div class="tab-pane container " id="users">
     {% include 'messages.html' %}

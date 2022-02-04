@@ -1,6 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from repository.models import Repository
 from .models import Label
+from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 
@@ -56,6 +57,8 @@ def editLabel(request, id):
 @login_required(login_url="login")
 def deleteLabel(request, id):
     label = get_object_or_404(Label, id = id)
+    if not label.repository.developers.all().filter(id=request.user.id):
+        return HttpResponse('401 Unauthorized', status=401)
     all_repos = Repository.objects.all()
     for r in all_repos:
         if(r.id == label.repository.id):

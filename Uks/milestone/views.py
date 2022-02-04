@@ -3,6 +3,8 @@ from .models import Milestone
 from repository.models import Repository
 from issue.models import Issue
 from datetime import date
+from django.http import HttpResponse
+
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 
@@ -28,6 +30,8 @@ def allMilestones(request):
 @login_required(login_url="login")
 def deleteMilestone(request, id):
     milestone = get_object_or_404(Milestone, id=id)
+    if not milestone.repository.developers.all().filter(id=request.user.id):
+        return HttpResponse('401 Unauthorized', status=401)
     all_repos = Repository.objects.all()
     for r in all_repos:
         if(r.id == milestone.repository.id):
